@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initQuiz();
   initNavigation();
   initScrollProgress();
+  initChalkDustCanvas();
+  initHero3DArtifact();
+  init3DDesk();
+  init3DCardFlips();
+  init3DTilt();
+  initScrollReveal();
+  initBackToTop();
 });
 
 /* --------------------------------------------------------------------------
@@ -866,3 +873,556 @@ function initScrollProgress() {
     bar.style.width = scrolled + '%';
   });
 }
+
+/* --------------------------------------------------------------------------
+   10. AMBIENT CHALK DUST CANVAS (HERO ATMOSPHERE)
+   -------------------------------------------------------------------------- */
+function initChalkDustCanvas() {
+  const canvas = document.getElementById('hero-dust-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  let width = (canvas.width = canvas.parentElement.offsetWidth);
+  let height = (canvas.height = canvas.parentElement.offsetHeight);
+
+  window.addEventListener('resize', () => {
+    if (!canvas.parentElement) return;
+    width = canvas.width = canvas.parentElement.offsetWidth;
+    height = canvas.height = canvas.parentElement.offsetHeight;
+  });
+
+  const particleCount = 38;
+  const particles = [];
+
+  for (let i = 0; i < particleCount; i++) {
+    particles.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: Math.random() * 2.2 + 0.8,
+      speedX: (Math.random() - 0.5) * 0.45,
+      speedY: -Math.random() * 0.35 - 0.15,
+      opacity: Math.random() * 0.6 + 0.2,
+      pulse: Math.random() * Math.PI,
+      isGold: Math.random() > 0.6
+    });
+  }
+
+  let animationFrameId = null;
+  let isVisible = true;
+
+  const observer = new IntersectionObserver(([entry]) => {
+    isVisible = entry.isIntersecting;
+    if (isVisible && !animationFrameId) {
+      render();
+    }
+  }, { threshold: 0.05 });
+
+  const heroSec = document.getElementById('hero');
+  if (heroSec) observer.observe(heroSec);
+
+  function render() {
+    if (!isVisible) {
+      animationFrameId = null;
+      return;
+    }
+
+    ctx.clearRect(0, 0, width, height);
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.speedX;
+      p.y += p.speedY;
+      p.pulse += 0.02;
+
+      // Wrap around
+      if (p.x < 0) p.x = width;
+      if (p.x > width) p.x = 0;
+      if (p.y < 0) p.y = height;
+      if (p.y > height) p.y = 0;
+
+      const alpha = p.opacity * (0.6 + 0.4 * Math.sin(p.pulse));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.isGold
+        ? `rgba(255, 215, 100, ${alpha * 0.9})`
+        : `rgba(255, 250, 240, ${alpha})`;
+      ctx.shadowBlur = 4;
+      ctx.shadowColor = p.isGold ? 'rgba(255, 215, 0, 0.4)' : 'rgba(255, 255, 255, 0.3)';
+      ctx.fill();
+    }
+
+    animationFrameId = requestAnimationFrame(render);
+  }
+
+  render();
+}
+
+/* --------------------------------------------------------------------------
+   11. HERO 3D ARTIFACT SHOWCASE: GOLD MEDAL & PIONEER BADGE
+   -------------------------------------------------------------------------- */
+const ARTIFACT_DATA = {
+  medal: {
+    stamp: "ГОЗНАК СССР • 1945",
+    tag: "ЭТАЛОН ДОБЛЕСТИ",
+    title: "Золотая Медаль Выпускника СССР",
+    desc: "Учреждена СНК СССР 30 мая 1945 года, в победный май. Вручалась выпускникам средней школы, имевшим полугодовые, годовые и экзаменационные отметки «5» (отлично) по всем предметам. До 1954 года чеканилась из чистого золота 583 пробы (вес 15,6 г), позже — из томпака с гальваническим золочением высокой стойкости. Давала право поступления в любой университет и институт СССР без экзаменов либо при сдаче всего одного профильного предмета на «отлично».",
+    specs: [
+      { label: "Диаметр", val: "32 мм" },
+      { label: "Материал", val: "Золото 583°" },
+      { label: "Льгота", val: "ВУЗ без конкурса" },
+      { label: "Тираж/год", val: "~1.5% выпускников" }
+    ]
+  },
+  badge: {
+    stamp: "ЦК ВЛКСМ • МОСКВА",
+    tag: "СИМВОЛ ЮНОСТИ",
+    title: "Всесоюзный Пионерский Значок",
+    desc: "Утвержден Бюро ЦК ВЛКСМ. Три языка пламени над пятиконечной звездой олицетворяют великое триединство поколений: коммунистов, комсомольцев и пионеров. В центре звезды — барельефный золоченый профиль В. И. Ленина и боевой девиз «Всегда готов!». Изготавливался методом горячей штамповки на московском заводе «Победа» из латуни с рубиновой горячей эмалью.",
+    specs: [
+      { label: "Материал", val: "Латунь / Эмаль" },
+      { label: "Крепление", val: "Булавка с фиксатором" },
+      { label: "Цена в СССР", val: "15 копеек" },
+      { label: "Охват", val: "Более 20 млн пионеров" }
+    ]
+  }
+};
+
+function initHero3DArtifact() {
+  const stage = document.getElementById('artifact-stage');
+  const scene = document.getElementById('artifact-3d-scene');
+  const tabMedal = document.getElementById('tab-medal');
+  const tabBadge = document.getElementById('tab-badge');
+  const modelMedal = document.getElementById('model-medal');
+  const modelBadge = document.getElementById('model-badge');
+
+  const btnSpin = document.getElementById('btn-spin-artifact');
+  const btnFlip = document.getElementById('btn-flip-artifact');
+  const btnReset = document.getElementById('btn-reset-artifact');
+
+  const dossierStamp = document.getElementById('dossier-stamp');
+  const dossierTag = document.getElementById('dossier-tag');
+  const dossierTitle = document.getElementById('dossier-title');
+  const dossierDesc = document.getElementById('dossier-desc');
+  const dossierSpecs = document.getElementById('dossier-specs');
+
+  if (!stage || !scene) return;
+
+  let currentArtifact = 'medal';
+  let rotX = 10;
+  let rotY = 15;
+  let isDragging = false;
+  let lastMouseX = 0;
+  let lastMouseY = 0;
+  let isAutoSpinning = false;
+  let spinAnimationId = null;
+
+  function updateTransform(smooth = false) {
+    scene.style.transition = smooth ? 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)' : 'transform 0.05s ease-out';
+    scene.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+  }
+
+  // Mouse / Touch drag rotation
+  stage.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+    stopAutoSpin();
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - lastMouseX;
+    const deltaY = e.clientY - lastMouseY;
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+
+    rotY += deltaX * 0.8;
+    rotX -= deltaY * 0.8;
+    rotX = Math.max(-65, Math.min(65, rotX));
+    updateTransform(false);
+  });
+
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+
+  // Touch support
+  stage.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      isDragging = true;
+      lastMouseX = e.touches[0].clientX;
+      lastMouseY = e.touches[0].clientY;
+      stopAutoSpin();
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    const deltaX = e.touches[0].clientX - lastMouseX;
+    const deltaY = e.touches[0].clientY - lastMouseY;
+    lastMouseX = e.touches[0].clientX;
+    lastMouseY = e.touches[0].clientY;
+
+    rotY += deltaX * 0.8;
+    rotX -= deltaY * 0.8;
+    rotX = Math.max(-65, Math.min(65, rotX));
+    updateTransform(false);
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    isDragging = false;
+  });
+
+  // Interactive Buttons
+  if (btnSpin) {
+    btnSpin.addEventListener('click', () => {
+      if (isAutoSpinning) {
+        stopAutoSpin();
+      } else {
+        startAutoSpin();
+      }
+    });
+  }
+
+  function startAutoSpin() {
+    isAutoSpinning = true;
+    if (btnSpin) btnSpin.classList.add('active');
+    function step() {
+      if (!isAutoSpinning) return;
+      rotY = (rotY + 1.2) % 360;
+      updateTransform(false);
+      spinAnimationId = requestAnimationFrame(step);
+    }
+    step();
+  }
+
+  function stopAutoSpin() {
+    isAutoSpinning = false;
+    if (spinAnimationId) cancelAnimationFrame(spinAnimationId);
+    if (btnSpin) btnSpin.classList.remove('active');
+  }
+
+  if (btnFlip) {
+    btnFlip.addEventListener('click', () => {
+      stopAutoSpin();
+      rotY += 180;
+      rotX = 0;
+      updateTransform(true);
+    });
+  }
+
+  if (btnReset) {
+    btnReset.addEventListener('click', () => {
+      stopAutoSpin();
+      rotX = 10;
+      rotY = 15;
+      updateTransform(true);
+    });
+  }
+
+  // Switch between Medal and Badge
+  function switchArtifact(type) {
+    currentArtifact = type;
+    stopAutoSpin();
+    rotX = 10;
+    rotY = 15;
+    updateTransform(true);
+
+    if (type === 'medal') {
+      if (tabMedal) tabMedal.classList.add('active');
+      if (tabBadge) tabBadge.classList.remove('active');
+      if (modelMedal) modelMedal.classList.add('active');
+      if (modelBadge) modelBadge.classList.remove('active');
+    } else {
+      if (tabBadge) tabBadge.classList.add('active');
+      if (tabMedal) tabMedal.classList.remove('active');
+      if (modelBadge) modelBadge.classList.add('active');
+      if (modelMedal) modelMedal.classList.remove('active');
+    }
+
+    const data = ARTIFACT_DATA[type];
+    if (data && dossierStamp && dossierTitle) {
+      dossierStamp.textContent = data.stamp;
+      dossierTag.textContent = data.tag;
+      dossierTitle.textContent = data.title;
+      dossierDesc.textContent = data.desc;
+
+      if (dossierSpecs) {
+        dossierSpecs.innerHTML = data.specs.map(s => `
+          <div class="spec-card">
+            <span class="spec-label">${s.label}</span>
+            <strong class="spec-value">${s.val}</strong>
+          </div>
+        `).join('');
+      }
+    }
+  }
+
+  if (tabMedal) tabMedal.addEventListener('click', () => switchArtifact('medal'));
+  if (tabBadge) tabBadge.addEventListener('click', () => switchArtifact('badge'));
+
+  // Initial render
+  updateTransform(true);
+}
+
+/* --------------------------------------------------------------------------
+   12. INTERACTIVE 3D ERISMAN DESK SIMULATOR
+   -------------------------------------------------------------------------- */
+function init3DDesk() {
+  const btnToggleLid = document.getElementById('btn-toggle-lid');
+  const hingedLid = document.getElementById('table-hinged-lid');
+  const lidText = document.getElementById('lid-btn-text');
+  const lidStatusTag = document.getElementById('lid-status-tag');
+  const deskWorld = document.getElementById('desk-3d-world');
+  const hotspotTitle = document.getElementById('hotspot-title');
+  const hotspotDesc = document.getElementById('hotspot-desc');
+
+  const btnMode3d = document.getElementById('btn-mode-3d');
+  const btnMode2d = document.getElementById('btn-mode-2d');
+  const stage3d = document.getElementById('desk-3d-stage');
+  const stage2d = document.getElementById('desk-2d-stage');
+
+  if (!hingedLid || !btnToggleLid) return;
+
+  let isLidOpen = false;
+
+  // Synthesize realistic wooden desk lid acoustic sound
+  function playDeskLidSound(opening) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    // Low resonant thud of heavy pine/oak
+    osc.type = 'triangle';
+    const baseFreq = opening ? 160 : 130;
+    osc.frequency.setValueAtTime(baseFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(50, now + 0.18);
+
+    gain.gain.setValueAtTime(0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.18);
+  }
+
+  // Toggle Lid
+  function toggleLid() {
+    isLidOpen = !isLidOpen;
+    hingedLid.classList.toggle('is-open', isLidOpen);
+    playDeskLidSound(isLidOpen);
+
+    if (isLidOpen) {
+      if (lidText) lidText.textContent = 'Опустить крышку парты';
+      if (lidStatusTag) lidStatusTag.textContent = 'КРЫШКА ПОДНЯТА';
+      if (hotspotTitle && hotspotDesc) {
+        hotspotTitle.textContent = '🪑 Крышка парты поднята:';
+        hotspotDesc.textContent = 'Обратите внимание на открывшуюся внутреннюю нишу (подстолье) для хранения учебников и тетрадей. Откидная створка позволяла вставать без малейшего шума.';
+      }
+    } else {
+      if (lidText) lidText.textContent = 'Поднять крышку парты';
+      if (lidStatusTag) lidStatusTag.textContent = 'КРЫШКА ЗАКРЫТА';
+      if (hotspotTitle && hotspotDesc) {
+        hotspotTitle.textContent = '📐 Наклон 15° активен:';
+        hotspotDesc.textContent = 'Крышка опущена в рабочее положение под углом 15 градусов, гарантируя строго перпендикулярное падение взгляда на строки тетради.';
+      }
+    }
+  }
+
+  btnToggleLid.addEventListener('click', toggleLid);
+  hingedLid.addEventListener('click', toggleLid);
+
+  // View Presets
+  const presetBtns = document.querySelectorAll('.btn-preset');
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      presetBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const preset = btn.dataset.preset;
+      if (deskWorld) {
+        deskWorld.className = 'desk-3d-world view-' + preset;
+      }
+    });
+  });
+
+  // Hotspots definitions
+  const HOTSPOT_EXPLANATIONS = {
+    angle: {
+      title: "Наклон столешницы 15°:",
+      desc: "Обеспечивает строго перпендикулярное направление оптической оси глаз к тексту, полностью устраняя необходимость нагибать шею и предотвращая школьную близорукость."
+    },
+    distance: {
+      title: "Отрицательная дистанция 4 см:",
+      desc: "Передний край скамьи заходит под столешницу на 4 см. При такой геометрии ученик физически не может развалиться или сесть боком — грудная клетка и поясница поддерживаются анатомически верно."
+    },
+    lid: {
+      title: "Откидная деревянная крышка:",
+      desc: "Подвешена на прочных латунных петлях. Давала ученику возможность мгновенно встать по стойке «смирно» при входе учителя без сдвигания мебели и грохота."
+    },
+    ink: {
+      title: "Чернильница-непроливайка:",
+      desc: "Керамическая или стеклянная емкость с внутренним конусом. Даже при падении чернила не выливались на тетрадь. Заправлялась фиолетовыми чернилами на основе сажи и анилина."
+    }
+  };
+
+  document.querySelectorAll('.desk-pin').forEach(pin => {
+    pin.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const pinType = pin.dataset.pin;
+      const data = HOTSPOT_EXPLANATIONS[pinType];
+      if (data && hotspotTitle && hotspotDesc) {
+        hotspotTitle.textContent = data.title;
+        hotspotDesc.textContent = data.desc;
+      }
+    });
+  });
+
+  // Switcher between 3D Model and 2D Blueprint
+  if (btnMode3d && btnMode2d) {
+    btnMode3d.addEventListener('click', () => {
+      btnMode3d.classList.add('active');
+      btnMode2d.classList.remove('active');
+      if (stage3d) stage3d.style.display = 'flex';
+      if (stage2d) stage2d.style.display = 'none';
+    });
+
+    btnMode2d.addEventListener('click', () => {
+      btnMode2d.classList.add('active');
+      btnMode3d.classList.remove('active');
+      if (stage3d) stage3d.style.display = 'none';
+      if (stage2d) stage2d.style.display = 'block';
+    });
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. 3D FLIP CARDS FOR GENERATIONS SECTION
+   -------------------------------------------------------------------------- */
+function init3DCardFlips() {
+  document.querySelectorAll('.btn-card-flip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card3d = btn.closest('.gen-card-3d');
+      if (card3d) card3d.classList.add('is-flipped');
+    });
+  });
+
+  document.querySelectorAll('.btn-card-flip-back').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card3d = btn.closest('.gen-card-3d');
+      if (card3d) card3d.classList.remove('is-flipped');
+    });
+  });
+}
+
+/* --------------------------------------------------------------------------
+   14. UNIVERSAL 3D TILT EFFECT & SPECULAR SHEEN
+   -------------------------------------------------------------------------- */
+function init3DTilt() {
+  const tiltElements = document.querySelectorAll('[data-tilt]');
+
+  tiltElements.forEach(el => {
+    // Add specular sheen overlay if not present
+    let glare = el.querySelector('.tilt-glare');
+    if (!glare) {
+      glare = document.createElement('div');
+      glare.className = 'tilt-glare';
+      el.appendChild(glare);
+    }
+
+    el.addEventListener('mousemove', (e) => {
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = ((centerY - y) / centerY) * 7.5;
+      const rotateY = ((x - centerX) / centerX) * 7.5;
+
+      el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+      const glareX = (x / rect.width) * 100;
+      const glareY = (y / rect.height) * 100;
+      glare.style.background = `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.28) 0%, transparent 65%)`;
+    });
+
+    el.addEventListener('mouseleave', () => {
+      el.style.transform = '';
+      el.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+    });
+
+    el.addEventListener('mouseenter', () => {
+      el.style.transition = 'transform 0.1s ease-out';
+    });
+  });
+}
+
+/* --------------------------------------------------------------------------
+   15. SMOOTH SCROLL REVEAL ANIMATIONS
+   -------------------------------------------------------------------------- */
+function initScrollReveal() {
+  const elements = document.querySelectorAll(
+    '.content-section, .stat-card, .routine-card, .subject-card, .stage-card, .hero-3d-showcase'
+  );
+
+  elements.forEach(el => {
+    el.classList.add('reveal-on-scroll');
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-revealed');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  elements.forEach(el => observer.observe(el));
+}
+
+/* --------------------------------------------------------------------------
+   16. FLOATING BACK TO TOP BUTTON WITH SCROLL RING
+   -------------------------------------------------------------------------- */
+function initBackToTop() {
+  const btt = document.getElementById('back-to-top');
+  const circle = document.getElementById('progress-ring-circle');
+  if (!btt) return;
+
+  const circumference = 2 * Math.PI * 20; // 125.66
+
+  window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = height > 0 ? winScroll / height : 0;
+
+    if (winScroll > 380) {
+      btt.classList.add('visible');
+    } else {
+      btt.classList.remove('visible');
+    }
+
+    if (circle) {
+      const offset = circumference - progress * circumference;
+      circle.style.strokeDashoffset = offset;
+    }
+  });
+
+  btt.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+}
+

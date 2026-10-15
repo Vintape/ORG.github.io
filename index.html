@@ -78,6 +78,7 @@
     <!-- HERO SECTION -->
     <section class="hero-section" id="hero">
       <div class="hero-bg-art">
+        <canvas id="hero-dust-canvas" class="hero-dust-canvas" aria-hidden="true"></canvas>
         <div class="hero-retro-sunburst"></div>
         <div class="hero-geometric-grid"></div>
       </div>
@@ -115,25 +116,228 @@
 
         <!-- Metrics Cards -->
         <div class="hero-stats-grid">
-          <div class="stat-card">
+          <div class="stat-card" data-tilt>
             <div class="stat-number">100%</div>
             <div class="stat-label">Грамотность к 1960-м</div>
             <div class="stat-sub">против ~20% в царской России 1917 г.</div>
           </div>
-          <div class="stat-card">
+          <div class="stat-card" data-tilt>
             <div class="stat-number">0 руб.</div>
             <div class="stat-label">Бесплатное образование</div>
             <div class="stat-sub">учебники, кружки, секции и ВУЗы</div>
           </div>
-          <div class="stat-card">
+          <div class="stat-card" data-tilt>
             <div class="stat-number">10 лет</div>
             <div class="stat-label">Золотой стандарт школы</div>
             <div class="stat-sub">обязательное всеобщее среднее</div>
           </div>
-          <div class="stat-card">
+          <div class="stat-card" data-tilt>
             <div class="stat-number">5 млн</div>
             <div class="stat-label">Студентов ВУЗов ежегодно</div>
             <div class="stat-sub">1-е место в мире по инженерам</div>
+          </div>
+        </div>
+
+        <!-- 3D HERO INTERACTIVE ARTIFACT SHOWCASE -->
+        <div class="hero-3d-showcase" id="hero-3d-showcase">
+          <div class="showcase-header">
+            <div class="showcase-badge-wrap">
+              <span class="showcase-badge">★ 3D-ЭКСПОНАТ ЭПОХИ</span>
+              <span class="showcase-sub">Потяните курсором или пальцем, чтобы вращать предмет в 3D</span>
+            </div>
+            <div class="showcase-tabs" role="tablist">
+              <button class="showcase-tab active" data-artifact="medal" role="tab" aria-selected="true" id="tab-medal">
+                🥇 Золотая медаль выпускника
+              </button>
+              <button class="showcase-tab" data-artifact="badge" role="tab" aria-selected="false" id="tab-badge">
+                ⭐ Пионерский значок
+              </button>
+            </div>
+          </div>
+
+          <div class="showcase-body">
+            <!-- 3D Interactive Stage -->
+            <div class="artifact-stage" id="artifact-stage" title="Зажмите и перемещайте курсор для свободного 3D-вращения">
+              <div class="artifact-lighting-glow"></div>
+              
+              <div class="artifact-3d-scene" id="artifact-3d-scene">
+                <!-- ARTIFACT 1: USSR GOLD GRADUATION MEDAL -->
+                <div class="artifact-model artifact-medal-model active" id="model-medal">
+                  <div class="medal-3d-disc">
+                    <div class="disc-face disc-front">
+                      <div class="medal-rim-ridge"></div>
+                      <div class="medal-emboss">
+                        <div class="emboss-star">★</div>
+                        <div class="emboss-arch-text">ЗА ОТЛИЧНЫЕ УСПЕХИ</div>
+                        <div class="emboss-crest-center">
+                          <svg viewBox="0 0 120 120" class="medal-crest-svg" aria-hidden="true">
+                            <defs>
+                              <linearGradient id="goldShine" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#FFE082"/>
+                                <stop offset="35%" stop-color="#FFD54F"/>
+                                <stop offset="70%" stop-color="#FFB300"/>
+                                <stop offset="100%" stop-color="#FF8F00"/>
+                              </linearGradient>
+                            </defs>
+                            <!-- Laurel branch -->
+                            <path d="M22,75 C20,45 35,26 60,20 C85,26 100,45 98,75" fill="none" stroke="url(#goldShine)" stroke-width="4.5" stroke-linecap="round"/>
+                            <!-- Open book -->
+                            <path d="M35,78 L60,67 L85,78 L85,88 L60,77 L35,88 Z" fill="#FFE082" stroke="#B8860B" stroke-width="2.5"/>
+                            <line x1="60" y1="67" x2="60" y2="77" stroke="#B8860B" stroke-width="2"/>
+                            <!-- Sun rays background -->
+                            <circle cx="60" cy="42" r="16" fill="url(#goldShine)" stroke="#B8860B" stroke-width="1.8"/>
+                            <!-- Red Soviet Star in center -->
+                            <polygon points="60,30 63.5,39 73,39 65.5,45 68,54 60,48.5 52,54 54.5,45 47,39 56.5,39" fill="#C62828" stroke="#FFE082" stroke-width="1"/>
+                          </svg>
+                        </div>
+                        <div class="emboss-bottom-motto">В УЧЕНИИ, ТРУДЕ И ЗА ПРИМЕРНОЕ ПОВЕДЕНИЕ</div>
+                        <div class="emboss-hallmark">ГОСЗНАК СССР</div>
+                      </div>
+                      <div class="disc-sheen"></div>
+                    </div>
+
+                    <!-- Milled Rim / Thickness Layer -->
+                    <div class="disc-thickness"></div>
+
+                    <!-- REVERSE FACE -->
+                    <div class="disc-face disc-back">
+                      <div class="medal-rim-ridge"></div>
+                      <div class="medal-emboss back-emboss">
+                        <div class="ussr-back-crest">
+                          <svg viewBox="0 0 120 120" class="crest-svg" aria-hidden="true">
+                            <!-- Globe with Hammer and Sickle -->
+                            <circle cx="60" cy="60" r="32" fill="none" stroke="#B8860B" stroke-width="3"/>
+                            <ellipse cx="60" cy="60" rx="16" ry="32" fill="none" stroke="#B8860B" stroke-width="2"/>
+                            <line x1="28" y1="60" x2="92" y2="60" stroke="#B8860B" stroke-width="2"/>
+                            <!-- Wheat Sheaves bound by ribbons -->
+                            <path d="M30,70 C24,50 32,32 60,22 C88,32 96,50 90,70" fill="none" stroke="url(#goldShine)" stroke-width="4.5"/>
+                            <!-- Hammer and Sickle -->
+                            <path d="M48,72 L72,46 M46,54 C52,44 65,45 70,55 C74,63 64,70 56,66" fill="none" stroke="#C62828" stroke-width="4.5" stroke-linecap="round"/>
+                            <!-- Top Star -->
+                            <polygon points="60,14 62.5,20 69,20 63.5,24 65.5,30 60,26 54.5,30 56.5,24 51,20 57.5,20" fill="#C62828" stroke="#FFE082" stroke-width="1"/>
+                          </svg>
+                        </div>
+                        <div class="ussr-full-title">СОЮЗ СОВЕТСКИХ СОЦИАЛИСТИЧЕСКИХ РЕСПУБЛИК</div>
+                        <div class="mint-stamp-box">
+                          <span>ЛЕНИНГРАДСКИЙ МОНЕТНЫЙ ДВОР</span>
+                          <strong>ПРОБА 583 • ВЕС 15.6 г</strong>
+                        </div>
+                      </div>
+                      <div class="disc-sheen"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ARTIFACT 2: PIONEER BADGE -->
+                <div class="artifact-model artifact-badge-model" id="model-badge">
+                  <div class="badge-3d-body">
+                    <div class="badge-front-face">
+                      <svg viewBox="0 0 140 140" class="pioneer-3d-svg" aria-hidden="true">
+                        <defs>
+                          <radialGradient id="rubyEnamel" cx="50%" cy="50%" r="55%">
+                            <stop offset="0%" stop-color="#FF1744"/>
+                            <stop offset="65%" stop-color="#D50000"/>
+                            <stop offset="100%" stop-color="#880E4F"/>
+                          </radialGradient>
+                          <linearGradient id="goldFlame" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#FFF9C4"/>
+                            <stop offset="40%" stop-color="#FFD54F"/>
+                            <stop offset="80%" stop-color="#FF8F00"/>
+                            <stop offset="100%" stop-color="#E65100"/>
+                          </linearGradient>
+                          <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="rgba(0,0,0,0.3)"/>
+                          </filter>
+                        </defs>
+                        <!-- Three Tongues of Fire -->
+                        <g filter="url(#badgeShadow)">
+                          <path d="M52,32 C52,14 64,2 70,2 C76,2 88,14 88,32 C97,18 102,32 94,48 C76,38 64,38 46,48 C38,32 43,18 52,32 Z" fill="url(#goldFlame)" stroke="#FF8F00" stroke-width="2"/>
+                          <path d="M60,30 C60,16 68,6 70,6 C72,6 80,16 80,30 C86,22 88,32 82,42 C72,36 68,36 58,42 C52,32 54,22 60,30 Z" fill="#D50000"/>
+                        </g>
+                        <!-- Ruby Star -->
+                        <polygon points="70,26 84,56 116,58 90,80 98,112 70,94 42,112 50,80 24,58 56,56" fill="url(#rubyEnamel)" stroke="url(#goldFlame)" stroke-width="3.5"/>
+                        <!-- Gold Lenin Medallion -->
+                        <circle cx="70,72" r="22" fill="url(#goldFlame)" stroke="#B8860B" stroke-width="2.5"/>
+                        <!-- Lenin Silhouette High Relief -->
+                        <path d="M63,62 C68,59 75,59 79,64 C82,67 82,72 78,76 C81,79 79,83 75,84 C69,85 64,83 63,78 C61,74 61,66 63,62 Z" fill="#793B02"/>
+                        <!-- Ribbon Bar -->
+                        <rect x="42,94" width="56" height="13" rx="4" fill="#B71C1C" stroke="url(#goldFlame)" stroke-width="2"/>
+                        <text x="70" y="103" font-size="8.5" font-family="'JetBrains Mono', monospace" font-weight="900" fill="#FFFDE7" text-anchor="middle" letter-spacing="0.5">ВСЕГДА ГОТОВ!</text>
+                      </svg>
+                      <div class="disc-sheen"></div>
+                    </div>
+
+                    <div class="badge-back-face">
+                      <div class="badge-pin-assembly">
+                        <div class="pin-baseplate">
+                          <span class="pin-factory">З-Д «ПОБЕДА» МОСКВА</span>
+                          <span class="pin-price">Ц. 15 КОП.</span>
+                        </div>
+                        <div class="pin-needle-clasp">
+                          <div class="clasp-hinge"></div>
+                          <div class="clasp-pin"></div>
+                          <div class="clasp-hook"></div>
+                        </div>
+                      </div>
+                      <div class="disc-sheen"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Floating Depth Particles -->
+              <div class="stage-pedestal">
+                <div class="pedestal-plate"></div>
+                <div class="pedestal-reflection"></div>
+              </div>
+            </div>
+
+            <!-- Curatorial Dossier & Historical Context -->
+            <div class="artifact-dossier" id="artifact-dossier">
+              <div class="dossier-header">
+                <span class="dossier-stamp" id="dossier-stamp">ГОЗНАК СССР • 1945</span>
+                <span class="dossier-tag" id="dossier-tag">ЭТАЛОН ДОБЛЕСТИ</span>
+              </div>
+
+              <h3 class="dossier-title" id="dossier-title">Золотая Медаль Выпускника СССР</h3>
+              <p class="dossier-desc" id="dossier-desc">
+                Учреждена СНК СССР 30 мая 1945 года, в победный май. Вручалась выпускникам средней школы, имевшим полугодовые, годовые и экзаменационные отметки «5» (отлично) по всем предметам. До 1954 года чеканилась из чистого золота 583 пробы (вес 15,6 г), позже — из томпака с гальваническим золочением высокой стойкости. Давала право поступления в любой университет и институт СССР <strong>без экзаменов</strong> либо при сдаче всего одного профильного предмета на «отлично».
+              </p>
+
+              <div class="dossier-specs-grid" id="dossier-specs">
+                <div class="spec-card">
+                  <span class="spec-label">Диаметр</span>
+                  <strong class="spec-value">32 мм</strong>
+                </div>
+                <div class="spec-card">
+                  <span class="spec-label">Материал</span>
+                  <strong class="spec-value">Золото 583°</strong>
+                </div>
+                <div class="spec-card">
+                  <span class="spec-label">Льгота</span>
+                  <strong class="spec-value">ВУЗ без конкурса</strong>
+                </div>
+                <div class="spec-card">
+                  <span class="spec-label">Тираж/год</span>
+                  <strong class="spec-value">~1.5% выпускников</strong>
+                </div>
+              </div>
+
+              <div class="dossier-controls">
+                <button class="btn-dossier" id="btn-spin-artifact">
+                  <span class="btn-ico">🔄</span>
+                  <span>Вращать 360°</span>
+                </button>
+                <button class="btn-dossier" id="btn-flip-artifact">
+                  <span class="btn-ico">🪙</span>
+                  <span>Аверс / Реверс</span>
+                </button>
+                <button class="btn-dossier" id="btn-reset-artifact">
+                  <span class="btn-ico">🎯</span>
+                  <span>Исходный ракурс</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -327,148 +531,337 @@
         </div>
 
         <div class="generations-grid">
-          <!-- CARD 1: Октябрята -->
-          <div class="gen-card" data-gen="october">
-            <div class="gen-art-header bg-october">
-              <div class="gen-insignia">
-                <svg viewBox="0 0 100 100" class="insignia-svg">
-                  <!-- Ruby Star with Young Lenin -->
-                  <polygon points="50,5 63,35 95,38 71,60 78,92 50,75 22,92 29,60 5,38 37,35" fill="#C62828" stroke="#FFD54F" stroke-width="3"/>
-                  <circle cx="50" cy="50" r="22" fill="#FFE082" stroke="#FF8F00" stroke-width="2"/>
-                  <!-- Stylized child silhouette -->
-                  <circle cx="50" cy="43" r="10" fill="#BF360C"/>
-                  <path d="M37,60 Q50,52 63,60" fill="none" stroke="#BF360C" stroke-width="4" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <div class="gen-tier-pill">1–3 КЛАССЫ • 7–9 ЛЕТ</div>
-            </div>
+          <!-- CARD 1: Октябрята (3D Flip Card) -->
+          <div class="gen-card-wrapper" data-gen="october">
+            <div class="gen-card-3d">
+              <!-- FRONT FACE -->
+              <div class="gen-card-face gen-card-front gen-card" data-tilt>
+                <div class="gen-art-header bg-october">
+                  <div class="gen-insignia">
+                    <svg viewBox="0 0 100 100" class="insignia-svg">
+                      <!-- Ruby Star with Young Lenin -->
+                      <polygon points="50,5 63,35 95,38 71,60 78,92 50,75 22,92 29,60 5,38 37,35" fill="#C62828" stroke="#FFD54F" stroke-width="3"/>
+                      <circle cx="50" cy="50" r="22" fill="#FFE082" stroke="#FF8F00" stroke-width="2"/>
+                      <!-- Stylized child silhouette -->
+                      <circle cx="50" cy="43" r="10" fill="#BF360C"/>
+                      <path d="M37,60 Q50,52 63,60" fill="none" stroke="#BF360C" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <div class="gen-tier-pill">1–3 КЛАССЫ • 7–9 ЛЕТ</div>
+                </div>
 
-            <div class="gen-content">
-              <div class="gen-header">
-                <h3 class="gen-name">Октябрята</h3>
-                <span class="gen-motto">«Внучата Ильича»</span>
-              </div>
-              
-              <p class="gen-desc">
-                Посвящение проходило в ноябре, в канун праздника 7 Ноября. Класс делился на <strong>«звёздочки» ровно по 5 человек</strong> — по числу лучей у звезды.
-              </p>
+                <div class="gen-content">
+                  <div class="gen-header">
+                    <h3 class="gen-name">Октябрята</h3>
+                    <span class="gen-motto">«Внучата Ильича»</span>
+                  </div>
+                  
+                  <p class="gen-desc">
+                    Посвящение проходило в ноябре, в канун праздника 7 Ноября. Класс делился на <strong>«звёздочки» ровно по 5 человек</strong> — по числу лучей у звезды.
+                  </p>
 
-              <div class="roles-breakdown">
-                <div class="roles-title">Обязанности внутри каждой звёздочки:</div>
-                <ul class="roles-list">
-                  <li><strong>Командир:</strong> ведет звёздочку, отчитывается учителю.</li>
-                  <li><strong>Санитар:</strong> каждое утро осматривает чистоту рук, ногтей и ушей одноклассников.</li>
-                  <li><strong>Цветовод:</strong> поливает герани на подоконниках класса.</li>
-                  <li><strong>Библиотекарь:</strong> следит за сохранностью школьных учебников.</li>
-                  <li><strong>Хозяин:</strong> отвечает за порядок в классе и мел у доски.</li>
-                </ul>
+                  <div class="roles-breakdown">
+                    <div class="roles-title">Обязанности внутри каждой звёздочки:</div>
+                    <ul class="roles-list">
+                      <li><strong>Командир:</strong> ведет звёздочку, отчитывается учителю.</li>
+                      <li><strong>Санитар:</strong> каждое утро осматривает чистоту рук, ногтей и ушей одноклассников.</li>
+                      <li><strong>Цветовод:</strong> поливает герани на подоконниках класса.</li>
+                      <li><strong>Библиотекарь:</strong> следит за сохранностью школьных учебников.</li>
+                      <li><strong>Хозяин:</strong> отвечает за порядок в классе и мел у доски.</li>
+                    </ul>
+                  </div>
+
+                  <div class="rules-box">
+                    <div class="rules-title">5 Заповедей Октябрят:</div>
+                    <ol>
+                      <li>Октябрята — будущие пионеры.</li>
+                      <li>Октябрята — прилежные ребята, любят школу, уважают старших.</li>
+                      <li>Только тех, кто любит труд, октябрятами зовут.</li>
+                      <li>Октябрята правдивы и смелы, ловки и умелы.</li>
+                      <li>Октябрята — дружные ребята, читают, рисуют, весело живут.</li>
+                    </ol>
+                  </div>
+
+                  <div class="gen-flip-bar">
+                    <button class="btn-card-flip" data-flip="october" aria-label="Перевернуть карту октябрят в 3D">
+                      <span>★ 3D-Переворот: Памятка и Устав</span>
+                      <span class="flip-icon">⟳</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              <div class="rules-box">
-                <div class="rules-title">5 Заповедей Октябрят:</div>
-                <ol>
-                  <li>Октябрята — будущие пионеры.</li>
-                  <li>Октябрята — прилежные ребята, любят школу, уважают старших.</li>
-                  <li>Только тех, кто любит труд, октябрятами зовут.</li>
-                  <li>Октябрята правдивы и смелы, ловки и умелы.</li>
-                  <li>Октябрята — дружные ребята, читают, рисуют, весело живут.</li>
-                </ol>
+              <!-- BACK FACE: HISTORICAL ARCHIVE FACSIMILE -->
+              <div class="gen-card-face gen-card-back">
+                <div class="card-back-parchment">
+                  <div class="archive-header-badge">АРХИВ МИНПРОСВЕЩЕНИЯ СССР</div>
+                  <div class="back-title-group">
+                    <span class="back-rubric">ПАМЯТКА ПЕРВОКЛАССНИКА</span>
+                    <h4 class="back-heading">Правила Октябрят СССР</h4>
+                    <span class="back-date">Утверждено Бюро ЦК ВЛКСМ 1924–1986 гг.</span>
+                  </div>
+
+                  <div class="back-historical-doc">
+                    <div class="doc-quote">
+                      «Октябрята — прилежные ребята, хорошо учатся, любят свою школу и труд. Чтут память Владимира Ильича Ленина и готовятся стать пионерами».
+                    </div>
+                    
+                    <div class="back-checklist">
+                      <div class="bc-item">
+                        <span class="bc-num">1</span>
+                        <span>Каждое утро начинай с зарядки и мытья ушей с мылом.</span>
+                      </div>
+                      <div class="bc-item">
+                        <span class="bc-num">2</span>
+                        <span>Береги школьный учебник, оберни его бумагой, не загибай листы.</span>
+                      </div>
+                      <div class="bc-item">
+                        <span class="bc-num">3</span>
+                        <span>Помогай товарищу по парте, если он не понял задачу.</span>
+                      </div>
+                      <div class="bc-item">
+                        <span class="bc-num">4</span>
+                        <span>Не сори, не бросай огрызки, подними упавший мел.</span>
+                      </div>
+                    </div>
+
+                    <div class="back-official-stamp">
+                      <div class="stamp-circle">
+                        <span>ДРУЖИНА ШКОЛЫ № 201</span>
+                        <strong>ДЛЯ ДОКУМЕНТОВ</strong>
+                        <span>МОСКВА</span>
+                      </div>
+                      <div class="stamp-signature">
+                        <span>Старшая вожатая:</span>
+                        <em>В. Крылова</em>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button class="btn-card-flip-back" data-flip="october" aria-label="Вернуться к описанию">
+                    <span>← Вернуться к карточке</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- CARD 2: Пионеры -->
-          <div class="gen-card featured-card" data-gen="pioneer">
-            <div class="featured-ribbon">СЕРДЦЕ ШКОЛЫ</div>
-            <div class="gen-art-header bg-pioneer">
-              <div class="gen-insignia">
-                <svg viewBox="0 0 100 100" class="insignia-svg">
-                  <!-- Pioneer Badge: Star with Flame & Lenin Profile -->
-                  <polygon points="50,15 62,38 88,40 68,58 74,84 50,70 26,84 32,58 12,40 38,38" fill="#D32F2F" stroke="#FFCA28" stroke-width="2.5"/>
-                  <!-- Three tongues of fire -->
-                  <path d="M42,20 Q50,0 58,20 Q65,10 60,30 Q50,22 40,30 Z" fill="#FF8F00"/>
-                  <path d="M46,18 Q50,6 54,18 Q58,12 55,26 Q50,20 45,26 Z" fill="#FFEB3B"/>
-                  <circle cx="50" cy="52" r="14" fill="#FFD54F"/>
-                  <text x="50" y="56" font-size="9" font-family="'JetBrains Mono', monospace" font-weight="bold" fill="#B71C1C" text-anchor="middle">ВСЕГДА ГОТОВ!</text>
-                </svg>
-              </div>
-              <div class="gen-tier-pill">3–8 КЛАССЫ • 9–14 ЛЕТ</div>
-            </div>
-
-            <div class="gen-content">
-              <div class="gen-header">
-                <h3 class="gen-name">Всесоюзная пионерия</h3>
-                <span class="gen-motto">«Будь готов! — Всегда готов!»</span>
-              </div>
-
-              <p class="gen-desc">
-                Главный символ — <strong>алый шелковый галстук</strong>, три конца которого символизируют нерушимую связь трех поколений: коммунистов, комсомольцев и пионеров.
-              </p>
-
-              <div class="pioneer-rituals">
-                <div class="ritual-item">
-                  <span class="r-bullet">🚩</span>
-                  <div><strong>Прием волнами:</strong> круглых отличников принимали первыми 22 апреля на Красной площади или у памятника Ленину; середнячков — на 19 мая (День Пионерии); хулиганов оставляли на осень «для исправления».</div>
+          <!-- CARD 2: Пионеры (3D Flip Card) -->
+          <div class="gen-card-wrapper" data-gen="pioneer">
+            <div class="gen-card-3d">
+              <!-- FRONT FACE -->
+              <div class="gen-card-face gen-card-front gen-card featured-card" data-tilt>
+                <div class="featured-ribbon">СЕРДЦЕ ШКОЛЫ</div>
+                <div class="gen-art-header bg-pioneer">
+                  <div class="gen-insignia">
+                    <svg viewBox="0 0 100 100" class="insignia-svg">
+                      <!-- Pioneer Badge: Star with Flame & Lenin Profile -->
+                      <polygon points="50,15 62,38 88,40 68,58 74,84 50,70 26,84 32,58 12,40 38,38" fill="#D32F2F" stroke="#FFCA28" stroke-width="2.5"/>
+                      <!-- Three tongues of fire -->
+                      <path d="M42,20 Q50,0 58,20 Q65,10 60,30 Q50,22 40,30 Z" fill="#FF8F00"/>
+                      <path d="M46,18 Q50,6 54,18 Q58,12 55,26 Q50,20 45,26 Z" fill="#FFEB3B"/>
+                      <circle cx="50" cy="52" r="14" fill="#FFD54F"/>
+                      <text x="50" y="56" font-size="9" font-family="'JetBrains Mono', monospace" font-weight="bold" fill="#B71C1C" text-anchor="middle">ВСЕГДА ГОТОВ!</text>
+                    </svg>
+                  </div>
+                  <div class="gen-tier-pill">3–8 КЛАССЫ • 9–14 ЛЕТ</div>
                 </div>
-                <div class="ritual-item">
-                  <span class="r-bullet">👔</span>
-                  <div><strong>Ритуал глажки:</strong> галстук завязывали аккуратным плоским узлом-подушечкой. Каждое утро его гладили горячим утюгом через влажную марлю. Появиться в мятом галстуке было страшным позором.</div>
-                </div>
-                <div class="ritual-item">
-                  <span class="r-bullet">✋</span>
-                  <div><strong>Пионерский салют:</strong> рука, поднятая над головой под углом, означала: <em>«Общественные интересы я ставлю выше личных»</em>.</div>
+
+                <div class="gen-content">
+                  <div class="gen-header">
+                    <h3 class="gen-name">Всесоюзная пионерия</h3>
+                    <span class="gen-motto">«Будь готов! — Всегда готов!»</span>
+                  </div>
+
+                  <p class="gen-desc">
+                    Главный символ — <strong>алый шелковый галстук</strong>, три конца которого символизируют нерушимую связь трех поколений: коммунистов, комсомольцев и пионеров.
+                  </p>
+
+                  <div class="pioneer-rituals">
+                    <div class="ritual-item">
+                      <span class="r-bullet">🚩</span>
+                      <div><strong>Прием волнами:</strong> круглых отличников принимали первыми 22 апреля на Красной площади или у памятника Ленину; середнячков — на 19 мая (День Пионерии); хулиганов оставляли на осень «для исправления».</div>
+                    </div>
+                    <div class="ritual-item">
+                      <span class="r-bullet">👔</span>
+                      <div><strong>Ритуал глажки:</strong> галстук завязывали аккуратным плоским узлом-подушечкой. Каждое утро его гладили горячим утюгом через влажную марлю. Появиться в мятом галстуке было страшным позором.</div>
+                    </div>
+                    <div class="ritual-item">
+                      <span class="r-bullet">✋</span>
+                      <div><strong>Пионерский салют:</strong> рука, поднятая над головой под углом, означала: <em>«Общественные интересы я ставлю выше личных»</em>.</div>
+                    </div>
+                  </div>
+
+                  <div class="rules-box special-pledge">
+                    <div class="rules-title">Торжественное обещание пионера:</div>
+                    <p class="pledge-text">
+                      «Я, вступая в ряды Всесоюзной пионерской организации имени Владимира Ильича Ленина, перед лицом своих товарищей торжественно обещаю: горячо любить и беречь свою Родину, жить, учиться и бороться, как завещал великий Ленин, как учит Коммунистическая партия...»
+                    </p>
+                  </div>
+
+                  <div class="gen-flip-bar">
+                    <button class="btn-card-flip" data-flip="pioneer" aria-label="Перевернуть карту пионерии в 3D">
+                      <span>★ 3D-Переворот: Полный текст Обещания</span>
+                      <span class="flip-icon">⟳</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <div class="rules-box special-pledge">
-                <div class="rules-title">Торжественное обещание пионера:</div>
-                <p class="pledge-text">
-                  «Я, вступая в ряды Всесоюзной пионерской организации имени Владимира Ильича Ленина, перед лицом своих товарищей торжественно обещаю: горячо любить и беречь свою Родину, жить, учиться и бороться, как завещал великий Ленин, как учит Коммунистическая партия...»
-                </p>
+              <!-- BACK FACE: HISTORICAL ARCHIVE FACSIMILE -->
+              <div class="gen-card-face gen-card-back">
+                <div class="card-back-parchment pioneer-parchment">
+                  <div class="archive-header-badge red-archive">ЦЕНТРАЛЬНЫЙ СОВЕТ ПИОНЕРСКОЙ ОРГАНИЗАЦИИ</div>
+                  <div class="back-title-group">
+                    <span class="back-rubric">ВСЕСОЮЗНАЯ ПИОНЕРИЯ ИМЕНИ В. И. ЛЕНИНА</span>
+                    <h4 class="back-heading">Торжественное Обещание</h4>
+                    <span class="back-date">Канонический текст ЦК ВЛКСМ (1957–1991)</span>
+                  </div>
+
+                  <div class="back-historical-doc">
+                    <div class="pioneer-full-oath">
+                      <p>«Я, (фамилия, имя), вступая в ряды Всесоюзной пионерской организации имени Владимира Ильича Ленина, перед лицом своих товарищей торжественно обещаю:</p>
+                      <ul>
+                        <li>Горячо любить и беречь свою Советскую Родину;</li>
+                        <li>Жить, учиться и бороться, как завещал великий Ленин, как учит Коммунистическая партия;</li>
+                        <li>Свято соблюдать Законы пионеров Советского Союза!</li>
+                      </ul>
+                      <p class="pioneer-motto-call"><strong>На призыв:</strong> «Пионер, к борьбе за дело Коммунистической партии Советского Союза будь готов!»</p>
+                      <p class="pioneer-motto-response"><strong>Ответ:</strong> «Всегда готов!»</p>
+                    </div>
+
+                    <div class="back-official-stamp">
+                      <div class="stamp-circle red-stamp">
+                        <span>ЦК ВЛКСМ • ПИОНЕРИЯ</span>
+                        <strong>БУДЬ ГОТОВ!</strong>
+                        <span>МОСКВА</span>
+                      </div>
+                      <div class="stamp-signature">
+                        <span>Председатель Совета Дружины:</span>
+                        <em>А. Смирнов</em>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button class="btn-card-flip-back" data-flip="pioneer" aria-label="Вернуться к описанию">
+                    <span>← Вернуться к карточке</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- CARD 3: Комсомол -->
-          <div class="gen-card" data-gen="komsomol">
-            <div class="gen-art-header bg-komsomol">
-              <div class="gen-insignia">
-                <svg viewBox="0 0 100 100" class="insignia-svg">
-                  <!-- Komsomol Red Banner Badge -->
-                  <path d="M20,20 L75,12 C82,12 86,16 86,22 L82,65 C82,72 75,76 68,76 L25,82 C18,82 14,78 14,72 L18,25 C18,22 19,20 20,20 Z" fill="#B71C1C" stroke="#FFD54F" stroke-width="2.5"/>
-                  <circle cx="50" cy="46" r="18" fill="#D32F2F" stroke="#FFD54F" stroke-width="1.5"/>
-                  <text x="50" y="50" font-size="11" font-weight="900" fill="#FFD54F" text-anchor="middle" font-family="'Fira Sans Extra Condensed', sans-serif">ВЛКСМ</text>
-                  <text x="50" y="61" font-size="7" font-weight="bold" fill="#FFE082" text-anchor="middle">ЛЕНИН</text>
-                </svg>
+          <!-- CARD 3: Комсомол (3D Flip Card) -->
+          <div class="gen-card-wrapper" data-gen="komsomol">
+            <div class="gen-card-3d">
+              <!-- FRONT FACE -->
+              <div class="gen-card-face gen-card-front gen-card" data-tilt>
+                <div class="gen-art-header bg-komsomol">
+                  <div class="gen-insignia">
+                    <svg viewBox="0 0 100 100" class="insignia-svg">
+                      <!-- Komsomol Red Banner Badge -->
+                      <path d="M20,20 L75,12 C82,12 86,16 86,22 L82,65 C82,72 75,76 68,76 L25,82 C18,82 14,78 14,72 L18,25 C18,22 19,20 20,20 Z" fill="#B71C1C" stroke="#FFD54F" stroke-width="2.5"/>
+                      <circle cx="50" cy="46" r="18" fill="#D32F2F" stroke="#FFD54F" stroke-width="1.5"/>
+                      <text x="50" y="50" font-size="11" font-weight="900" fill="#FFD54F" text-anchor="middle" font-family="'Fira Sans Extra Condensed', sans-serif">ВЛКСМ</text>
+                      <text x="50" y="61" font-size="7" font-weight="bold" fill="#FFE082" text-anchor="middle">ЛЕНИН</text>
+                    </svg>
+                  </div>
+                  <div class="gen-tier-pill">С 14 ЛЕТ • 8–10 КЛАССЫ & ВУЗ</div>
+                </div>
+
+                <div class="gen-content">
+                  <div class="gen-header">
+                    <h3 class="gen-name">ВЛКСМ (Комсомол)</h3>
+                    <span class="gen-motto">«Передовой отряд советской молодежи»</span>
+                  </div>
+
+                  <p class="gen-desc">
+                    Серьезнейшая общественно-политическая организация. Вступление проходило через строгий индивидуальный экзамен в райкоме комсомола.
+                  </p>
+
+                  <div class="roles-breakdown">
+                    <div class="roles-title">Что спрашивали на комиссии в райкоме:</div>
+                    <ul class="roles-list">
+                      <li>Устав ВЛКСМ и принцип демократического централизма.</li>
+                      <li>Даты ключевых съездов КПСС и комсомольских орденов.</li>
+                      <li>Имена лидеров дружественных соцстран (Фидель Кастро, Эрих Хонеккер и др.).</li>
+                      <li>Характеристику классного комсорга и личные оценки.</li>
+                    </ul>
+                  </div>
+
+                  <div class="rules-box highlight-komsomol">
+                    <div class="rules-title">Почему комсомол был критически важен:</div>
+                    <p>
+                      Без комсомольского билета поступление в ведущие ВУЗы (МГУ, МГИМО, МФТИ, МВТУ им. Баумана) было фактически заблокировано, невозможно было получить хорошую характеристику, поехать в загранкомандировку или попасть в стройотряд на целину и БАМ.
+                    </p>
+                  </div>
+
+                  <div class="gen-flip-bar">
+                    <button class="btn-card-flip" data-flip="komsomol" aria-label="Перевернуть карту комсомола в 3D">
+                      <span>★ 3D-Переворот: Комсомольский Билет</span>
+                      <span class="flip-icon">⟳</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div class="gen-tier-pill">С 14 ЛЕТ • 8–10 КЛАССЫ & ВУЗ</div>
-            </div>
 
-            <div class="gen-content">
-              <div class="gen-header">
-                <h3 class="gen-name">ВЛКСМ (Комсомол)</h3>
-                <span class="gen-motto">«Передовой отряд советской молодежи»</span>
-              </div>
+              <!-- BACK FACE: HISTORICAL ARCHIVE FACSIMILE -->
+              <div class="gen-card-face gen-card-back">
+                <div class="card-back-parchment komsomol-parchment">
+                  <div class="archive-header-badge komsomol-badge">ЦК ВЛКСМ • УЧЕТНАЯ КАРТОЧКА</div>
+                  <div class="back-title-group">
+                    <span class="back-rubric">ВСЕСОЮЗНЫЙ ЛЕНИНСКИЙ КОММУНИСТИЧЕСКИЙ СОЮЗ МОЛОДЕЖИ</span>
+                    <h4 class="back-heading">Комсомольский Билет</h4>
+                    <span class="back-date">Серия Б № 48 291 034 • Образец 1975 г.</span>
+                  </div>
 
-              <p class="gen-desc">
-                Серьезнейшая общественно-политическая организация. Вступление проходило через строгий индивидуальный экзамен в райкоме комсомола.
-              </p>
+                  <div class="back-historical-doc">
+                    <div class="komsomol-id-card">
+                      <div class="kic-row">
+                        <span class="kic-label">Фамилия, Имя:</span>
+                        <strong class="kic-val">Иванов Алексей Николаевич</strong>
+                      </div>
+                      <div class="kic-row">
+                        <span class="kic-label">Год рождения:</span>
+                        <strong class="kic-val">1964 г.</strong>
+                      </div>
+                      <div class="kic-row">
+                        <span class="kic-label">Время вступления:</span>
+                        <strong class="kic-val">Октябрь 1978 г. (8 класс)</strong>
+                      </div>
+                      <div class="kic-row">
+                        <span class="kic-label">Кем выдан:</span>
+                        <strong class="kic-val">Ленинский РК ВЛКСМ г. Ленинграда</strong>
+                      </div>
+                    </div>
 
-              <div class="roles-breakdown">
-                <div class="roles-title">Что спрашивали на комиссии в райкоме:</div>
-                <ul class="roles-list">
-                  <li>Устав ВЛКСМ и принцип демократического централизма.</li>
-                  <li>Даты ключевых съездов КПСС и комсомольских орденов.</li>
-                  <li>Имена лидеров дружественных соцстран (Фидель Кастро, Эрих Хонеккер и др.).</li>
-                  <li>Характеристику классного комсорга и личные оценки.</li>
-                </ul>
-              </div>
+                    <div class="komsomol-dues-table">
+                      <div class="kdt-title">Отметки об уплате членских взносов:</div>
+                      <div class="kdt-grid">
+                        <div class="kdt-cell"><span>Сентябрь:</span> <strong>2 коп. ✓</strong></div>
+                        <div class="kdt-cell"><span>Октябрь:</span> <strong>2 коп. ✓</strong></div>
+                        <div class="kdt-cell"><span>Ноябрь:</span> <strong>2 коп. ✓</strong></div>
+                        <div class="kdt-cell"><span>Декабрь:</span> <strong>2 коп. ✓</strong></div>
+                      </div>
+                    </div>
 
-              <div class="rules-box highlight-komsomol">
-                <div class="rules-title">Почему комсомол был критически важен:</div>
-                <p>
-                  Без комсомольского билета поступление в ведущие ВУЗы (МГУ, МГИМО, МФТИ, МВТУ им. Баумана) было фактически заблокировано, невозможно было получить хорошую характеристику, поехать в загранкомандировку или попасть в стройотряд на целину и БАМ.
-                </p>
+                    <div class="back-official-stamp">
+                      <div class="stamp-circle purple-stamp">
+                        <span>РАЙКОМ ВЛКСМ</span>
+                        <strong>УПЛАЧЕНО</strong>
+                        <span>ЛЕНИНГРАД</span>
+                      </div>
+                      <div class="stamp-signature">
+                        <span>Секретарь комитета:</span>
+                        <em>М. Васильев</em>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button class="btn-card-flip-back" data-flip="komsomol" aria-label="Вернуться к описанию">
+                    <span>← Вернуться к карточке</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -652,7 +1045,7 @@
         </div>
 
         <div class="subjects-grid">
-          <div class="subject-card">
+          <div class="subject-card" data-tilt>
             <div class="subj-badge">1–3 классы (до 1969 г.)</div>
             <h4 class="subj-title">Чистописание</h4>
             <p class="subj-desc">
@@ -661,7 +1054,7 @@
             <div class="subj-tag">Стальные перья и нажим</div>
           </div>
 
-          <div class="subject-card">
+          <div class="subject-card" data-tilt>
             <div class="subj-badge">9–10 классы (1947–1959 гг.)</div>
             <h4 class="subj-title">Логика и Психология</h4>
             <p class="subj-desc">
@@ -670,7 +1063,7 @@
             <div class="subj-tag">Академическая строгость</div>
           </div>
 
-          <div class="subject-card">
+          <div class="subject-card" data-tilt>
             <div class="subj-badge">7–8 классы</div>
             <h4 class="subj-title">Черчение</h4>
             <p class="subj-desc">
@@ -679,7 +1072,7 @@
             <div class="subj-tag">Инженерная графика</div>
           </div>
 
-          <div class="subject-card">
+          <div class="subject-card" data-tilt>
             <div class="subj-badge">9–10 классы</div>
             <h4 class="subj-title">НВП (Военная подготовка)</h4>
             <p class="subj-desc">
@@ -688,7 +1081,7 @@
             <div class="subj-tag">Армейская выправка</div>
           </div>
 
-          <div class="subject-card">
+          <div class="subject-card" data-tilt>
             <div class="subj-badge">9–10 классы (с 1974 г.)</div>
             <h4 class="subj-title">УПК (Комбинат)</h4>
             <p class="subj-desc">
@@ -697,7 +1090,7 @@
             <div class="subj-tag">Профессия со школьной скамьи</div>
           </div>
 
-          <div class="subject-card">
+          <div class="subject-card" data-tilt>
             <div class="subj-badge">9–10 классы (с 1985 г.)</div>
             <h4 class="subj-title">ОИВТ (Информатика)</h4>
             <p class="subj-desc">
@@ -708,7 +1101,7 @@
         </div>
 
         <!-- Erisman Desk Showcase -->
-        <div class="erisman-desk-box">
+        <div class="erisman-desk-box" id="erisman-desk-box">
           <div class="desk-grid">
             <div class="desk-info">
               <span class="desk-pill">ШЕДЕВР ГИГИЕНЫ</span>
@@ -717,19 +1110,19 @@
                 Изобретена врачом-гигиенистом Федором Эрисманом и доработана революционером Петром Коротковым. На долгие десятилетия стала несокрушимым стандартом советских школ.
               </p>
               <div class="desk-features-list">
-                <div class="df-item">
+                <div class="df-item" data-hotspot="distance">
                   <span class="df-num">01</span>
-                  <div><strong>Монолитная конструкция:</strong> скамья и стол намертво скреплены деревянными брусьями. Сутулиться или сесть боком было физически невозможно.</div>
+                  <div><strong>Монолитная конструкция:</strong> скамья и стол намертво скреплены деревянными брусьями с «отрицательной дистанцией» 4 см. Сутулиться или сесть боком было физически невозможно.</div>
                 </div>
-                <div class="df-item">
+                <div class="df-item" data-hotspot="angle">
                   <span class="df-num">02</span>
                   <div><strong>Наклон столешницы 15°:</strong> книга и тетрадь всегда располагались строго перпендикулярно взгляду, предотвращая раннюю близорукость.</div>
                 </div>
-                <div class="df-item">
+                <div class="df-item" data-hotspot="lid">
                   <span class="df-num">03</span>
                   <div><strong>Откидная крышка:</strong> передняя часть крышки поднималась на петлях с характерным деревянным звуком, позволяя легко вставать при входе учителя.</div>
                 </div>
-                <div class="df-item">
+                <div class="df-item" data-hotspot="inkwell">
                   <span class="df-num">04</span>
                   <div><strong>Желобок и лунка:</strong> полукруглый паз для карандашей и углубление по центру под фарфоровую чернильницу-непроливайку.</div>
                 </div>
@@ -738,34 +1131,134 @@
 
             <div class="desk-interactive-schematic">
               <div class="schematic-card">
-                <div class="schematic-badge">ИНЖЕНЕРНЫЙ ЧЕРТЕЖ</div>
-                <div class="schematic-blueprint">
-                  <svg viewBox="0 0 420 280" class="blueprint-svg" aria-label="Схема парты Эрисмана">
-                    <!-- Desk frame -->
-                    <rect x="50" y="70" width="320" height="18" rx="3" fill="#8D6E63" stroke="#3E2723" stroke-width="2"/>
-                    <polygon points="50,70 370,70 360,140 40,140" fill="#A1887F" stroke="#3E2723" stroke-width="2"/>
-                    <line x1="45" y1="105" x2="365" y2="105" stroke="#3E2723" stroke-width="2" stroke-dasharray="4"/>
-                    <!-- Inkwell hole -->
-                    <circle cx="205" cy="85" r="8" fill="#37474F" stroke="#263238" stroke-width="2"/>
-                    <!-- Pen groove -->
-                    <rect x="70" y="80" width="90" height="6" rx="3" fill="#5D4037"/>
-                    <!-- Bench -->
-                    <rect x="60" y="190" width="300" height="25" rx="3" fill="#8D6E63" stroke="#3E2723" stroke-width="2"/>
-                    <!-- Metal/wood legs & tie bars -->
-                    <line x1="80" y1="140" x2="80" y2="250" stroke="#37474F" stroke-width="6"/>
-                    <line x1="340" y1="140" x2="340" y2="250" stroke="#37474F" stroke-width="6"/>
-                    <line x1="70" y1="250" x2="350" y2="250" stroke="#37474F" stroke-width="8"/>
-                    <line x1="80" y1="200" x2="340" y2="200" stroke="#37474F" stroke-width="4"/>
-                    
-                    <!-- Callout labels -->
-                    <text x="220" y="88" fill="#FFF8E7" font-size="11" font-family="'JetBrains Mono', monospace">Лунка для непроливайки</text>
-                    <text x="75" y="65" fill="#FFF8E7" font-size="11" font-family="'JetBrains Mono', monospace">Угол наклона 15°</text>
-                    <text x="150" y="125" fill="#FFFFFF" font-size="12" font-weight="bold" font-family="'Plus Jakarta Sans', sans-serif">Откидная крышка</text>
-                    <text x="120" y="240" fill="#FFE082" font-size="11" font-family="'JetBrains Mono', monospace">Жесткая связка «стол–скамья»</text>
-                  </svg>
+                <div class="schematic-top-bar">
+                  <div class="schematic-modes" role="tablist">
+                    <button class="btn-desk-mode active" id="btn-mode-3d" data-desk-mode="3d" role="tab" aria-selected="true">
+                      📐 3D-Модель & Крышка
+                    </button>
+                    <button class="btn-desk-mode" id="btn-mode-2d" data-desk-mode="2d" role="tab" aria-selected="false">
+                      📋 Чертёж ГОСТ 1950 г.
+                    </button>
+                  </div>
+                  <div class="schematic-badge">ГОСТ 11015-77</div>
                 </div>
+
+                <!-- 3D INTERACTIVE DESK VIEW -->
+                <div class="desk-3d-stage active" id="desk-3d-stage">
+                  <div class="desk-3d-viewport" id="desk-3d-viewport">
+                    <div class="desk-3d-world" id="desk-3d-world">
+                      <!-- 3D Desk Construction -->
+                      <div class="desk-mesh" id="desk-mesh">
+                        <!-- Cast Iron Legs & Base -->
+                        <div class="desk-iron-frame">
+                          <div class="iron-leg leg-left"></div>
+                          <div class="iron-leg leg-right"></div>
+                          <div class="iron-tie-bar"></div>
+                          <div class="iron-footrest">
+                            <span class="footrest-label">Подножка</span>
+                          </div>
+                        </div>
+
+                        <!-- Fixed Wooden Bench -->
+                        <div class="desk-bench-assembly">
+                          <div class="bench-plank"></div>
+                          <div class="bench-backrest">
+                            <span class="backrest-text">Поясничный упор</span>
+                          </div>
+                        </div>
+
+                        <!-- Sloped Table Body -->
+                        <div class="desk-table-body">
+                          <!-- Fixed rear table part with inkwell -->
+                          <div class="table-fixed-shelf">
+                            <div class="inkwell-socket" id="hotspot-inkwell-target" title="Чернильница-непроливайка">
+                              <div class="inkwell-porcelain">
+                                <div class="ink-purple"></div>
+                              </div>
+                            </div>
+                            <div class="pen-groove" title="Желобок для ручек"></div>
+                          </div>
+
+                          <!-- Hinged Lifting Lid -->
+                          <div class="table-hinged-lid" id="table-hinged-lid">
+                            <div class="lid-wood-face">
+                              <span class="lid-wood-grain"></span>
+                              <div class="lid-handle-edge"></div>
+                              <div class="lid-status-tag" id="lid-status-tag">КРЫШКА ЗАКРЫТА</div>
+                            </div>
+                            <div class="lid-brass-hinges">
+                              <span class="hinge h-left"></span>
+                              <span class="hinge h-right"></span>
+                            </div>
+                          </div>
+
+                          <!-- Internal Under-desk Cubby -->
+                          <div class="desk-cubby-interior">
+                            <div class="cubby-book">Арифметика (1958)</div>
+                          </div>
+                        </div>
+
+                        <!-- 3D Hotspot Pins -->
+                        <button class="desk-pin pin-angle" data-pin="angle" title="Наклон столешницы 15°" aria-label="Наклон 15°">
+                          <span>15°</span>
+                        </button>
+                        <button class="desk-pin pin-distance" data-pin="distance" title="Отрицательная дистанция 4 см" aria-label="Дистанция 4 см">
+                          <span>-4 см</span>
+                        </button>
+                        <button class="desk-pin pin-lid" data-pin="lid" title="Откидная крышка" aria-label="Откидная крышка">
+                          <span>🪑</span>
+                        </button>
+                        <button class="desk-pin pin-ink" data-pin="ink" title="Фарфоровая непроливайка" aria-label="Чернильница">
+                          <span>🖊️</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 3D Desk Controls Bar -->
+                  <div class="desk-3d-toolbar">
+                    <button class="btn-desk-action lid-toggle-btn" id="btn-toggle-lid">
+                      <span class="lid-btn-icon">🪑</span>
+                      <span class="lid-btn-text" id="lid-btn-text">Поднять крышку парты</span>
+                    </button>
+                    <div class="desk-view-presets">
+                      <button class="btn-preset active" data-preset="iso">3D Изометрия</button>
+                      <button class="btn-preset" data-preset="profile">Профиль 15°</button>
+                      <button class="btn-preset" data-preset="top">Вид сверху</button>
+                    </div>
+                  </div>
+
+                  <!-- Hotspot Info Display Box -->
+                  <div class="hotspot-info-banner" id="hotspot-info-banner">
+                    <strong id="hotspot-title">💡 Откидная крышка парты:</strong>
+                    <span id="hotspot-desc">Нажмите кнопку выше, чтобы поднять или опустить створку. Она позволяла школьникам быстро и без шума вставать по стойке «смирно» при входе учителя в класс.</span>
+                  </div>
+                </div>
+
+                <!-- 2D BLUEPRINT VIEW -->
+                <div class="desk-2d-stage" id="desk-2d-stage" style="display: none;">
+                  <div class="schematic-blueprint">
+                    <svg viewBox="0 0 420 280" class="blueprint-svg" aria-label="Схема парты Эрисмана">
+                      <rect x="50" y="70" width="320" height="18" rx="3" fill="#8D6E63" stroke="#3E2723" stroke-width="2"/>
+                      <polygon points="50,70 370,70 360,140 40,140" fill="#A1887F" stroke="#3E2723" stroke-width="2"/>
+                      <line x1="45" y1="105" x2="365" y2="105" stroke="#3E2723" stroke-width="2" stroke-dasharray="4"/>
+                      <circle cx="205" cy="85" r="8" fill="#37474F" stroke="#263238" stroke-width="2"/>
+                      <rect x="70" y="80" width="90" height="6" rx="3" fill="#5D4037"/>
+                      <rect x="60" y="190" width="300" height="25" rx="3" fill="#8D6E63" stroke="#3E2723" stroke-width="2"/>
+                      <line x1="80" y1="140" x2="80" y2="250" stroke="#37474F" stroke-width="6"/>
+                      <line x1="340" y1="140" x2="340" y2="250" stroke="#37474F" stroke-width="6"/>
+                      <line x1="70" y1="250" x2="350" y2="250" stroke="#37474F" stroke-width="8"/>
+                      <line x1="80" y1="200" x2="340" y2="200" stroke="#37474F" stroke-width="4"/>
+                      <text x="220" y="88" fill="#FFF8E7" font-size="11" font-family="'JetBrains Mono', monospace">Лунка для непроливайки</text>
+                      <text x="75" y="65" fill="#FFF8E7" font-size="11" font-family="'JetBrains Mono', monospace">Угол наклона 15°</text>
+                      <text x="150" y="125" fill="#FFFFFF" font-size="12" font-weight="bold" font-family="'Plus Jakarta Sans', sans-serif">Откидная крышка</text>
+                      <text x="120" y="240" fill="#FFE082" font-size="11" font-family="'JetBrains Mono', monospace">Жесткая связка «стол–скамья»</text>
+                    </svg>
+                  </div>
+                </div>
+
                 <div class="schematic-note">
-                  <strong>Исторический факт:</strong> Парты выпускались пяти стандартных номеров под разный рост учеников. В 1950-е их красили в темно-зеленый или черный цвет, а позже — в светло-древесный лак.
+                  <strong>Исторический факт:</strong> Парты Эрисмана выпускались пяти стандартных номеров строго под разный рост учеников. В 1950-е их красили в темно-зеленый или черный цвет, а позже — в светло-древесный лак.
                 </div>
               </div>
             </div>
@@ -970,7 +1463,7 @@
 
         <div class="routine-cards-grid">
           <!-- Card 1: Дежурство -->
-          <div class="routine-card">
+          <div class="routine-card" data-tilt>
             <div class="routine-icon-header">
               <span class="r-badge-band">КРАСНАЯ ПОВЯЗКА</span>
               <span class="r-icon">🪣</span>
@@ -982,7 +1475,7 @@
           </div>
 
           <!-- Card 2: Староста -->
-          <div class="routine-card">
+          <div class="routine-card" data-tilt>
             <div class="routine-icon-header">
               <span class="r-badge-band">АКТИВ КЛАССА</span>
               <span class="r-icon">👩‍🏫</span>
@@ -994,7 +1487,7 @@
           </div>
 
           <!-- Card 3: Макулатура -->
-          <div class="routine-card">
+          <div class="routine-card" data-tilt>
             <div class="routine-icon-header">
               <span class="r-badge-band">ОПЕРАЦИЯ «МИЛЛИОН — РОДИНЕ»</span>
               <span class="r-icon">📦</span>
@@ -1006,7 +1499,7 @@
           </div>
 
           <!-- Card 4: Субботники -->
-          <div class="routine-card">
+          <div class="routine-card" data-tilt>
             <div class="routine-icon-header">
               <span class="r-badge-band">ВСЕСОЮЗНЫЙ ПРАЗДНИК ТРУДА</span>
               <span class="r-icon">🌳</span>
@@ -1018,7 +1511,7 @@
           </div>
 
           <!-- Card 5: На картошку -->
-          <div class="routine-card">
+          <div class="routine-card" data-tilt>
             <div class="routine-icon-header">
               <span class="r-badge-band">ТРУДОВОЙ ДЕСАНТ</span>
               <span class="r-icon">🥔</span>
@@ -1030,7 +1523,7 @@
           </div>
 
           <!-- Card 6: Зарница -->
-          <div class="routine-card">
+          <div class="routine-card" data-tilt>
             <div class="routine-icon-header">
               <span class="r-badge-band">ВОЕННЫЕ ИГРЫ</span>
               <span class="r-icon">🎖️</span>
@@ -1358,6 +1851,16 @@
       </div>
     </div>
   </footer>
+
+  <!-- Floating Back to Top Button with Scroll Progress Ring -->
+  <button id="back-to-top" class="back-to-top" aria-label="Наверх страницы" title="Наверх">
+    <svg class="progress-ring" width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+      <circle class="progress-ring-bg" stroke="rgba(229, 169, 60, 0.2)" stroke-width="3" fill="transparent" r="20" cx="23" cy="23"/>
+      <circle id="progress-ring-circle" class="progress-ring-circle" stroke="#D32F2F" stroke-width="3" stroke-dasharray="125.66" stroke-dashoffset="125.66" stroke-linecap="round" fill="transparent" r="20" cx="23" cy="23"/>
+    </svg>
+    <span class="btt-icon">↑</span>
+    <span class="btt-percent" id="btt-percent">0%</span>
+  </button>
 
   <script src="app.js"></script>
 </body>
