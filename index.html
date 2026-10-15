@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Красный Звонок: Великая Эпоха Советского Образования | 1917–1991</title>
+  <meta name="description" content="Интерактивная фото-энциклопедия советской школы: от ликбеза и чернильниц до УПК, Зарницы и советских компьютеров. Реальные фото, форма, предметы, интерактивная презентация для команды.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@600;700;800;900&family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Scroll Progress Bar -->
+  <div id="scroll-progress" class="scroll-progress"></div>
+
+  <!-- Announcement Ticker -->
+  <div class="ussr-ticker">
+    <div class="ticker-inner">
+      <span>★ МИНИСТЕРСТВО ПРОСВЕЩЕНИЯ СССР ★ ВСЕОБЩЕЕ БЕСПЛАТНОЕ ОБРАЗОВАНИЕ ★ «УЧИТЬСЯ, УЧИТЬСЯ И ЕЩЁ РАЗ УЧИТЬСЯ!» ★ ЛУЧШИЙ В МИРЕ УРОВЕНЬ ФИЗМАТ ПОДГОТОВКИ ★ ОТ ИЗБЫ-ЧИТАЛЬНИ ДО КОСМИЧЕСКИХ ВЫСОТ ★ БУДЬ ГОТОВ! — ВСЕГДА ГОТОВ! ★</span>
+    </div>
+  </div>
+
+  <!-- Modern Site Header -->
+  <header class="site-header" id="header">
+    <div class="header-container">
+      <a href="#hero" class="brand-logo">
+        <div class="logo-emblem">
+          <svg viewBox="0 0 40 40" class="star-icon">
+            <polygon points="20,2 25,14 38,14 28,23 32,36 20,28 8,36 12,23 2,14 15,14" fill="#D32F2F" stroke="#FBC02D" stroke-width="1.5"/>
+            <circle cx="20" cy="20" r="5" fill="#FBC02D"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">ШКОЛА СССР</span>
+          <span class="logo-subtitle">Мультимедийная летопись 1917–1991</span>
+        </div>
+      </a>
+
+      <nav class="main-nav" id="main-nav">
+        <ul>
+          <li><a href="#chronology" class="nav-link">Хроника & Фото</a></li>
+          <li><a href="#generations" class="nav-link">Иерархия</a></li>
+          <li><a href="#uniforms" class="nav-link">Форма</a></li>
+          <li><a href="#classroom" class="nav-link">Парта & Предметы</a></li>
+          <li><a href="#backpack" class="nav-link">Ранец</a></li>
+          <li><a href="#routine" class="nav-link">Быт & Труд</a></li>
+          <li><a href="#interactive-diary" class="nav-link">Дневник</a></li>
+          <li><a href="#quiz-section" class="nav-link highlight-link">Экзамен 1980</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Presentation Mode Trigger Button -->
+        <button id="open-presentation-btn" class="presentation-btn" title="Открыть командную слайд-презентацию со сценарием для спикеров">
+          <span class="p-icon">📽️</span>
+          <span class="p-text">Презентация</span>
+        </button>
+
+        <!-- Sound Bell Button -->
+        <button id="bell-btn" class="bell-button" title="Подать звонок на урок!">
+          <span class="bell-icon">🔔</span>
+          <span class="bell-text">Звонок</span>
+        </button>
+
+        <!-- Download Project Button -->
+        <a href="ussr-education-site.zip" download class="download-nav-btn" title="Скачать весь сайт архивом ZIP">
+          <span>💾 Скачать ZIP</span>
+        </a>
+
+        <button class="menu-toggle" id="menu-toggle" aria-label="Открыть меню">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO SECTION WITH ARCHIVAL BACKDROP & MODERN GLASSMORPHISM -->
+    <section class="hero-section" id="hero">
+      <div class="hero-bg-media">
+        <div class="hero-photo-layer" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/RIAN_archive_795042_Soviet_schoolgirl_Katya_Lycheva.jpg/1280px-RIAN_archive_795042_Soviet_schoolgirl_Katya_Lycheva.jpg');"></div>
+        <div class="hero-gradient-overlay"></div>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-badge animate-fade-in">
+          <span class="badge-star">★</span> Историко-просветительский интерактивный проект
+        </div>
+
+        <h1 class="hero-title animate-slide-up">
+          ОБРАЗОВАНИЕ <br><span class="hero-highlight">В СТРАНЕ СОВЕТОВ</span>
+        </h1>
+
+        <p class="hero-lead animate-slide-up-delay">
+          От всеобщей безграмотности и изб-читален до покорения космоса и сильнейшей в мире математической школы. Подлинные фотографии, школьная форма, быт, экзамены и воспоминания.
+        </p>
+
+        <!-- Quick Action Buttons -->
+        <div class="hero-cta-group">
+          <button id="hero-presentation-btn" class="btn btn-presentation">
+            <span class="btn-icon">📽️</span>
+            <span>Запустить презентацию команды</span>
+          </button>
+          <a href="#chronology" class="btn btn-primary">
+            <span>Исследовать архивные залы</span>
+            <span class="btn-arrow">→</span>
+          </a>
+          <a href="#quiz-section" class="btn btn-secondary">
+            <span>Сдать советский экзамен</span>
+            <span class="btn-icon">📋</span>
+          </a>
+        </div>
+
+        <!-- Key Metrics Cards -->
+        <div class="hero-stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Грамотность к 1960-м</div>
+            <div class="stat-sub">против ~20% в 1917 году</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">0 руб.</div>
+            <div class="stat-label">Бесплатное обучение</div>
+            <div class="stat-sub">кружки, учебники и секции</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">10 лет</div>
+            <div class="stat-label">Золотой стандарт</div>
+            <div class="stat-sub">обязательное среднее</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">5 млн</div>
+            <div class="stat-label">Студентов вузов</div>
+            <div class="stat-sub">сильнейшие инженеры мира</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: CHRONOLOGY WITH AUTHENTIC ARCHIVAL PHOTOS -->
+    <section class="content-section chronology-section" id="chronology">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">Архивная фото-хроника</span>
+          <h2 class="section-title">Как зарождалась и менялась советская школа</h2>
+          <p class="section-subtitle">
+            Шесть исторических эпох от декретов Совнаркома и плакатов Ликбеза до первых школьных компьютеров «Агат» и «Корвет».
+          </p>
+        </div>
+
+        <!-- Interactive Era Selector -->
+        <div class="era-nav-wrapper">
+          <div class="era-nav" id="era-nav" role="tablist">
+            <button class="era-tab active" data-era="1917" role="tab" aria-selected="true">
+              <span class="era-year">1917–1929</span>
+              <span class="era-title">Ликбез & Эксперименты</span>
+            </button>
+            <button class="era-tab" data-era="1930" role="tab" aria-selected="false">
+              <span class="era-year">1930–1940</span>
+              <span class="era-title">Канон & Парты Эрисмана</span>
+            </button>
+            <button class="era-tab" data-era="1941" role="tab" aria-selected="false">
+              <span class="era-year">1941–1953</span>
+              <span class="era-title">Война & Раздельные школы</span>
+            </button>
+            <button class="era-tab" data-era="1954" role="tab" aria-selected="false">
+              <span class="era-year">1954–1964</span>
+              <span class="era-title">Оттепель & Политехника</span>
+            </button>
+            <button class="era-tab" data-era="1965" role="tab" aria-selected="false">
+              <span class="era-year">1965–1983</span>
+              <span class="era-title">Золотой век 10-летки</span>
+            </button>
+            <button class="era-tab" data-era="1984" role="tab" aria-selected="false">
+              <span class="era-year">1984–1991</span>
+              <span class="era-title">ЭВМ & Реформа с 6 лет</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Era Detail Card With Photos -->
+        <div class="era-display-card" id="era-display">
+          <!-- Populated dynamically via JS with real archival imagery -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: HIERARCHY / GENERATIONS (Октябрята - Пионеры - Комсомол) -->
+    <section class="content-section generations-section" id="generations">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">Школьная иерархия</span>
+          <h2 class="section-title">Ступени взросления советского школьника</h2>
+          <p class="section-subtitle">
+            Каждый советский ребенок проходил четкую систему нравственной и социальной навигации: от рубиновой звёздочки до комсомольского билета.
+          </p>
+        </div>
+
+        <div class="generations-grid">
+          <!-- CARD 1: Октябрята -->
+          <div class="gen-card" data-gen="october">
+            <div class="gen-photo-thumb" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/RIAN_archive_795042_Soviet_schoolgirl_Katya_Lycheva.jpg/640px-RIAN_archive_795042_Soviet_schoolgirl_Katya_Lycheva.jpg');">
+              <div class="thumb-badge">1–3 КЛАССЫ • 7–9 ЛЕТ</div>
+            </div>
+            <div class="gen-content">
+              <div class="gen-header">
+                <div class="gen-badge-icon badge-october">★</div>
+                <div class="gen-title-box">
+                  <h3 class="gen-name">Октябрята</h3>
+                  <span class="gen-motto">«Внучата Ильича»</span>
+                </div>
+              </div>
+              <p class="gen-desc">
+                Посвящение проходило в ноябре. Класс делился на <strong>«звёздочки» ровно по 5 человек</strong>. Каждый имел свою должность: командир, санитар (утром проверял чистоту рук и ушей), цветовод (поливал цветы на окне), библиотекарь и хозяин.
+              </p>
+              <div class="rules-box">
+                <div class="rules-title">5 Заповедей Октябрят:</div>
+                <ol>
+                  <li>Октябрята — будущие пионеры.</li>
+                  <li>Октябрята — прилежные ребята, любят школу, уважают старших.</li>
+                  <li>Только тех, кто любит труд, октябрятами зовут.</li>
+                  <li>Октябрята правдивы и смелы, ловки и умелы.</li>
+                  <li>Октябрята — дружные ребята, читают, рисуют, весело живут.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2: Пионеры -->
+          <div class="gen-card featured-card" data-gen="pioneer">
+            <div class="featured-ribbon">СЕРДЦЕ ШКОЛЫ</div>
+            <div class="gen-photo-thumb" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/RIAN_archive_872838_Children_at_the_Artek_Young_Pioneer_Camp.jpg/640px-RIAN_archive_872838_Children_at_the_Artek_Young_Pioneer_Camp.jpg');">
+              <div class="thumb-badge">3–8 КЛАССЫ • 9–14 ЛЕТ</div>
+            </div>
+            <div class="gen-content">
+              <div class="gen-header">
+                <div class="gen-badge-icon badge-pioneer">🔥</div>
+                <div class="gen-title-box">
+                  <h3 class="gen-name">Всесоюзная пионерия</h3>
+                  <span class="gen-motto">«Будь готов! — Всегда готов!»</span>
+                </div>
+              </div>
+              <p class="gen-desc">
+                Кульминация детства! Алый шелковый галстук — символ частицы Красного знамени. Прием проходил волнами: отличников принимали первыми у Мавзолея или памятника Ленину, хулиганов оставляли на май «для исправления». Учили завязывать аккуратный узел-подушечку. Галстук каждое утро гладили утюгом через влажную марлю.
+              </p>
+              <div class="rules-box special-pledge">
+                <div class="rules-title">Торжественное обещание пионера:</div>
+                <p class="pledge-text">
+                  «Я, вступая в ряды Всесоюзной пионерской организации имени В. И. Ленина, перед лицом своих товарищей торжественно обещаю: горячо любить свою Родину, жить, учиться и бороться, как завещал великий Ленин...»
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 3: Комсомол -->
+          <div class="gen-card" data-gen="komsomol">
+            <div class="gen-photo-thumb" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Soviet_Young_Pioneers_in_1983_in_the_Zeravshan_Mountains_of_Tajik_SSR.jpg/640px-Soviet_Young_Pioneers_in_1983_in_the_Zeravshan_Mountains_of_Tajik_SSR.jpg');">
+              <div class="thumb-badge">С 14 ЛЕТ • 8–10 КЛАССЫ & ВУЗ</div>
+            </div>
+            <div class="gen-content">
+              <div class="gen-header">
+                <div class="gen-badge-icon badge-komsomol">🚩</div>
+                <div class="gen-title-box">
+                  <h3 class="gen-name">ВЛКСМ (Комсомол)</h3>
+                  <span class="gen-motto">«Верный помощник партии»</span>
+                </div>
+              </div>
+              <p class="gen-desc">
+                Серьезная политическая организация. Вступление сопровождалось строгим экзаменом в райкоме: спрашивали устав ВЛКСМ, даты съездов, принципы демократического централизма и имена лидеров соцстран.
+              </p>
+              <div class="rules-box">
+                <div class="rules-title">Что давал комсомольский билет:</div>
+                <p>Без членства в ВЛКСМ было практически невозможно поступить в престижный университет (МГУ, МГИМО, МФТИ), устроиться на ответственную работу или поехать за границу.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: UNIFORMS & DRESS CODE -->
+    <section class="content-section uniforms-section" id="uniforms">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">Школьный дресс-код</span>
+          <h2 class="section-title">Эволюция школьной формы в фотографиях</h2>
+          <p class="section-subtitle">
+            От сталинских гимнастерок с фуражками и бляхами до культовых синих джинсовых курток с шевроном «Книга и солнце».
+          </p>
+        </div>
+
+        <div class="uniform-component">
+          <div class="uniform-tabs" role="tablist">
+            <button class="u-tab active" data-uniform="1948">
+              <span>1948–1962</span>
+              <small>Гимнастерки & Фартуки</small>
+            </button>
+            <button class="u-tab" data-uniform="1962">
+              <span>1962–1973</span>
+              <small>Серый шерстяной костюм</small>
+            </button>
+            <button class="u-tab" data-uniform="1973">
+              <span>1973–1988</span>
+              <small>Культовая синяя двойка</small>
+            </button>
+            <button class="u-tab" data-uniform="1988">
+              <span>1988–1991</span>
+              <small>Старшеклассники & Джинсы</small>
+            </button>
+          </div>
+
+          <div class="uniform-showcase" id="uniform-showcase">
+            <!-- Rendered by JS with photos and details -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: CLASSROOM, SUBJECTS & ERISMAN DESK -->
+    <section class="content-section classroom-section" id="classroom">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">Школьный класс и программа</span>
+          <h2 class="section-title">Предметы, парты и секреты советского урока</h2>
+          <p class="section-subtitle">
+            Каких предметов боялись советские школьники, почему от чернил были синими все пальцы и чем знаменита наклонная парта Эрисмана.
+          </p>
+        </div>
+
+        <div class="subjects-grid">
+          <div class="subject-card">
+            <div class="subj-badge">1–3 классы (до 1969 г.)</div>
+            <h4 class="subj-title">Чистописание</h4>
+            <p class="subj-desc">
+              Писали исключительно стальными перьями № 86 («звёздочка») с фиолетовыми чернилами из чернильницы-непроливайки. Тетради были в частую косую сетку. За кляксу снижали балл. В каждой тетрадке лежала розовая промокашка. Шариковые ручки запрещались до 1970-х, считалось, что они портят почерк!
+            </p>
+            <div class="subj-tag">Железная моторика и терпение</div>
+          </div>
+
+          <div class="subject-card">
+            <div class="subj-badge">9–10 классы (1947–1959 гг.)</div>
+            <h4 class="subj-title">Логика и Психология</h4>
+            <p class="subj-desc">
+              Введены по личному указанию И. В. Сталина по дореволюционным учебникам Виноградова и Теплова. Старшеклассники изучали законы силлогизма, индукцию, дедукцию и структуру воли. Предмет формировал строгую культуру научного доказательства.
+            </p>
+            <div class="subj-tag">Основа научного мышления</div>
+          </div>
+
+          <div class="subject-card">
+            <div class="subj-badge">9–10 классы</div>
+            <h4 class="subj-title">НВП (Военная подготовка)</h4>
+            <p class="subj-desc">
+              Вел отставной офицер (военрук). Разборка автомата Калашникова (АК-74) на скорость за 18 секунд, метание гранат РГД-5, норматив по надеванию противогаза ГП-5 («Газы!»), строевая подготовка и стрельба из винтовки ТОЗ-8 в подвальном тире.
+            </p>
+            <div class="subj-tag">Армейская выправка</div>
+          </div>
+
+          <div class="subject-card">
+            <div class="subj-badge">7–8 классы</div>
+            <h4 class="subj-title">Черчение</h4>
+            <p class="subj-desc">
+              Ватман, кнопки, готовальня с циркулями и рейсфедерами, карандаши ТМ, 2Т, М. Требовалось вручную вывести изометрическую проекцию детали с разрезом и подписать строгим стандартизированным шрифтом по ГОСТу.
+            </p>
+            <div class="subj-tag">Инженерная графика</div>
+          </div>
+
+          <div class="subject-card">
+            <div class="subj-badge">9–10 классы (с 1974 г.)</div>
+            <h4 class="subj-title">УПК (Комбинат)</h4>
+            <p class="subj-desc">
+              Один день в неделю старшеклассники проводили на заводе или комбинате! Осваивали рабочие специальности: шофер (права категории «С»), токарь, слесарь, машинистка-стенографистка, швея или оператор ЭВМ. По окончании школы выдавали свидетельство с разрядом.
+            </p>
+            <div class="subj-tag">Профессия со школы</div>
+          </div>
+
+          <div class="subject-card">
+            <div class="subj-badge">9–10 классы (с 1985 г.)</div>
+            <h4 class="subj-title">ОИВТ (Информатика)</h4>
+            <p class="subj-desc">
+              «Основы информатики и вычислительной техники» акад. А. П. Ершова. Первые годы информатика была безмашинной — алгоритмы писали в тетради (алг, нач, кон, нц, кц). Позже появились легендарные советские ПК «Агат», «Корвет», «БК-0010» и японские Yamaha КУВТ.
+            </p>
+            <div class="subj-tag">Компьютерная эра</div>
+          </div>
+        </div>
+
+        <!-- Erisman Desk Showcase -->
+        <div class="erisman-desk-box">
+          <div class="desk-grid">
+            <div class="desk-info">
+              <span class="desk-pill">ШЕДЕВР ГИГИЕНЫ</span>
+              <h3>Парта Эрисмана — спаситель осанки и зрения</h3>
+              <p>
+                Изобретена Федором Эрисманом и доработана революционером Петром Коротковым. На десятилетия стала нерушимым стандартом советских школ.
+              </p>
+              <div class="desk-features-list">
+                <div class="df-item">
+                  <span class="df-num">01</span>
+                  <div><strong>Монолитная конструкция:</strong> скамья и стол жестко скреплены брусьями. Сутулиться или сесть криво было невозможно.</div>
+                </div>
+                <div class="df-item">
+                  <span class="df-num">02</span>
+                  <div><strong>Наклон столешницы 15°:</strong> книга и тетрадь всегда перпендикулярны взгляду, предотвращая близорукость.</div>
+                </div>
+                <div class="df-item">
+                  <span class="df-num">03</span>
+                  <div><strong>Откидная крышка:</strong> передняя часть поднималась с характерным стуком, чтобы встать при входе учителя.</div>
+                </div>
+                <div class="df-item">
+                  <span class="df-num">04</span>
+                  <div><strong>Желобок и лунка:</strong> полукруглый паз для ручек и углубление для чернильницы-непроливайки.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="desk-interactive-schematic">
+              <div class="schematic-card">
+                <div class="schematic-badge">АНАТОМИЯ СОВЕТСКОЙ ПАРТЫ</div>
+                <div class="schematic-blueprint">
+                  <svg viewBox="0 0 400 280" class="blueprint-svg">
+                    <rect x="50" y="70" width="300" height="20" rx="3" fill="#8D6E63" stroke="#4E342E" stroke-width="2"/>
+                    <polygon points="50,70 350,70 340,140 40,140" fill="#A1887F" stroke="#3E2723" stroke-width="2"/>
+                    <line x1="45" y1="105" x2="345" y2="105" stroke="#3E2723" stroke-width="2" stroke-dasharray="4"/>
+                    <circle cx="195" cy="85" r="8" fill="#37474F" stroke="#263238" stroke-width="2"/>
+                    <rect x="70" y="80" width="80" height="6" rx="3" fill="#5D4037"/>
+                    <rect x="60" y="190" width="280" height="25" rx="3" fill="#8D6E63" stroke="#4E342E" stroke-width="2"/>
+                    <line x1="80" y1="140" x2="80" y2="250" stroke="#37474F" stroke-width="6"/>
+                    <line x1="320" y1="140" x2="320" y2="250" stroke="#37474F" stroke-width="6"/>
+                    <line x1="80" y1="215" x2="80" y2="250" stroke="#37474F" stroke-width="6"/>
+                    <line x1="70" y1="250" x2="330" y2="250" stroke="#37474F" stroke-width="8"/>
+                    <line x1="80" y1="200" x2="320" y2="200" stroke="#37474F" stroke-width="4"/>
+                    <text x="210" y="88" fill="#ECEFF1" font-size="10" font-family="monospace">Лунка для непроливайки</text>
+                    <text x="75" y="65" fill="#ECEFF1" font-size="10" font-family="monospace">Угол наклона 15°</text>
+                    <text x="140" y="125" fill="#FFF" font-size="11" font-weight="bold">Откидная крышка</text>
+                  </svg>
+                </div>
+                <div class="schematic-note">
+                  Цвет парт: в 50-е парты красили в темно-зеленый или черный матовый цвет, позже — в светлый серо-зеленый лак.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: BACKPACK EXPLORER -->
+    <section class="content-section backpack-section" id="backpack">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">Интерактивный артефакт</span>
+          <h2 class="section-title">Что лежало в ранце советского школьника?</h2>
+          <p class="section-subtitle">
+            Нажимайте на предметы, чтобы узнать их историю, цены в советских копейках и подлинные воспоминания.
+          </p>
+        </div>
+
+        <div class="backpack-interactive-container">
+          <div class="backpack-selector" id="backpack-selector">
+            <button class="bp-btn active" data-item="penal">
+              <span class="bp-emoji">✏️</span>
+              <span class="bp-name">Деревянный пенал</span>
+              <span class="bp-price">35 коп.</span>
+            </button>
+            <button class="bp-btn" data-item="inkpot">
+              <span class="bp-emoji">🧪</span>
+              <span class="bp-name">Непроливайка & Перья</span>
+              <span class="bp-price">12 коп.</span>
+            </button>
+            <button class="bp-btn" data-item="notebook">
+              <span class="bp-emoji">📓</span>
+              <span class="bp-name">Тетрадка за 2 копейки</span>
+              <span class="bp-price">2 коп.</span>
+            </button>
+            <button class="bp-btn" data-item="ruler">
+              <span class="bp-emoji">📐</span>
+              <span class="bp-name">Логарифмическая линейка</span>
+              <span class="bp-price">1 руб. 80 коп.</span>
+            </button>
+            <button class="bp-btn" data-item="snack">
+              <span class="bp-emoji">🥐</span>
+              <span class="bp-name">Городская булка & Сок</span>
+              <span class="bp-price">10 коп.</span>
+            </button>
+            <button class="bp-btn" data-item="eraser">
+              <span class="bp-emoji">🧼</span>
+              <span class="bp-name">Ластик «Архитектор»</span>
+              <span class="bp-price">5 коп.</span>
+            </button>
+          </div>
+
+          <div class="backpack-view-card" id="backpack-view">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: ROUTINE, DUTY, HARVEST & SUBBOTNIKS -->
+    <section class="content-section routine-section" id="routine">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">Школьный быт & Труд</span>
+          <h2 class="section-title">Самоуправление, дежурство и трудовые будни</h2>
+          <p class="section-subtitle">
+            Советская школа воспитывала коллективизм делом: полы мыли сами ученики, а за сбор металлолома шла битва дворов.
+          </p>
+        </div>
+
+        <div class="routine-cards-grid">
+          <div class="routine-card">
+            <div class="routine-icon-header">
+              <span class="r-badge-band">КРАСНАЯ ПОВЯЗКА</span>
+              <span class="r-icon">🪣</span>
+            </div>
+            <h3 class="r-title">Дежурство по классу и школе</h3>
+            <p class="r-text">
+              Пара дежурных назначалась на неделю. Обязанности: смочить тряпку и натереть доску до матовой черноты, принести мел у технички, проветрить класс. После уроков поднимали стулья на парты, посыпали пол влажными опилками и мыли деревянной шваброй.
+            </p>
+          </div>
+
+          <div class="routine-card">
+            <div class="routine-icon-header">
+              <span class="r-badge-band">АКТИВ КЛАССА</span>
+              <span class="r-icon">👩‍🏫</span>
+            </div>
+            <h3 class="r-title">Староста: гроза прогульщиков</h3>
+            <p class="r-text">
+              Староста носил журнал из учительской, отмечал отсутствующих («Н-ки»), следил за тишиной и писал на доске фамилии нарушителей. В активе также были культорг, физорг, санитар и редколлегия сатирической стенгазеты «Колючка».
+            </p>
+          </div>
+
+          <div class="routine-card">
+            <div class="routine-icon-header">
+              <span class="r-badge-band">ОПЕРАЦИЯ «МИЛЛИОН — РОДИНЕ»</span>
+              <span class="r-icon">📦</span>
+            </div>
+            <h3 class="r-title">Сбор макулатуры и металлолома</h3>
+            <p class="r-text">
+              Дважды в год пионеры обходили все квартиры микрорайона: «Здравствуйте, есть старые газеты?». Тащили чугунные батареи, трубы, сетки от кроватей. Класс-победитель награждался путевками в «Артек» или поездкой в Москву!
+            </p>
+          </div>
+
+          <div class="routine-card">
+            <div class="routine-icon-header">
+              <span class="r-badge-band">ВСЕСОЮЗНЫЙ СУББОТНИК</span>
+              <span class="r-icon">🌳</span>
+            </div>
+            <h3 class="r-title">Апрельский субботник и побелка</h3>
+            <p class="r-text">
+              22 апреля в память о Ленине вся школа выходила на коммунистический субботник. Белили стволы деревьев и бордюры гашеной известью, мыли окна мятыми газетами с мылом, красили заборы зеленой масляной краской под марши из радиорубки.
+            </p>
+          </div>
+
+          <div class="routine-card">
+            <div class="routine-icon-header">
+              <span class="r-badge-band">ТРУДОВОЙ ДЕСАНТ</span>
+              <span class="r-icon">🥔</span>
+            </div>
+            <h3 class="r-title">Поездки «на картошку» и ЛТО</h3>
+            <p class="r-text">
+              В сентябре старшеклассников снимали с уроков на 2–3 недели в колхоз собирать картофель, морковь или яблоки. Бараки, костры по вечерам, печеная картошка в золе, гитара и вкус настоящего физического труда!
+            </p>
+          </div>
+
+          <div class="routine-card">
+            <div class="routine-icon-header">
+              <span class="r-badge-band">ВОЕННЫЕ ИГРЫ</span>
+              <span class="r-icon">🎖️</span>
+            </div>
+            <h3 class="r-title">Игра «Зарница» и смотр строя</h3>
+            <p class="r-text">
+              Смотр строя и песни к 23 февраля с чеканным шагом и пением «Несокрушимая и легендарная». Весной — игра «Зарница»: картонные погоны на нитках, полевая кухня с гречкой, полоса препятствий и штурм высоты с деревянными автоматами.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: VIRTUAL DIARY (1982) -->
+    <section class="content-section diary-section" id="interactive-diary">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">Интерактивный экспонат</span>
+          <h2 class="section-title">Дневник советского школьника (ноябрь 1982 г.)</h2>
+          <p class="section-subtitle">
+            Листайте страницы дневника ученика 7 «Б» класса. Реальные оценки, предметы и перлы учителей красной пастой!
+          </p>
+        </div>
+
+        <div class="diary-wrapper">
+          <div class="diary-book">
+            <div class="diary-cover-ribbon">
+              <span>ДНЕВНИК УЧЕНИКА 7 «Б» КЛАССА СРЕДНЕЙ ШКОЛЫ № 42 • СИДОРОВА АНДРЕЯ</span>
+            </div>
+
+            <div class="diary-pages">
+              <!-- Left Page -->
+              <div class="diary-page">
+                <div class="day-table">
+                  <div class="day-header"><span class="day-name">ПОНЕДЕЛЬНИК, 15 НОЯБРЯ</span></div>
+                  <table class="diary-table">
+                    <thead><tr><th>№</th><th>Предмет</th><th>Задание на дом</th><th>Оценка</th><th>Подпись</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td>Алгебра</td><td>№ 142, 145 (а, б)</td><td class="grade grade-5">5</td><td><span class="sign">М.И.</span></td></tr>
+                      <tr><td>2</td><td>Русский яз.</td><td>Упр. 89, правило стр. 44</td><td class="grade grade-4">4</td><td><span class="sign">В.П.</span></td></tr>
+                      <tr><td>3</td><td>Физика</td><td>§ 18, лабораторная № 3</td><td class="grade grade-5">5</td><td><span class="sign">С.С.</span></td></tr>
+                      <tr><td>4</td><td>История СССР</td><td>Параграф 12, пересказ</td><td class="grade grade-4">4</td><td><span class="sign">Н.А.</span></td></tr>
+                      <tr><td>5</td><td>Физкультура</td><td>Форма в зал (лыжи)</td><td class="grade grade-5">5</td><td><span class="sign">К.В.</span></td></tr>
+                    </tbody>
+                  </table>
+                  <div class="teacher-remark">
+                    <span class="remark-label">Замечание:</span> 
+                    <span class="remark-text">«Сдал 14 кг макулатуры — молодец! Назначен дежурным на среду.»</span>
+                  </div>
+                </div>
+
+                <div class="day-table">
+                  <div class="day-header"><span class="day-name">ВТОРНИК, 16 НОЯБРЯ</span></div>
+                  <table class="diary-table">
+                    <thead><tr><th>№</th><th>Предмет</th><th>Задание на дом</th><th>Оценка</th><th>Подпись</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td>Геометрия</td><td>Теорема Пифагора, док-во</td><td class="grade grade-3">3</td><td><span class="sign">М.И.</span></td></tr>
+                      <tr><td>2</td><td>Литература</td><td>Выучить «Бородино» отрывок</td><td class="grade grade-5">5</td><td><span class="sign">В.П.</span></td></tr>
+                      <tr><td>3</td><td>Химия</td><td>Таблица Менделеева, валентность</td><td class="grade grade-4">4</td><td><span class="sign">А.Г.</span></td></tr>
+                      <tr><td>4</td><td>География</td><td>Контурная карта Африки</td><td class="grade grade-5">5</td><td><span class="sign">Е.Д.</span></td></tr>
+                      <tr><td>5</td><td>Труд</td><td>Выточить болт М10 на станке</td><td class="grade grade-5">5</td><td><span class="sign">Трудовик</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Right Page -->
+              <div class="diary-page">
+                <div class="day-table">
+                  <div class="day-header"><span class="day-name">СРЕДА, 17 НОЯБРЯ</span></div>
+                  <table class="diary-table">
+                    <thead><tr><th>№</th><th>Предмет</th><th>Задание на дом</th><th>Оценка</th><th>Подпись</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td>Английский</td><td>Текст «London is the capital...»</td><td class="grade grade-4">4</td><td><span class="sign">Т.В.</span></td></tr>
+                      <tr><td>2</td><td>Биология</td><td>Строение инфузории-туфельки</td><td class="grade grade-2">2</td><td><span class="sign">О.Б.</span></td></tr>
+                      <tr><td>3</td><td>Черчение</td><td>Чертеж гайки в разрезе</td><td class="grade grade-4">4</td><td><span class="sign">П.Р.</span></td></tr>
+                      <tr><td>4</td><td>Алгебра</td><td>Контрольная работа № 2</td><td class="grade grade-4">4</td><td><span class="sign">М.И.</span></td></tr>
+                      <tr><td>5</td><td>Пение</td><td>Песня «Крейсер Аврора»</td><td class="grade grade-5">5</td><td><span class="sign">Г.Ф.</span></td></tr>
+                    </tbody>
+                  </table>
+                  <div class="teacher-remark red-alert">
+                    <span class="remark-label">Замечание классного рук.:</span> 
+                    <span class="remark-text">«Плевался жеваной промокашкой через трубочку на уроке биологии! Вымыть доску в кабинете №12 и привести родителей!»</span>
+                  </div>
+                </div>
+
+                <div class="diary-summary-box">
+                  <div class="signatures-row">
+                    <div class="sig-col">
+                      <span class="sig-title">Классный руководитель:</span>
+                      <span class="sig-name">В. П. Смирнова (роспись)</span>
+                    </div>
+                    <div class="sig-col">
+                      <span class="sig-title">Роспись родителей:</span>
+                      <span class="sig-name">Сидоров В. А. (проверено)</span>
+                    </div>
+                  </div>
+                  <div class="diary-quote">
+                    Пятибалльная система: «5» — отлично, «4» — хорошо, «3» — удовлетворительно, «2» — неудовлетворительно.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8: QUIZ WITH DIPLOMA -->
+    <section class="content-section quiz-section" id="quiz-section">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">Проверка знаний</span>
+          <h2 class="section-title">Всесоюзная аттестация: «Сдал бы ты советский экзамен?»</h2>
+          <p class="section-subtitle">
+            7 вопросов из реальных советских учебников и уставов. Ответь и получи свой подлинный табель успеваемости!
+          </p>
+        </div>
+
+        <div class="quiz-container" id="quiz-container">
+          <div class="quiz-card" id="quiz-card">
+            <div class="quiz-progress-bar-wrap">
+              <div class="quiz-progress-bar" id="quiz-progress-bar" style="width: 14%;"></div>
+            </div>
+            
+            <div class="quiz-top">
+              <span class="quiz-step" id="quiz-step">Вопрос 1 из 7</span>
+              <span class="quiz-subject" id="quiz-subject">Октябрята & Традиции</span>
+            </div>
+
+            <div class="quiz-question-box">
+              <h3 class="quiz-question" id="quiz-question">
+                Какое количество человек входило в первичную группу октябрят в младших классах, называвшуюся «звёздочкой»?
+              </h3>
+            </div>
+
+            <div class="quiz-options" id="quiz-options"></div>
+            <div class="quiz-explanation" id="quiz-explanation" style="display: none;"></div>
+
+            <div class="quiz-footer">
+              <button class="btn btn-primary" id="quiz-next-btn" style="display: none;">
+                <span>Следующий вопрос</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Final Result Card -->
+          <div class="quiz-result-card" id="quiz-result-card" style="display: none;">
+            <div class="result-attestat">
+              <div class="attestat-border">
+                <div class="attestat-header">
+                  <div class="gerb-ussr">
+                    <svg viewBox="0 0 60 60" class="gerb-svg">
+                      <circle cx="30" cy="30" r="26" fill="#B71C1C" stroke="#FBC02D" stroke-width="2"/>
+                      <polygon points="30,8 33,18 43,18 35,24 38,34 30,28 22,34 25,24 17,18 27,18" fill="#FBC02D"/>
+                      <path d="M12,30 Q30,52 48,30" fill="none" stroke="#FBC02D" stroke-width="3"/>
+                    </svg>
+                  </div>
+                  <h3>МИНИСТЕРСТВО ПРОСВЕЩЕНИЯ СССР</h3>
+                  <h4>АТТЕСТАТ ЗРЕЛОСТИ</h4>
+                </div>
+
+                <div class="attestat-body">
+                  <p class="attestat-text">Настоящим подтверждается прохождение экзаменационной проверки знаний.</p>
+                  <div class="attestat-score-box">
+                    <div class="attestat-grade-num" id="final-grade-digit">5</div>
+                    <div class="attestat-verdict" id="final-verdict-title">КРУГЛЫЙ ОТЛИЧНИК! ЗОЛОТАЯ МЕДАЛЬ!</div>
+                    <p class="attestat-detail" id="final-score-text">Правильных ответов: 7 из 7</p>
+                  </div>
+                  <p class="attestat-decision" id="final-decision-text">Решением педсовета зачислен в МГУ без экзаменов!</p>
+                </div>
+
+                <div class="attestat-footer">
+                  <div class="attestat-stamp">
+                    <span>ПЕДСОВЕТ ШКОЛЫ № 1</span>
+                    <small>УТВЕРЖДЕНО</small>
+                  </div>
+                  <button class="btn btn-primary" id="restart-quiz-btn">Пройти заново</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 9: DOWNLOAD & HOW TO VIEW BAR -->
+    <section class="content-section download-box-section">
+      <div class="section-container">
+        <div class="download-banner-card">
+          <div class="download-info">
+            <span class="d-tag">ПОЛНЫЙ ИСХОДНЫЙ КОД & МАТЕРИАЛЫ</span>
+            <h3>Как запустить и скачать всё локально</h3>
+            <p>
+              Вы можете скачать архив со всеми файлами сайта прямо на свой компьютер или открыть презентацию команды.
+            </p>
+            <div class="instruction-steps">
+              <div class="step-badge">1. Нажмите «Скачать ZIP»</div>
+              <div class="step-badge">2. Распакуйте архив в любую папку</div>
+              <div class="step-badge">3. Дважды кликните на <strong>index.html</strong></div>
+            </div>
+          </div>
+          <div class="download-action">
+            <a href="ussr-education-site.zip" download class="btn btn-download-big">
+              <span>💾 Скачать всё (.ZIP)</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-col brand-col">
+          <span class="footer-title">КРАСНЫЙ ЗВОНОК</span>
+          <p class="footer-desc">
+            Мультимедийная историческая ретроспектива советского образования (1917–1991).
+          </p>
+        </div>
+        <div class="footer-col links-col">
+          <h4>Разделы</h4>
+          <ul>
+            <li><a href="#chronology">Хроника реформ</a></li>
+            <li><a href="#generations">Октябрята и Пионеры</a></li>
+            <li><a href="#uniforms">Школьная форма</a></li>
+            <li><a href="#classroom">Парта Эрисмана</a></li>
+          </ul>
+        </div>
+        <div class="footer-col links-col">
+          <h4>Интерактив</h4>
+          <ul>
+            <li><button class="footer-bell-link" id="footer-pres-btn">📽️ Запустить слайды презентации</button></li>
+            <li><button class="footer-bell-link" id="footer-bell-btn">🔔 Подать звонок на урок</button></li>
+            <li><a href="ussr-education-site.zip" download>💾 Скачать архив проекта (ZIP)</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 1917–1991 • Историко-культурный образовательный проект.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FULLSCREEN INTERACTIVE TEAM PRESENTATION DECK MODAL -->
+  <div class="presentation-modal" id="presentation-modal">
+    <div class="pres-backdrop" id="pres-backdrop"></div>
+    <div class="pres-window">
+      <!-- Presentation Topbar -->
+      <div class="pres-topbar">
+        <div class="pres-branding">
+          <span class="pres-logo">★ ШКОЛА СССР</span>
+          <span class="pres-slide-indicator" id="pres-slide-indicator">Слайд 1 из 9</span>
+        </div>
+
+        <div class="pres-speaker-indicator" id="pres-speaker-badge">
+          Спикер 1: Историк
+        </div>
+
+        <div class="pres-controls-top">
+          <button id="toggle-speaker-notes-btn" class="pres-btn-icon" title="Скрыть/показать текст спикера">
+            🎤 Текст спикера
+          </button>
+          <button id="pres-close-btn" class="pres-btn-icon pres-close" title="Закрыть презентацию (Esc)">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Presentation Slide Viewport -->
+      <div class="pres-slide-container" id="pres-slide-container">
+        <!-- Rendered dynamically by JS -->
+      </div>
+
+      <!-- Presentation Bottom Bar -->
+      <div class="pres-bottombar">
+        <button id="pres-prev-btn" class="pres-nav-btn">
+          <span>← Назад</span>
+        </button>
+
+        <div class="pres-dots" id="pres-dots">
+          <!-- Dots generated by JS -->
+        </div>
+
+        <button id="pres-next-btn" class="pres-nav-btn">
+          <span>Вперёд →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Lightbox Modal for Full View -->
+  <div class="lightbox-modal" id="lightbox-modal">
+    <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightbox-close">✕</button>
+      <img id="lightbox-img" src="" alt="Архивное фото СССР">
+      <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
