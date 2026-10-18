@@ -54,6 +54,8 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body {
@@ -62,6 +64,7 @@ body {
   color: var(--text-main);
   line-height: 1.65;
   overflow-x: hidden;
+  width: 100%;
   background-image: radial-gradient(#d8d2c3 0.75px, transparent 0.75px);
   background-size: 24px 24px;
 }
@@ -5007,4 +5010,811 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+
+/* ==========================================================================
+   25. MOBILE VIEWPORT OPTIMIZATIONS (TABLETS & PHONES <= 768px)
+   Strictly isolated to mobile screens: desktop view (>= 993px) is 100% untouched.
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Site Header */
+  .header-container {
+    padding: 6px 12px;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  .brand-logo .logo-subtitle {
+    display: none;
+  }
+
+  .brand-logo .logo-title {
+    font-size: 1.15rem;
+  }
+
+  .brand-logo .logo-emblem {
+    width: 28px;
+    height: 28px;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .bell-button {
+    padding: 5px 9px;
+    font-size: 0.76rem;
+  }
+
+  .header-action-btn,
+  .header-speech-btn,
+  .header-exam-btn {
+    padding: 5px 9px;
+    font-size: 0.76rem;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding: 36px 14px 48px;
+    min-height: auto;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .hero-badge {
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    letter-spacing: 0.5px;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.35;
+    margin-bottom: 16px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.1rem, 7.5vw, 3.2rem);
+    letter-spacing: 0.5px;
+    line-height: 1.08;
+    margin: 14px 0;
+    word-break: break-word;
+  }
+
+  .hero-lead {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0 auto 22px;
+    padding: 0 4px;
+  }
+
+  .hero-term-pills-bar {
+    gap: 6px;
+    justify-content: center;
+    margin: 12px 0 22px;
+  }
+
+  .htpb-label {
+    width: 100%;
+    text-align: center;
+    font-size: 0.72rem;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .hero-cta-group .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 18px;
+    font-size: 0.94rem;
+  }
+
+  .hero-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px 14px;
+  }
+
+  .stat-number {
+    font-size: 2.2rem;
+  }
+
+  /* 3D Showcase in Hero */
+  .hero-3d-showcase {
+    margin-top: 28px;
+    padding: 20px 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .showcase-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .artifact-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .artifact-btn {
+    flex: 1 1 calc(50% - 6px);
+    justify-content: center;
+    text-align: center;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .showcase-body {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .artifact-stage {
+    height: 250px;
+    overflow: hidden;
+  }
+
+  .artifact-dossier {
+    padding: 14px 0 0;
+  }
+
+  .dossier-specs-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* Three.js Erisman Desk Section */
+  .desk-webgl-container {
+    height: 320px;
+  }
+
+  .desk-canvas-badge {
+    top: 8px;
+    left: 8px;
+    padding: 4px 8px;
+    font-size: 0.68rem;
+  }
+
+  .desk-canvas-hint {
+    bottom: 8px;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    max-width: 94%;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+  }
+
+  .desk-3d-toolbar {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 10px;
+  }
+
+  .desk-presets-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .btn-preset {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 0.72rem;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .desk-hotspots-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .dhb-label {
+    text-align: center;
+  }
+
+  /* Schematic Card & Mode Buttons */
+  .schematic-card {
+    padding: 14px 10px !important;
+  }
+
+  .schematic-top-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .schematic-modes {
+    flex-direction: column;
+    width: 100%;
+    border-radius: var(--radius-sm);
+    gap: 4px;
+  }
+
+  .btn-desk-mode {
+    width: 100%;
+    text-align: center;
+    padding: 6px 8px;
+    font-size: 0.74rem;
+  }
+
+  .desk-info h3 {
+    font-size: 1.45rem;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  /* Content Sections General */
+  .content-section {
+    padding: 40px 14px;
+  }
+
+  .section-header {
+    margin-bottom: 24px;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 6vw, 2.4rem);
+    line-height: 1.15;
+  }
+
+  .section-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  /* Universal Mobile Card & Box Padding Fix: Prevents Horizontal Overflow */
+  .era-display-card,
+  .uniform-component,
+  .uniform-showcase-box,
+  .uniform-tabs-container,
+  .level-card,
+  .erisman-desk-box,
+  .exams-overview-card,
+  .vuz-admission-box,
+  .routine-card,
+  .routine-timeline-box,
+  .backpack-interactive-container,
+  .price-calculator-wrapper,
+  .quiz-card,
+  .download-banner-card {
+    padding: 20px 14px !important;
+    border-radius: var(--radius-md) !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Universal Grid Collapse to Single Column on Mobile */
+  .era-grid,
+  .era-facts,
+  .stages-grid,
+  .generations-grid,
+  .uniform-cards-grid,
+  .levels-container,
+  .subjects-grid,
+  .exams-grid,
+  .paths-grid,
+  .routine-cards-grid,
+  .backpack-interactive-container,
+  .desk-grid,
+  .vuz-grid,
+  .footer-top {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  .era-grid > *,
+  .stages-grid > *,
+  .generations-grid > *,
+  .uniform-cards-grid > *,
+  .levels-container > *,
+  .subjects-grid > *,
+  .exams-grid > *,
+  .paths-grid > *,
+  .routine-cards-grid > *,
+  .backpack-interactive-container > *,
+  .desk-grid > *,
+  .vuz-grid > *,
+  .desk-info,
+  .desk-interactive-schematic,
+  .schematic-card,
+  .erisman-desk-box {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .fact-item {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .quote-box {
+    padding: 12px 14px;
+  }
+
+  .era-heading {
+    font-size: 1.7rem;
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+
+  /* Chronology / Era */
+  .era-nav-wrapper {
+    margin-bottom: 18px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  .era-nav {
+    min-width: 540px;
+    justify-content: flex-start;
+    padding: 0 4px;
+  }
+
+  .download-banner-card {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    gap: 18px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  /* Materials Anatomy & Pocket Relics */
+  .materials-anatomy-wrapper,
+  .pockets-relics-wrapper {
+    margin-top: 24px;
+    padding: 18px 14px;
+  }
+
+  .materials-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .pockets-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .pocket-item {
+    padding: 12px 8px;
+  }
+
+  .pi-visual {
+    font-size: 1.8rem;
+  }
+
+  .pi-title {
+    font-size: 0.88rem;
+  }
+
+  .pocket-dossier-card {
+    padding: 16px 14px;
+  }
+
+  /* Soviet Price Calculator */
+  .calculator-container {
+    padding: 18px 14px;
+  }
+
+  .calc-input-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .calc-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .calc-preset-btn {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+
+  .soviet-coin-tray {
+    padding: 12px 10px;
+    margin: 16px 0;
+  }
+
+  .coin-buttons-row {
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .coin-btn {
+    padding: 6px 9px;
+    font-size: 0.75rem;
+    border-radius: 16px;
+  }
+
+  .calc-results-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .soviet-receipt {
+    max-width: 100%;
+    width: 100%;
+    padding: 16px 14px;
+    font-size: 0.76rem;
+  }
+
+  /* Virtual Diary */
+  .diary-book {
+    padding: 12px 8px;
+    max-width: 100%;
+  }
+
+  .diary-page {
+    padding: 12px 8px;
+    overflow-x: auto;
+  }
+
+  .diary-table {
+    width: 100%;
+    font-size: 0.74rem;
+  }
+
+  .diary-table th,
+  .diary-table td {
+    padding: 5px 6px;
+  }
+
+  .signatures-row {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.76rem;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-dialog {
+    max-width: 100%;
+    width: 100%;
+    max-height: 94vh;
+    border-radius: var(--radius-sm);
+  }
+
+  .modal-close-btn {
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    font-size: 1.4rem;
+  }
+
+  .inspector-card-content {
+    padding: 24px 14px 18px;
+  }
+
+  .inspector-header h3 {
+    font-size: 1.35rem;
+  }
+
+  .inspector-specs-table th {
+    width: 40%;
+    font-size: 0.72rem;
+    padding: 8px 6px;
+  }
+
+  .inspector-specs-table td {
+    font-size: 0.8rem;
+    padding: 8px 6px;
+  }
+
+  .speech-dialog-header {
+    padding: 18px 14px 12px;
+  }
+
+  .speech-dialog-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .speech-speakers-tabs {
+    padding: 8px 12px;
+    gap: 4px;
+  }
+
+  .speech-tab-btn {
+    padding: 6px 10px;
+    font-size: 0.74rem;
+  }
+
+  .speech-content-body {
+    padding: 14px;
+    font-size: 0.92rem;
+    max-height: 52vh;
+  }
+
+  .speech-dialog-footer {
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .sdf-tip {
+    font-size: 0.76rem;
+    max-width: 100%;
+  }
+
+  .glossary-dialog-header {
+    padding: 18px 14px 12px;
+  }
+
+  .glossary-search-bar {
+    padding: 12px 14px;
+  }
+
+  .glossary-cards-grid {
+    padding: 14px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    max-height: 52vh;
+  }
+
+  /* Quiz Section */
+  .quiz-options {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .option-btn {
+    padding: 10px 14px;
+    font-size: 0.88rem;
+  }
+}
+
+/* ==========================================================================
+   SMARTPHONES (<= 480px, e.g. 360px - 430px screens)
+   ========================================================================== */
+@media (max-width: 480px) {
+  /* Header Ultra Compact: Zero clipping, perfectly fitting action icons */
+  .site-header {
+    padding: 0;
+  }
+
+  .header-container {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+
+  .brand-logo {
+    gap: 6px;
+  }
+
+  .brand-logo .logo-title {
+    font-size: 0.92rem;
+    letter-spacing: 0;
+  }
+
+  .brand-logo .logo-emblem {
+    width: 22px;
+    height: 22px;
+  }
+
+  .header-actions {
+    gap: 3px;
+  }
+
+  /* Bell: icon only */
+  #bell-btn {
+    padding: 0;
+    min-width: 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #bell-btn .bell-text {
+    display: none;
+  }
+
+  #bell-btn .bell-icon {
+    font-size: 0.88rem;
+    margin: 0;
+  }
+
+  /* Glossary button */
+  #glossary-btn {
+    padding: 3px 6px;
+    font-size: 0.68rem;
+    gap: 3px;
+  }
+
+  /* Team speech button */
+  #team-speech-btn {
+    padding: 3px 6px;
+    font-size: 0.68rem;
+    gap: 3px;
+  }
+
+  .header-btn-extra {
+    display: none;
+  }
+
+  /* Hide redundant direct exam anchor in header on small phones (prominent in hero CTA & menu) */
+  .header-exam-btn {
+    display: none !important;
+  }
+
+  .menu-toggle {
+    padding: 4px 2px;
+    gap: 4px;
+  }
+
+  .menu-toggle span {
+    width: 18px;
+    height: 2px;
+  }
+
+  /* Extra compact card padding on small screens */
+  .era-display-card,
+  .uniform-component,
+  .uniform-showcase-box,
+  .uniform-tabs-container,
+  .level-card,
+  .erisman-desk-box,
+  .exams-overview-card,
+  .vuz-admission-box,
+  .routine-card,
+  .routine-timeline-box,
+  .backpack-interactive-container,
+  .price-calculator-wrapper,
+  .quiz-card,
+  .download-banner-card {
+    padding: 16px 12px !important;
+  }
+
+  .content-section {
+    padding: 34px 10px;
+  }
+
+  /* Hero adjustments for tiny phones */
+  .hero-title {
+    font-size: clamp(1.85rem, 8.5vw, 2.25rem);
+    line-height: 1.05;
+  }
+
+  .hero-badge {
+    font-size: 0.72rem;
+    padding: 4px 10px;
+  }
+
+  .hero-lead {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .term-chip {
+    padding: 2px 7px;
+    font-size: 0.75rem;
+  }
+
+  /* 3D Showcase */
+  .hero-3d-showcase {
+    padding: 14px 10px;
+  }
+
+  .artifact-btn {
+    flex: 1 1 100%;
+    font-size: 0.76rem;
+    padding: 6px 8px;
+  }
+
+  .artifact-stage {
+    height: 210px;
+  }
+
+  .dossier-specs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* 3D Desk container */
+  .desk-webgl-container {
+    height: 280px;
+  }
+
+  .dhb-btn {
+    padding: 4px 7px;
+    font-size: 0.7rem;
+  }
+
+  /* Pockets */
+  .pockets-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .pi-visual {
+    font-size: 1.6rem;
+  }
+
+  .pi-title {
+    font-size: 0.82rem;
+  }
+
+  /* Coins */
+  .coin-btn {
+    padding: 5px 7px;
+    font-size: 0.7rem;
+  }
+
+  .receipt-stamp {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+  }
+}
+
+
+/* Extra Small Screens (<= 360px, e.g. iPhone SE 1st Gen & narrow Androids) */
+@media (max-width: 360px) {
+  .brand-logo .logo-title {
+    font-size: 0.85rem;
+  }
+
+  .brand-logo .logo-emblem {
+    width: 20px;
+    height: 20px;
+  }
+
+  #glossary-btn {
+    padding: 3px 5px;
+    font-size: 0.65rem;
+  }
+
+  #team-speech-btn {
+    padding: 3px 5px;
+    font-size: 0.65rem;
+  }
+
+  .desk-view-presets,
+  .desk-presets-group {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .btn-preset {
+    flex: 1 1 calc(50% - 4px);
+    font-size: 0.66rem;
+    padding: 4px 6px;
+  }
 }
