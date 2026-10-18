@@ -61,6 +61,16 @@
           <span class="bell-text">Звонок</span>
         </button>
 
+        <!-- Glossary Archive Button -->
+        <button id="glossary-btn" class="header-action-btn" title="Словарь терминов и понятий СССР">
+          <span>📖 Словарь</span>
+        </button>
+
+        <!-- Team Presentation Speech Prompter -->
+        <button id="team-speech-btn" class="header-speech-btn" title="Текст доклада для команды (5 минут, 4 спикера)">
+          <span>🎙️ Доклад команды</span>
+        </button>
+
         <!-- Direct Exam Anchor Button -->
         <a href="#quiz-section" class="header-exam-btn" title="Сдать экзамен 1980 года">
           <span>📋 Экзамен 1980</span>
@@ -95,8 +105,21 @@
 
         <p class="hero-lead animate-slide-up-delay">
           Как из 80% неграмотности и деревенских изб-читален выросла мощнейшая в мире физико-математическая и инженерная школа. 
-          Подробный экскурс в школьные ступени, легендарную форму, чернила и парту Эрисмана, старост и дежурства, суровые вступительные экзамены и всесоюзное распределение.
+          Подробный экскурс в школьные ступени, легендарную форму, <button class="term-chip" data-term="inkwell">чернила</button> и <button class="term-chip" data-term="erisman-desk">парту Эрисмана</button>, <button class="term-chip" data-term="stewards">старост</button> и дежурства, суровые вступительные экзамены и всесоюзное <button class="term-chip" data-term="raspredelenie">распределение</button>.
         </p>
+
+        <!-- Quick Interactive Term Pills Bar -->
+        <div class="hero-term-pills-bar animate-slide-up-delay">
+          <span class="htpb-label">Досье артефактов:</span>
+          <button class="term-chip" data-term="likbez">★ Ликбез 1919</button>
+          <button class="term-chip" data-term="rabfak">★ Рабфак</button>
+          <button class="term-chip" data-term="erisman-desk">🪑 Парта Эрисмана</button>
+          <button class="term-chip" data-term="upk">🛠️ УПК</button>
+          <button class="term-chip" data-term="sptu">🏭 СПТУ</button>
+          <button class="term-chip" data-term="gold-medal">🎖️ Золотая медаль</button>
+          <button class="term-chip" data-term="nvp">🎯 НВП</button>
+          <button class="term-chip" data-term="subbotnik">🧹 Субботник</button>
+        </div>
 
         <!-- Quick CTAs -->
         <div class="hero-cta-group animate-slide-up-delay2">
@@ -1143,75 +1166,16 @@
                   <div class="schematic-badge">ГОСТ 11015-77</div>
                 </div>
 
-                <!-- 3D INTERACTIVE DESK VIEW -->
+                <!-- 3D INTERACTIVE DESK VIEW (THREE.JS WEBGL + PROCEDURAL PBR) -->
                 <div class="desk-3d-stage active" id="desk-3d-stage">
-                  <div class="desk-3d-viewport" id="desk-3d-viewport">
-                    <div class="desk-3d-world" id="desk-3d-world">
-                      <!-- 3D Desk Construction -->
-                      <div class="desk-mesh" id="desk-mesh">
-                        <!-- Cast Iron Legs & Base -->
-                        <div class="desk-iron-frame">
-                          <div class="iron-leg leg-left"></div>
-                          <div class="iron-leg leg-right"></div>
-                          <div class="iron-tie-bar"></div>
-                          <div class="iron-footrest">
-                            <span class="footrest-label">Подножка</span>
-                          </div>
-                        </div>
-
-                        <!-- Fixed Wooden Bench -->
-                        <div class="desk-bench-assembly">
-                          <div class="bench-plank"></div>
-                          <div class="bench-backrest">
-                            <span class="backrest-text">Поясничный упор</span>
-                          </div>
-                        </div>
-
-                        <!-- Sloped Table Body -->
-                        <div class="desk-table-body">
-                          <!-- Fixed rear table part with inkwell -->
-                          <div class="table-fixed-shelf">
-                            <div class="inkwell-socket" id="hotspot-inkwell-target" title="Чернильница-непроливайка">
-                              <div class="inkwell-porcelain">
-                                <div class="ink-purple"></div>
-                              </div>
-                            </div>
-                            <div class="pen-groove" title="Желобок для ручек"></div>
-                          </div>
-
-                          <!-- Hinged Lifting Lid -->
-                          <div class="table-hinged-lid" id="table-hinged-lid">
-                            <div class="lid-wood-face">
-                              <span class="lid-wood-grain"></span>
-                              <div class="lid-handle-edge"></div>
-                              <div class="lid-status-tag" id="lid-status-tag">КРЫШКА ЗАКРЫТА</div>
-                            </div>
-                            <div class="lid-brass-hinges">
-                              <span class="hinge h-left"></span>
-                              <span class="hinge h-right"></span>
-                            </div>
-                          </div>
-
-                          <!-- Internal Under-desk Cubby -->
-                          <div class="desk-cubby-interior">
-                            <div class="cubby-book">Арифметика (1958)</div>
-                          </div>
-                        </div>
-
-                        <!-- 3D Hotspot Pins -->
-                        <button class="desk-pin pin-angle" data-pin="angle" title="Наклон столешницы 15°" aria-label="Наклон 15°">
-                          <span>15°</span>
-                        </button>
-                        <button class="desk-pin pin-distance" data-pin="distance" title="Отрицательная дистанция 4 см" aria-label="Дистанция 4 см">
-                          <span>-4 см</span>
-                        </button>
-                        <button class="desk-pin pin-lid" data-pin="lid" title="Откидная крышка" aria-label="Откидная крышка">
-                          <span>🪑</span>
-                        </button>
-                        <button class="desk-pin pin-ink" data-pin="ink" title="Фарфоровая непроливайка" aria-label="Чернильница">
-                          <span>🖊️</span>
-                        </button>
-                      </div>
+                  <div class="desk-webgl-container" id="desk-webgl-container">
+                    <canvas id="desk-webgl-canvas" class="desk-webgl-canvas"></canvas>
+                    <div class="desk-canvas-badge">
+                      <span class="dcb-dot"></span>
+                      <span>Three.js WebGL • 360° Вращение</span>
+                    </div>
+                    <div class="desk-canvas-hint">
+                      <span>🖱️ Зажмите левую кнопку мыши или проведите пальцем для свободного вращения 360° | Колёсико мыши — масштаб | Клик по парте — открыть крышку</span>
                     </div>
                   </div>
 
@@ -1224,14 +1188,26 @@
                     <div class="desk-view-presets">
                       <button class="btn-preset active" data-preset="iso">3D Изометрия</button>
                       <button class="btn-preset" data-preset="profile">Профиль 15°</button>
+                      <button class="btn-preset" data-preset="front">Фас (Спереди)</button>
                       <button class="btn-preset" data-preset="top">Вид сверху</button>
                     </div>
+                    <button class="btn-desk-reset" id="btn-desk-reset" title="Сбросить угол обзора к стандартному">🔄 Сброс ракурса</button>
+                  </div>
+
+                  <!-- Hotspots Anatomy Buttons -->
+                  <div class="desk-hotspots-bar">
+                    <span class="dhb-label">Анатомия ГОСТ:</span>
+                    <button class="dhb-btn active" data-pin="lid">🪑 Откидная крышка</button>
+                    <button class="dhb-btn" data-pin="angle">📐 Наклон 15°</button>
+                    <button class="dhb-btn" data-pin="distance">📏 Дистанция -4 см</button>
+                    <button class="dhb-btn" data-pin="ink">🖋️ Непроливайка</button>
+                    <button class="dhb-btn" data-pin="footrest">🪵 Подножка и упор</button>
                   </div>
 
                   <!-- Hotspot Info Display Box -->
                   <div class="hotspot-info-banner" id="hotspot-info-banner">
-                    <strong id="hotspot-title">💡 Откидная крышка парты:</strong>
-                    <span id="hotspot-desc">Нажмите кнопку выше, чтобы поднять или опустить створку. Она позволяла школьникам быстро и без шума вставать по стойке «смирно» при входе учителя в класс.</span>
+                    <strong id="hotspot-title">💡 Откидная створка парты:</strong>
+                    <span id="hotspot-desc">Нажмите кнопку выше или кликните по столешнице, чтобы открыть или опустить створку парты со звуком деревянного захлопывания. Откидной механизм на шарнирах позволял школьникам мгновенно вставать по стойке «смирно» без грохота и сдвигания мебели.</span>
                   </div>
                 </div>
 
@@ -1470,7 +1446,7 @@
             </div>
             <h3 class="r-title">Дежурство по классу и влажные опилки</h3>
             <p class="r-text">
-              Уборщицы мыли только коридоры. Кабинеты убирали сами ученики! Каждую неделю назначалась пара дежурных с красными нарукавными повязками. Обязанности: принести ведро с водой, намочить тряпку и натереть доску до матовой черноты, принести мел. После уроков поднимали стулья на парты, посыпали дощатый пол <strong>влажными древесными опилками</strong> (чтобы связать меловую пыль), подметали веником и мыли пол деревянной шваброй.
+              Уборщицы мыли только коридоры. Кабинеты убирали сами ученики! Каждую неделю назначалась пара <button class="term-link" data-term="stewards">дежурных с красными нарукавными повязками</button>. Обязанности: принести ведро с водой, намочить тряпку и натереть доску до матовой черноты, принести мел. После уроков поднимали стулья на парты, посыпали дощатый пол <strong>влажными древесными опилками</strong> (чтобы связать меловую пыль), подметали веником и мыли пол деревянной шваброй.
             </p>
           </div>
 
@@ -1480,7 +1456,7 @@
               <span class="r-badge-band">АКТИВ КЛАССА</span>
               <span class="r-icon">👩‍🏫</span>
             </div>
-            <h3 class="r-title">Староста: правая рука учителя</h3>
+            <h3 class="r-title"><button class="term-link" data-term="stewards">Староста</button>: правая рука учителя</h3>
             <p class="r-text">
               Староста носил классный журнал из учительской, отмечал в нем отсутствующих («Н-ки»), следил за тишиной на перемене и имел право записывать фамилии шумящих на классной доске. В школьном активе также были: <strong>физорг</strong> (проводил утреннюю зарядку), <strong>культорг</strong> (билеты в театр и кино), <strong>санитар</strong> и редколлегия стенгазеты «Колючка».
             </p>
@@ -1492,7 +1468,7 @@
               <span class="r-badge-band">ОПЕРАЦИЯ «МИЛЛИОН — РОДИНЕ»</span>
               <span class="r-icon">📦</span>
             </div>
-            <h3 class="r-title">Сбор макулатуры и металлолома</h3>
+            <h3 class="r-title"><button class="term-link" data-term="makulatura">Сбор макулатуры и металлолома</button></h3>
             <p class="r-text">
               Дважды в год пионеры поднимали на ноги весь микрорайон. Звонили в квартиры: «Здравствуйте, есть старые газеты?». Пачки перевязывали бечевкой, взвешивали пружинным безменом. На металлолом тащили чугунные батареи, ржавые трубы и каркасы кроватей с ближайших свалок. Класс-победитель награждался путевками в «Артек» или экскурсией в Москву и Ленинград!
             </p>
@@ -1504,9 +1480,9 @@
               <span class="r-badge-band">ВСЕСОЮЗНЫЙ ПРАЗДНИК ТРУДА</span>
               <span class="r-icon">🌳</span>
             </div>
-            <h3 class="r-title">Ленинский субботник и побелка</h3>
+            <h3 class="r-title"><button class="term-link" data-term="subbotnik">Ленинский субботник</button> и побелка</h3>
             <p class="r-text">
-              22 апреля в честь дня рождения В. И. Ленина вся школа от первоклашек до директора выходила на коммунистический субботник. Гашеной известью белили стволы школьных деревьев и бордюры, мятыми газетами с хозяйственным мылом отмывали окна после зимы, красили заборы зеленой краской под марши из школьной радиорубки.
+              22 апреля в честь дня рождения В. И. Ленина вся школа от первоклашек до директора выходила на <button class="term-link" data-term="subbotnik">коммунистический субботник</button>. Гашеной известью белили стволы школьных деревьев и бордюры, мятыми газетами с хозяйственным мылом отмывали окна после зимы, красили заборы зеленой краской под марши из школьной радиорубки.
             </p>
           </div>
 
@@ -1516,7 +1492,7 @@
               <span class="r-badge-band">ТРУДОВОЙ ДЕСАНТ</span>
               <span class="r-icon">🥔</span>
             </div>
-            <h3 class="r-title">Поездки «на картошку» в колхоз</h3>
+            <h3 class="r-title"><button class="term-link" data-term="lto">Поездки «на картошку» и ЛТО</button></h3>
             <p class="r-text">
               В сентябре старшеклассников снимали с занятий на 2–3 недели на помощь совхозам в уборке картофеля, свёклы или яблок. Резиновые сапоги, ведра, холодное утро, обед из колхозного котла на полевом стане, печеная картошка в ночном костре, гитара и первые романтические признания.
             </p>
@@ -1594,12 +1570,144 @@
           </div>
         </div>
 
-        <!-- NEW FEATURE: SOVIET PRICE CALCULATOR -->
-        <div class="price-calculator-wrapper">
+        <!-- FEATURE A: ANATOMY OF SOVIET SCHOOL OBJECTS (MATERIALS SCIENCE) -->
+        <div class="materials-anatomy-wrapper" id="materials-anatomy">
           <div class="calc-header">
-            <span class="calc-pill">КАЛЬКУЛЯТОР ЭПОХИ</span>
-            <h3>Калькулятор цен советского школьника</h3>
-            <p>Выберите сумму карманных денег советского ребенка и посмотрите, сколько школьных радостей можно было на неё приобрести!</p>
+            <span class="calc-pill">МАТЕРИАЛОВЕДЕНИЕ СССР</span>
+            <h3>Анатомия школьных вещей: из чего это сделано и почему служило веками</h3>
+            <p>В СССР не существовало понятия «одноразовая вещь» или запланированное устаревание. Всё производилось по суровым военным и промышленным ГОСТам из натурального сырья и сверхпрочных полимеров.</p>
+          </div>
+
+          <div class="materials-grid">
+            <div class="material-card" data-term="erisman-desk">
+              <div class="mat-icon">🪵</div>
+              <div class="mat-badge">ГОСТ 3916-69</div>
+              <h4>Авиационная берёзовая фанера и массив дуба</h4>
+              <p class="mat-use"><strong>Где применялось:</strong> Парты Эрисмана, деревянные пеналы-пенальницы, счёты, логарифмические линейки.</p>
+              <p class="mat-secret"><strong>Секрет прочности:</strong> Склейка водостойким бакелитовым лаком и фенолформальдегидными смолами под прессом 20 атм. Мебель выдерживала вес взрослого человека и служила в школах по 40–50 лет без рассыхания.</p>
+            </div>
+
+            <div class="material-card" data-term="inkwell">
+              <div class="mat-icon">🧪</div>
+              <div class="mat-badge">ГОСТ 5689-79</div>
+              <h4>Карболит (Бакелит) и Эбонит</h4>
+              <p class="mat-use"><strong>Где применялось:</strong> Корпуса чернильниц-непроливаек, перьевые авторучки, патроны школьных ламп, колодки станков на уроках труда.</p>
+              <p class="mat-secret"><strong>Секрет прочности:</strong> Первый в мире термореактивный полимер на фенольной основе и вулканизированный высокосернистый каучук. Не горит, не проводит ток, не растворяется кислотами и чернилами.</p>
+            </div>
+
+            <div class="material-card" data-term="drafting-set">
+              <div class="mat-icon">⚙️</div>
+              <div class="mat-badge">ГОСТ 14959-79</div>
+              <h4>Пружинная рессорно-углеродистая сталь 65Г</h4>
+              <p class="mat-use"><strong>Где применялось:</strong> Перья для чистописания («Звёздочка», «Рондо»), циркули готовален завода «Готовальня», перочинные ножи.</p>
+              <p class="mat-secret"><strong>Секрет прочности:</strong> Легирование марганцем с термическим воронением (оксидированием). Перо выдерживало миллионы нажимов детской руки без залома кончиков и микротрещин.</p>
+            </div>
+
+            <div class="material-card">
+              <div class="mat-icon">🌿</div>
+              <div class="mat-badge">ГОСТ 3650-77</div>
+              <h4>Вулканизированный каучук с белой серой</h4>
+              <p class="mat-use"><strong>Где применялось:</strong> Стирательные резинки «Архитектор», «Слон» и «Кохинор».</p>
+              <p class="mat-secret"><strong>Секрет прочности:</strong> 100% натуральный сок гевеи без дешевого мела и винила. Ластик снимал тончайший микронный слой графита методом адгезии, не засаливая и не размазывая бумагу.</p>
+            </div>
+
+            <div class="material-card">
+              <div class="mat-icon">🧶</div>
+              <div class="mat-badge">ГОСТ 20756-75</div>
+              <h4>Камвольное шерстяное сукно и лавсан</h4>
+              <p class="mat-use"><strong>Где применялось:</strong> Форменные коричневые платья для девочек, синие полушерстяные куртки для мальчиков.</p>
+              <p class="mat-secret"><strong>Секрет прочности:</strong> Натуральная крученая овечья шерсть с добавлением 30% полиэфирного волокна лавсан. Ткань дышала зимой и летом, не лоснилась на локтях и передавалась от старших братьев младшим.</p>
+            </div>
+
+            <div class="material-card" data-term="pioneer-tie">
+              <div class="mat-icon">🎗️</div>
+              <div class="mat-badge">ГОСТ 21790-76</div>
+              <h4>Ацетатный шелк горячего кроя</h4>
+              <p class="mat-use"><strong>Где применялось:</strong> Пионерские галстуки кумачового цвета (цена 55 коп. и 75 коп.).</p>
+              <p class="mat-secret"><strong>Секрет прочности:</strong> Края обрезались раскаленным нихромовым термоножом (без осыпающейся нитки). Окраска выдерживала сотни стирок хозяйственным мылом и горячую глажку утюгом каждое утро.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- FEATURE B: WHAT JINGLED IN A SOVIET KID'S POCKETS -->
+        <div class="pockets-relics-wrapper" id="pockets-relics">
+          <div class="calc-header">
+            <span class="calc-pill">КАРМАННЫЕ СОКРОВИЩА</span>
+            <h3>Что звенело в карманах советского школьника?</h3>
+            <p>Помимо ранца, карманы школьных форменных брюк и фартуков таили в себе целую вселенную мальчишеских и девчоночьих секретов. Кликайте на сокровища!</p>
+          </div>
+
+          <div class="pockets-grid" id="pockets-grid">
+            <div class="pocket-item active" data-relic="coin15">
+              <div class="pi-visual">🪙</div>
+              <div class="pi-title">Пятнашка (15 коп.)</div>
+              <div class="pi-sub">Главная валюта детства</div>
+            </div>
+
+            <div class="pocket-item" data-relic="knife">
+              <div class="pi-visual">🐿️</div>
+              <div class="pi-title">Ножик «Белка»</div>
+              <div class="pi-sub">Завод Ворсма (1 руб. 60 коп.)</div>
+            </div>
+
+            <div class="pocket-item" data-relic="slingshot">
+              <div class="pi-visual">🪃</div>
+              <div class="pi-title">Рогатка со жгутом</div>
+              <div class="pi-sub">Аптечный жгут и рогулька</div>
+            </div>
+
+            <div class="pocket-item" data-relic="beetle">
+              <div class="pi-visual">🪲</div>
+              <div class="pi-title">Спичечный коробок</div>
+              <div class="pi-sub">Живой майский жук внутри</div>
+            </div>
+
+            <div class="pocket-item" data-relic="tram-ticket">
+              <div class="pi-visual">🎫</div>
+              <div class="pi-title">Счастливый билетик</div>
+              <div class="pi-sub">Трамвайный талон 3 коп.</div>
+            </div>
+
+            <div class="pocket-item" data-relic="button-pin">
+              <div class="pi-visual">📌</div>
+              <div class="pi-title">Медная кнопка</div>
+              <div class="pi-sub">Классика школьных шалостей</div>
+            </div>
+          </div>
+
+          <!-- Dynamic Pocket Relic Dossier Card -->
+          <div class="pocket-dossier-card" id="pocket-dossier-card">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+
+        <!-- FEATURE C: UPGRADED SOVIET PRICE CALCULATOR WITH COINS & RECEIPT -->
+        <div class="price-calculator-wrapper" id="calculator">
+          <div class="calc-header">
+            <span class="calc-pill">ИНТЕРАКТИВНЫЙ БЮДЖЕТ</span>
+            <h3>Калькулятор советских цен & Монетница Госбанка СССР</h3>
+            <p>Кликайте по настоящим советским монетам, чтобы бросить их в школьный кошелёк, или выберите сумму. Посмотрите, сколько радостей эпохи можно было купить на эти деньги!</p>
+          </div>
+
+          <!-- Soviet Coin Tray (Монетница) -->
+          <div class="soviet-coin-tray">
+            <div class="sct-label">🪙 Нажмите на монету, чтобы добавить в кошелёк:</div>
+            <div class="coin-buttons-row" id="coin-buttons-row">
+              <button class="coin-btn coin-1k" data-val="0.01" title="1 копейка — коробок спичек">1 коп.</button>
+              <button class="coin-btn coin-2k" data-val="0.02" title="2 копейки — звонок из телефона-автомата / тетрадь 12 л.">2 коп.</button>
+              <button class="coin-btn coin-3k" data-val="0.03" title="3 копейки — стакан газировки с сиропом / трамвай">3 коп.</button>
+              <button class="coin-btn coin-5k" data-val="0.05" title="5 копеек — пирожок с повидлом / поездка в метро">5 коп.</button>
+              <button class="coin-btn coin-10k" data-val="0.10" title="10 копеек — билет в кино на утренний детский сеанс">10 коп.</button>
+              <button class="coin-btn coin-15k" data-val="0.15" title="15 копеек — порция сырного мороженого / 5 стаканов газировки">15 коп.</button>
+              <button class="coin-btn coin-20k" data-val="0.20" title="20 копеек — школьный обед / пломбир в стаканчике">20 коп.</button>
+              <button class="coin-btn coin-50k" data-val="0.50" title="50 копеек — комплексный обед в столовой">50 коп.</button>
+              <button class="coin-btn coin-1r" data-val="1.00" title="1 рубль — банкнота Госбанка СССР с Лениным">1 руб.</button>
+              <button class="coin-btn coin-3r" data-val="3.00" title="3 рубля — зеленая банкнота">3 руб.</button>
+              <button class="coin-btn coin-5r" data-val="5.00" title="5 рублей — подарок на день рождения от бабушки">5 руб.</button>
+            </div>
+            <div class="coin-tray-actions">
+              <button class="btn-clear-coins" id="btn-clear-coins">🗑️ Очистить кошелек (0 руб.)</button>
+            </div>
           </div>
 
           <div class="calc-controls">
@@ -1607,16 +1715,56 @@
               <button class="preset-btn active" data-amount="0.20">20 копеек (Завтрак)</button>
               <button class="preset-btn" data-amount="0.50">50 копеек (Сдача)</button>
               <button class="preset-btn" data-amount="1.00">1 рубль (Бумажка с Лениным)</button>
-              <button class="preset-btn" data-amount="5.00">5 рублей (Подарок бабушки)</button>
+              <button class="preset-btn" data-amount="5.00">5 рублей (Бабушкин подарок)</button>
             </div>
             <div class="calc-custom">
-              <label for="custom-kopeks">Или введите свою сумму (в рублях СССР):</label>
-              <input type="number" id="custom-kopeks" value="1.00" min="0.01" max="100" step="0.10">
+              <label for="custom-kopeks">Текущая сумма в кошельке (в рублях СССР):</label>
+              <div class="calc-input-row">
+                <input type="number" id="custom-kopeks" value="0.20" min="0.01" max="100" step="0.01">
+                <span class="calc-currency-tag">руб. СССР</span>
+              </div>
             </div>
           </div>
 
+          <!-- Goods Grid -->
           <div class="calc-results-grid" id="calc-results-grid">
             <!-- Rendered by JavaScript -->
+          </div>
+
+          <!-- Printable Soviet Store Receipt Box -->
+          <div class="calc-receipt-trigger-box">
+            <button class="btn-print-receipt" id="btn-print-receipt">
+              <span>🧾 Выбить кассовый чек Гастронома № 1 (Аппарат «Ока»)</span>
+            </button>
+          </div>
+
+          <div class="soviet-receipt-wrapper" id="soviet-receipt-wrapper" style="display: none;">
+            <div class="soviet-receipt" id="soviet-receipt">
+              <div class="receipt-cut-line">┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈</div>
+              <div class="receipt-header">
+                <div>РСФСР • МИНТОРГ СССР</div>
+                <div>ГАСТРОНОМ № 1 «ЦЕНТРАЛЬНЫЙ»</div>
+                <div>КАССОВЫЙ АППАРАТ «ОКА» № 4821</div>
+                <div class="receipt-date" id="receipt-date">18.10.1982 • КАССА № 3</div>
+              </div>
+              <div class="receipt-divider">====================================</div>
+              <div class="receipt-items-list" id="receipt-items-list">
+                <!-- Populated dynamically via JS -->
+              </div>
+              <div class="receipt-divider">====================================</div>
+              <div class="receipt-total-row">
+                <span>ИТОГ К ОПЛАТЕ:</span>
+                <strong id="receipt-total-sum">0-20</strong>
+              </div>
+              <div class="receipt-stamp-box">
+                <div class="receipt-stamp">★ ОПЛАЧЕНО ★<br><small>КАССА № 3</small></div>
+              </div>
+              <div class="receipt-footer">
+                <div>СПАСИБО ЗА ПОКУПКУ!</div>
+                <div>БЕРЕГИТЕ ЧЕК ДО КОНЦА ПУТИ</div>
+              </div>
+              <div class="receipt-cut-line">┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1862,6 +2010,80 @@
     <span class="btt-percent" id="btt-percent">0%</span>
   </button>
 
+  <!-- ARCHIVAL INSPECTOR MODAL (Deep-Dive Term Card) -->
+  <div class="modal-overlay" id="inspector-modal" aria-hidden="true" role="dialog" aria-labelledby="inspector-modal-title">
+    <div class="modal-dialog inspector-dialog">
+      <button class="modal-close-btn" id="inspector-close-btn" aria-label="Закрыть архивное дело">&times;</button>
+      <div class="inspector-card-content" id="inspector-card-content">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TEAM PRESENTATION SPEECH PROMPTER MODAL -->
+  <div class="modal-overlay" id="speech-modal" aria-hidden="true" role="dialog" aria-labelledby="speech-modal-title">
+    <div class="modal-dialog speech-dialog">
+      <div class="speech-dialog-header">
+        <div class="sdh-left">
+          <span class="sdh-badge">ДОКЛАД КОМАНДЫ • 5 МИНУТ</span>
+          <h3 id="speech-modal-title">Текст выступления для команды (4 спикера)</h3>
+        </div>
+        <button class="modal-close-btn" id="speech-close-btn" aria-label="Закрыть текст доклада">&times;</button>
+      </div>
+
+      <div class="speech-speakers-tabs" id="speech-speakers-tabs">
+        <button class="speech-tab-btn active" data-speaker="all">📋 Весь доклад (общий обзор)</button>
+        <button class="speech-tab-btn" data-speaker="1">👤 Спикер 1: Вступление & Форма (1:30)</button>
+        <button class="speech-tab-btn" data-speaker="2">👤 Спикер 2: Парта, Чернила & Вещи (1:30)</button>
+        <button class="speech-tab-btn" data-speaker="3">👤 Спикер 3: Иерархия & Дежурство (1:15)</button>
+        <button class="speech-tab-btn" data-speaker="4">👤 Спикер 4: Развилка ВУЗ/ПТУ & Цены (1:15)</button>
+      </div>
+
+      <div class="speech-content-body" id="speech-content-body">
+        <!-- Rendered dynamically by JS -->
+      </div>
+
+      <div class="speech-dialog-footer">
+        <div class="sdf-tip">💡 В тексте выделены интерактивные действия (клик по звонку, 3D парте, калькулятору) для показа жюри в реальном времени.</div>
+        <div class="sdf-actions">
+          <button class="btn btn-secondary" id="btn-copy-speech">📋 Скопировать текст</button>
+          <button class="btn btn-primary" id="btn-close-speech-footer">Понятно, к докладу!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCHABLE SOVIET GLOSSARY MODAL -->
+  <div class="modal-overlay" id="glossary-modal" aria-hidden="true" role="dialog" aria-labelledby="glossary-modal-title">
+    <div class="modal-dialog glossary-dialog">
+      <div class="glossary-dialog-header">
+        <div class="gdh-left">
+          <span class="gdh-badge">ВСЕСОЮЗНЫЙ АРХИВ ТЕРМИНОВ</span>
+          <h3 id="glossary-modal-title">Словарь понятий и реалий советской школы</h3>
+        </div>
+        <button class="modal-close-btn" id="glossary-close-btn" aria-label="Закрыть словарь">&times;</button>
+      </div>
+
+      <div class="glossary-search-bar">
+        <input type="text" id="glossary-search-input" placeholder="🔍 Поиск по архиву (например: Ликбез, УПК, Парта, 15 копеек, Зарница...)" autocomplete="off">
+        <div class="glossary-filter-chips" id="glossary-filter-chips">
+          <button class="gf-chip active" data-cat="all">Все понятия</button>
+          <button class="gf-chip" data-cat="study">Обучение & Предметы</button>
+          <button class="gf-chip" data-cat="org">Организации & Идеология</button>
+          <button class="gf-chip" data-cat="life">Быт & Труд</button>
+          <button class="gf-chip" data-cat="relics">Вещи & Карманные сокровища</button>
+        </div>
+      </div>
+
+      <div class="glossary-cards-grid" id="glossary-cards-grid">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Local Standalone Three.js & OrbitControls (100% Offline Compatible) -->
+  <script src="lib/three.min.js"></script>
+  <script src="lib/OrbitControls.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

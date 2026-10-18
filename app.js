@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initUniforms();
   initBackpack();
   initPriceCalculator();
+  initPocketsAndMaterials();
+  initArchivalInspectorAndGlossary();
+  initTeamSpeechPrompter();
   initQuiz();
   initNavigation();
   initScrollProgress();
@@ -580,49 +583,150 @@ function renderBackpackItem(key) {
 }
 
 /* --------------------------------------------------------------------------
-   5. SOVIET PRICE CALCULATOR
+   5. UPGRADED SOVIET PRICE CALCULATOR & GASTONOM RECEIPT
    -------------------------------------------------------------------------- */
 const SOVIET_GOODS = [
   { name: "Школьных тетрадок (12 л.)", price: 0.02, icon: "📓" },
-  { name: "Булочек городских", price: 0.03, icon: "🥐" },
+  { name: "Булочек городских («жулик»)", price: 0.03, icon: "🥐" },
   { name: "Стаканов газировки с сиропом", price: 0.03, icon: "🥤" },
   { name: "Поездок на трамвае", price: 0.03, icon: "🚋" },
   { name: "Пирожков с повидлом", price: 0.05, icon: "🥟" },
+  { name: "Поездок на метро", price: 0.05, icon: "🚇" },
   { name: "Билетов в кино (детский сеанс)", price: 0.10, icon: "🎟️" },
-  { name: "Стаканов яблочного сока", price: 0.10, icon: "🧃" },
-  { name: "Пломбиров в вафельном стаканчике", price: 0.20, icon: "🍦" },
-  { name: "Деревянных пеналов", price: 0.35, icon: "✏️" },
+  { name: "Стаканов томатного/яблочного сока", price: 0.10, icon: "🧃" },
+  { name: "Порций пломбира в вафельном стаканчике", price: 0.20, icon: "🍦" },
+  { name: "Деревянных пеналов с выдвижной крышкой", price: 0.35, icon: "✏️" },
   { name: "Пионерских шелковых галстуков", price: 0.75, icon: "🧣" },
-  { name: "Школьных линеек счетных", price: 1.80, icon: "📐" }
+  { name: "Логарифмических счетных линеек", price: 1.80, icon: "📐" },
+  { name: "Готовален чертежных «НЧК-14»", price: 4.50, icon: "📏" }
 ];
 
 function initPriceCalculator() {
   const presets = document.querySelectorAll('.preset-btn');
   const input = document.getElementById('custom-kopeks');
   const grid = document.getElementById('calc-results-grid');
+  const coinBtns = document.querySelectorAll('.coin-btn');
+  const btnClearCoins = document.getElementById('btn-clear-coins');
+  const btnPrintReceipt = document.getElementById('btn-print-receipt');
+  const receiptWrapper = document.getElementById('soviet-receipt-wrapper');
+  const receiptItemsList = document.getElementById('receipt-items-list');
+  const receiptTotalSum = document.getElementById('receipt-total-sum');
+
   if (!grid || !input) return;
 
+  let currentAmount = 0.20;
+
+  // Synthesize realistic metal coin clink sound
+  function playCoinClinkSound() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    const freqs = [1800, 2400, 3100, 4200];
+    const f = freqs[Math.floor(Math.random() * freqs.length)];
+    osc.frequency.setValueAtTime(f, now);
+    osc.frequency.exponentialRampToValueAtTime(f * 0.85, now + 0.08);
+
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.08);
+  }
+
   function updateCalc(rubles) {
-    const val = parseFloat(rubles) || 0;
+    let val = parseFloat(rubles);
+    if (isNaN(val) || val < 0) val = 0;
+    currentAmount = parseFloat(val.toFixed(2));
+
     grid.innerHTML = SOVIET_GOODS.map(item => {
-      const count = Math.floor(val / item.price);
+      const count = Math.floor(currentAmount / item.price);
       return `
-        <div class="calc-result-card">
+        <div class="calc-result-card ${count > 0 ? 'is-affordable' : 'not-affordable'}">
           <span class="calc-res-icon">${item.icon}</span>
           <div class="calc-res-count">${count} шт.</div>
           <div class="calc-res-label">${item.name}</div>
-          <span class="calc-res-price">по ${(item.price >= 1 ? item.price + ' руб.' : (item.price * 100).toFixed(0) + ' коп.')}</span>
+          <span class="calc-res-price">по ${(item.price >= 1 ? item.price.toFixed(2) + ' руб.' : (item.price * 100).toFixed(0) + ' коп.')}</span>
         </div>
       `;
     }).join('');
+
+    renderReceiptContent(currentAmount);
   }
 
+  function renderReceiptContent(amount) {
+    if (!receiptItemsList || !receiptTotalSum) return;
+
+    // Find affordable items for receipt
+    const items = [];
+    let remainder = amount;
+
+    // Pick a realistic basket
+    for (const g of SOVIET_GOODS) {
+      if (remainder >= g.price) {
+        const qty = Math.min(Math.floor(remainder / g.price), 2);
+        if (qty > 0) {
+          items.push({ name: g.name.substring(0, 20), qty: qty, price: g.price, total: (qty * g.price).toFixed(2) });
+          remainder -= qty * g.price;
+        }
+      }
+      if (items.length >= 4) break;
+    }
+
+    if (items.length === 0) {
+      receiptItemsList.innerHTML = `<div style="text-align:center;padding:10px 0;opacity:0.7;">НЕТ ПОКУПОК (СУММА: 0 РУБ.)</div>`;
+    } else {
+      receiptItemsList.innerHTML = items.map(it => `
+        <div style="display:flex;justify-content:space-between;margin:3px 0;">
+          <span>${it.name} x${it.qty}</span>
+          <span>${it.total}</span>
+        </div>
+      `).join('');
+    }
+
+    const rublesPart = Math.floor(amount);
+    const kopeksPart = Math.round((amount - rublesPart) * 100);
+    receiptTotalSum.textContent = `${rublesPart}-${kopeksPart < 10 ? '0' + kopeksPart : kopeksPart} РУБ.`;
+  }
+
+  // Coin Buttons (Increment purse)
+  coinBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = parseFloat(btn.dataset.val) || 0;
+      currentAmount = parseFloat((currentAmount + val).toFixed(2));
+      input.value = currentAmount.toFixed(2);
+      presets.forEach(b => b.classList.remove('active'));
+      playCoinClinkSound();
+      updateCalc(currentAmount);
+    });
+  });
+
+  // Clear coins
+  if (btnClearCoins) {
+    btnClearCoins.addEventListener('click', () => {
+      currentAmount = 0;
+      input.value = '0.00';
+      presets.forEach(b => b.classList.remove('active'));
+      updateCalc(0);
+    });
+  }
+
+  // Presets
   presets.forEach(btn => {
     btn.addEventListener('click', () => {
       presets.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const amt = btn.dataset.amount;
-      input.value = amt;
+      const amt = parseFloat(btn.dataset.amount);
+      input.value = amt.toFixed(2);
+      playCoinClinkSound();
       updateCalc(amt);
     });
   });
@@ -632,7 +736,22 @@ function initPriceCalculator() {
     updateCalc(e.target.value);
   });
 
-  updateCalc('0.20');
+  // Print Receipt Button
+  if (btnPrintReceipt && receiptWrapper) {
+    btnPrintReceipt.addEventListener('click', () => {
+      const isVisible = receiptWrapper.style.display !== 'none';
+      if (isVisible) {
+        receiptWrapper.style.display = 'none';
+        btnPrintReceipt.textContent = '🧾 Выбить кассовый чек Гастронома № 1 (Аппарат «Ока»)';
+      } else {
+        receiptWrapper.style.display = 'flex';
+        btnPrintReceipt.textContent = '▲ Свернуть чек Гастронома № 1';
+        receiptWrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  }
+
+  updateCalc(0.20);
 }
 
 /* --------------------------------------------------------------------------
@@ -1167,27 +1286,31 @@ function initHero3DArtifact() {
 }
 
 /* --------------------------------------------------------------------------
-   12. INTERACTIVE 3D ERISMAN DESK SIMULATOR
+   12. THREE.JS WEBGL ERISMAN DESK SIMULATOR (ГОСТ 11015-77)
    -------------------------------------------------------------------------- */
 function init3DDesk() {
+  const canvas = document.getElementById('desk-webgl-canvas');
+  const container = document.getElementById('desk-webgl-container');
   const btnToggleLid = document.getElementById('btn-toggle-lid');
-  const hingedLid = document.getElementById('table-hinged-lid');
   const lidText = document.getElementById('lid-btn-text');
-  const lidStatusTag = document.getElementById('lid-status-tag');
-  const deskWorld = document.getElementById('desk-3d-world');
   const hotspotTitle = document.getElementById('hotspot-title');
   const hotspotDesc = document.getElementById('hotspot-desc');
+  const btnReset = document.getElementById('btn-desk-reset');
 
   const btnMode3d = document.getElementById('btn-mode-3d');
   const btnMode2d = document.getElementById('btn-mode-2d');
   const stage3d = document.getElementById('desk-3d-stage');
   const stage2d = document.getElementById('desk-2d-stage');
 
-  if (!hingedLid || !btnToggleLid) return;
+  if (!canvas || !container) return;
 
-  let isLidOpen = false;
+  // Verify THREE is available
+  if (typeof THREE === 'undefined') {
+    container.innerHTML = '<div style="color:#e5a93c;padding:40px;text-align:center;">Библиотека Three.js загружается...</div>';
+    return;
+  }
 
-  // Synthesize realistic wooden desk lid acoustic sound
+  // Audio synthesizer for wooden desk lid acoustic resonance
   function playDeskLidSound(opening) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return;
@@ -1198,88 +1321,469 @@ function init3DDesk() {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
 
-    // Low resonant thud of heavy pine/oak
     osc.type = 'triangle';
-    const baseFreq = opening ? 160 : 130;
+    const baseFreq = opening ? 160 : 120;
     osc.frequency.setValueAtTime(baseFreq, now);
-    osc.frequency.exponentialRampToValueAtTime(50, now + 0.18);
+    osc.frequency.exponentialRampToValueAtTime(45, now + 0.16);
 
-    gain.gain.setValueAtTime(0.4, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+    gain.gain.setValueAtTime(0.45, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
 
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.start(now);
-    osc.stop(now + 0.18);
+    osc.stop(now + 0.16);
   }
 
-  // Toggle Lid
-  function toggleLid() {
-    isLidOpen = !isLidOpen;
-    hingedLid.classList.toggle('is-open', isLidOpen);
+  // --- 1. Scene & Camera Setup ---
+  const scene = new THREE.Scene();
+  scene.background = null; // Transparent, CSS radial gradient behind
+
+  const width = container.clientWidth || 700;
+  const height = container.clientHeight || 480;
+
+  const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+  camera.position.set(3.8, 2.6, 3.8);
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas: canvas,
+    antialias: true,
+    alpha: true,
+    powerPreference: 'high-performance'
+  });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.15;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  // --- 2. Orbit Controls ---
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.minDistance = 2.2;
+  controls.maxDistance = 8.5;
+  controls.minPolarAngle = 0.1;
+  controls.maxPolarAngle = Math.PI / 2 + 0.08;
+  controls.target.set(0, 0.4, 0);
+
+  // --- 3. Lighting ---
+  const ambientLight = new THREE.AmbientLight(0xfff5ea, 1.2);
+  scene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0xfff8ee, 1.8);
+  dirLight.position.set(4, 7, 5);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.mapSize.height = 1024;
+  dirLight.shadow.bias = -0.001;
+  scene.add(dirLight);
+
+  const rimLight = new THREE.DirectionalLight(0xe5a93c, 0.8);
+  rimLight.position.set(-5, 3, -4);
+  scene.add(rimLight);
+
+  const fillLight = new THREE.DirectionalLight(0x8fa3bf, 0.5);
+  fillLight.position.set(0, -3, 3);
+  scene.add(fillLight);
+
+  // --- 4. Procedural Canvas Textures (Zero CORS, 100% Offline) ---
+  function makeWoodTexture() {
+    const c = document.createElement('canvas');
+    c.width = 512;
+    c.height = 512;
+    const ctx = c.getContext('2d');
+
+    // Rich warm pine/oak school varnish
+    ctx.fillStyle = '#8d5b2d';
+    ctx.fillRect(0, 0, 512, 512);
+
+    for (let y = 0; y < 512; y++) {
+      const alpha = 0.03 + Math.random() * 0.05;
+      ctx.fillStyle = `rgba(50, 28, 12, ${alpha})`;
+      ctx.fillRect(0, y, 512, 1);
+    }
+    // Grain streaks
+    ctx.fillStyle = 'rgba(210, 150, 75, 0.07)';
+    for (let i = 0; i < 25; i++) {
+      const x = Math.random() * 512;
+      const w = Math.random() * 60 + 20;
+      ctx.fillRect(x, 0, w, 512);
+    }
+    // Soft wood knots
+    for (let k = 0; k < 5; k++) {
+      const kx = 60 + k * 95 + (Math.random() * 20);
+      const ky = 50 + k * 90 + (Math.random() * 30);
+      const grad = ctx.createRadialGradient(kx, ky, 2, kx, ky, 18);
+      grad.addColorStop(0, 'rgba(40, 20, 8, 0.45)');
+      grad.addColorStop(0.7, 'rgba(100, 50, 20, 0.2)');
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(kx, ky, 22, 10, 0.15, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = THREE.RepeatWrapping;
+    t.wrapT = THREE.RepeatWrapping;
+    return t;
+  }
+
+  function makeIronTexture() {
+    const c = document.createElement('canvas');
+    c.width = 256;
+    c.height = 256;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#1e2226';
+    ctx.fillRect(0, 0, 256, 256);
+    const idata = ctx.getImageData(0, 0, 256, 256);
+    const d = idata.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const n = (Math.random() - 0.5) * 26;
+      d[i] = Math.min(255, Math.max(0, 32 + n));
+      d[i + 1] = Math.min(255, Math.max(0, 36 + n));
+      d[i + 2] = Math.min(255, Math.max(0, 42 + n));
+    }
+    ctx.putImageData(idata, 0, 0);
+    return new THREE.CanvasTexture(c);
+  }
+
+  const woodTexture = makeWoodTexture();
+  const ironTexture = makeIronTexture();
+
+  const woodMaterial = new THREE.MeshStandardMaterial({
+    map: woodTexture,
+    roughness: 0.38,
+    metalness: 0.04,
+    color: 0xaa733e
+  });
+
+  const ironMaterial = new THREE.MeshStandardMaterial({
+    map: ironTexture,
+    roughness: 0.72,
+    metalness: 0.65,
+    color: 0x22262a
+  });
+
+  const porcelainMaterial = new THREE.MeshStandardMaterial({
+    color: 0xf4f4ee,
+    roughness: 0.12,
+    metalness: 0.05
+  });
+
+  const inkMaterial = new THREE.MeshStandardMaterial({
+    color: 0x240f42,
+    roughness: 0.1,
+    metalness: 0.2
+  });
+
+  const brassMaterial = new THREE.MeshStandardMaterial({
+    color: 0xd4af37,
+    roughness: 0.35,
+    metalness: 0.8
+  });
+
+  // --- 5. Assemble Realistic Erisman Desk (ГОСТ 11015-77) ---
+  const deskGroup = new THREE.Group();
+  scene.add(deskGroup);
+
+  // A. Cast-Iron Side Frames (Left & Right)
+  const ironSideGeo = new THREE.BoxGeometry(0.08, 0.85, 0.08);
+  const ironBaseGeo = new THREE.BoxGeometry(0.1, 0.06, 1.6);
+  const tieBarGeo = new THREE.CylinderGeometry(0.03, 0.03, 2.1, 16);
+  tieBarGeo.rotateZ(Math.PI / 2);
+
+  [-1.0, 1.0].forEach(x => {
+    // Front table upright
+    const legFront = new THREE.Mesh(ironSideGeo, ironMaterial);
+    legFront.position.set(x, 0.425, -0.45);
+    legFront.castShadow = true;
+    deskGroup.add(legFront);
+
+    // Rear bench upright
+    const legBack = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.5, 0.08), ironMaterial);
+    legBack.position.set(x, 0.25, 0.55);
+    legBack.castShadow = true;
+    deskGroup.add(legBack);
+
+    // Rigid bottom runner (connecting desk and bench)
+    const baseRunner = new THREE.Mesh(ironBaseGeo, ironMaterial);
+    baseRunner.position.set(x, 0.03, 0.05);
+    baseRunner.castShadow = true;
+    deskGroup.add(baseRunner);
+
+    // Diagonal stiffener strut
+    const strutGeo = new THREE.BoxGeometry(0.06, 0.05, 1.15);
+    const strut = new THREE.Mesh(strutGeo, ironMaterial);
+    strut.position.set(x, 0.38, 0.05);
+    strut.rotation.x = 0.22;
+    deskGroup.add(strut);
+  });
+
+  // Tie Bar (Стяжка)
+  const tieBar = new THREE.Mesh(tieBarGeo, ironMaterial);
+  tieBar.position.set(0, 0.15, 0.05);
+  tieBar.castShadow = true;
+  deskGroup.add(tieBar);
+
+  // Elevated Footrest Plank (Подножка для упора ног)
+  const footrestGeo = new THREE.BoxGeometry(2.0, 0.04, 0.16);
+  const footrest = new THREE.Mesh(footrestGeo, woodMaterial);
+  footrest.position.set(0, 0.18, 0.02);
+  footrest.castShadow = true;
+  deskGroup.add(footrest);
+
+  // B. Wooden Bench (Скамья)
+  // Contoured Bench Plank
+  const benchPlankGeo = new THREE.BoxGeometry(2.1, 0.045, 0.34);
+  const benchPlank = new THREE.Mesh(benchPlankGeo, woodMaterial);
+  benchPlank.position.set(0, 0.48, 0.55);
+  benchPlank.castShadow = true;
+  deskGroup.add(benchPlank);
+
+  // Lumbar Backrest (Поясничный анатомический упор)
+  const backrestGeo = new THREE.BoxGeometry(2.1, 0.16, 0.035);
+  const backrest = new THREE.Mesh(backrestGeo, woodMaterial);
+  backrest.position.set(0, 0.72, 0.73);
+  backrest.rotation.x = -0.08;
+  backrest.castShadow = true;
+  deskGroup.add(backrest);
+
+  // C. Main Desk Table Body
+  // Side wooden aprons
+  [-0.96, 0.96].forEach(x => {
+    const sideApronGeo = new THREE.BoxGeometry(0.04, 0.26, 0.72);
+    const sideApron = new THREE.Mesh(sideApronGeo, woodMaterial);
+    sideApron.position.set(x, 0.74, -0.45);
+    sideApron.rotation.x = -0.26; // 15 degrees tilt
+    deskGroup.add(sideApron);
+  });
+
+  // Under-desk Cubby Bottom Shelf (Подстолье для книг)
+  const cubbyShelfGeo = new THREE.BoxGeometry(1.92, 0.03, 0.68);
+  const cubbyShelf = new THREE.Mesh(cubbyShelfGeo, woodMaterial);
+  cubbyShelf.position.set(0, 0.65, -0.45);
+  cubbyShelf.rotation.x = -0.26;
+  cubbyShelf.receiveShadow = true;
+  deskGroup.add(cubbyShelf);
+
+  // Textbook inside cubby ("Арифметика 1958")
+  const bookGeo = new THREE.BoxGeometry(0.35, 0.04, 0.48);
+  const bookMat = new THREE.MeshStandardMaterial({ color: 0x1b5e20, roughness: 0.5 });
+  const bookMesh = new THREE.Mesh(bookGeo, bookMat);
+  bookMesh.position.set(-0.35, 0.68, -0.45);
+  bookMesh.rotation.x = -0.26;
+  bookMesh.rotation.y = 0.05;
+  deskGroup.add(bookMesh);
+
+  // D. Fixed Rear Shelf (Горизонтальная задняя полка с чернильницей)
+  const fixedShelfGeo = new THREE.BoxGeometry(2.1, 0.045, 0.22);
+  const fixedShelf = new THREE.Mesh(fixedShelfGeo, woodMaterial);
+  fixedShelf.position.set(0, 0.88, -0.76);
+  fixedShelf.castShadow = true;
+  deskGroup.add(fixedShelf);
+
+  // Inkwell Socket & Porcelain Inkwell (Чернильница-непроливайка)
+  const inkwellOuterGeo = new THREE.CylinderGeometry(0.055, 0.045, 0.065, 24);
+  const inkwellOuter = new THREE.Mesh(inkwellOuterGeo, porcelainMaterial);
+  inkwellOuter.position.set(0, 0.92, -0.76);
+  inkwellOuter.castShadow = true;
+  deskGroup.add(inkwellOuter);
+
+  const inkInnerGeo = new THREE.CylinderGeometry(0.038, 0.015, 0.04, 24);
+  const inkInner = new THREE.Mesh(inkInnerGeo, inkMaterial);
+  inkInner.position.set(0, 0.94, -0.76);
+  deskGroup.add(inkInner);
+
+  // Pen Groove & Wooden Dip Pen
+  const penGeo = new THREE.CylinderGeometry(0.009, 0.009, 0.42, 16);
+  penGeo.rotateZ(Math.PI / 2);
+  const penMat = new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.3 });
+  const pen = new THREE.Mesh(penGeo, penMat);
+  pen.position.set(0.45, 0.91, -0.76);
+  deskGroup.add(pen);
+
+  const nibGeo = new THREE.ConeGeometry(0.012, 0.04, 8);
+  nibGeo.rotateZ(-Math.PI / 2);
+  const nib = new THREE.Mesh(nibGeo, brassMaterial);
+  nib.position.set(0.67, 0.91, -0.76);
+  deskGroup.add(nib);
+
+  // E. Hinged Lid Assembly (Откидная створка парты)
+  // Pivot placed right at the seam between fixed shelf and slope
+  const lidPivot = new THREE.Group();
+  lidPivot.position.set(0, 0.87, -0.65);
+  deskGroup.add(lidPivot);
+
+  // Lid mesh (centered forward relative to pivot)
+  const lidPlankGeo = new THREE.BoxGeometry(2.1, 0.04, 0.52);
+  const lidMesh = new THREE.Mesh(lidPlankGeo, woodMaterial);
+  lidMesh.position.set(0, 0, 0.26);
+  lidMesh.castShadow = true;
+  lidMesh.receiveShadow = true;
+  lidPivot.add(lidMesh);
+
+  // Brass Hinges (Латунные петли)
+  [-0.65, 0.65].forEach(hx => {
+    const hingeGeo = new THREE.CylinderGeometry(0.014, 0.014, 0.08, 12);
+    hingeGeo.rotateZ(Math.PI / 2);
+    const hinge = new THREE.Mesh(hingeGeo, brassMaterial);
+    hinge.position.set(hx, 0.018, 0.01);
+    lidPivot.add(hinge);
+  });
+
+  // Soft Contact Ground Shadow
+  const shadowGeo = new THREE.PlaneGeometry(3.2, 2.2);
+  const shadowCanvas = document.createElement('canvas');
+  shadowCanvas.width = 256;
+  shadowCanvas.height = 256;
+  const sctx = shadowCanvas.getContext('2d');
+  const sgrad = sctx.createRadialGradient(128, 128, 20, 128, 128, 120);
+  sgrad.addColorStop(0, 'rgba(0, 0, 0, 0.6)');
+  sgrad.addColorStop(0.6, 'rgba(0, 0, 0, 0.25)');
+  sgrad.addColorStop(1, 'transparent');
+  sctx.fillStyle = sgrad;
+  sctx.fillRect(0, 0, 256, 256);
+  const shadowTexture = new THREE.CanvasTexture(shadowCanvas);
+
+  const shadowMat = new THREE.MeshBasicMaterial({
+    map: shadowTexture,
+    transparent: true,
+    opacity: 0.7,
+    depthWrite: false
+  });
+  const shadowPlane = new THREE.Mesh(shadowGeo, shadowMat);
+  shadowPlane.rotation.x = -Math.PI / 2;
+  shadowPlane.position.y = 0.005;
+  scene.add(shadowPlane);
+
+  // --- 6. Lid Animation & State ---
+  let isLidOpen = false;
+  let currentLidAngle = -0.26; // Resting 15 degrees tilt
+  let targetLidAngle = -0.26;
+
+  function setLidState(open) {
+    isLidOpen = open;
+    targetLidAngle = isLidOpen ? 0.95 : -0.26; // 0.95 rad ≈ 55 deg open
     playDeskLidSound(isLidOpen);
 
-    if (isLidOpen) {
-      if (lidText) lidText.textContent = 'Опустить крышку парты';
-      if (lidStatusTag) lidStatusTag.textContent = 'КРЫШКА ПОДНЯТА';
-      if (hotspotTitle && hotspotDesc) {
+    if (btnToggleLid && lidText) {
+      lidText.textContent = isLidOpen ? 'Опустить крышку парты' : 'Поднять крышку парты';
+    }
+
+    if (hotspotTitle && hotspotDesc) {
+      if (isLidOpen) {
         hotspotTitle.textContent = '🪑 Крышка парты поднята:';
         hotspotDesc.textContent = 'Обратите внимание на открывшуюся внутреннюю нишу (подстолье) для хранения учебников и тетрадей. Откидная створка позволяла вставать без малейшего шума.';
-      }
-    } else {
-      if (lidText) lidText.textContent = 'Поднять крышку парты';
-      if (lidStatusTag) lidStatusTag.textContent = 'КРЫШКА ЗАКРЫТА';
-      if (hotspotTitle && hotspotDesc) {
+      } else {
         hotspotTitle.textContent = '📐 Наклон 15° активен:';
         hotspotDesc.textContent = 'Крышка опущена в рабочее положение под углом 15 градусов, гарантируя строго перпендикулярное падение взгляда на строки тетради.';
       }
     }
   }
 
-  btnToggleLid.addEventListener('click', toggleLid);
-  hingedLid.addEventListener('click', toggleLid);
+  function toggleLid() {
+    setLidState(!isLidOpen);
+  }
 
-  // View Presets
+  if (btnToggleLid) btnToggleLid.addEventListener('click', toggleLid);
+
+  // Raycaster for clicking directly on lid
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+
+    const intersects = raycaster.intersectObjects([lidMesh, fixedShelf, inkwellOuter], true);
+    if (intersects.length > 0) {
+      toggleLid();
+    }
+  });
+
+  // --- 7. Camera Presets Smooth Tweening ---
+  let targetCamPos = new THREE.Vector3(3.8, 2.6, 3.8);
+  let targetControlsTarget = new THREE.Vector3(0, 0.45, 0);
+
+  const PRESETS = {
+    iso: { pos: new THREE.Vector3(3.8, 2.6, 3.8), target: new THREE.Vector3(0, 0.45, 0) },
+    profile: { pos: new THREE.Vector3(4.8, 0.65, 0.05), target: new THREE.Vector3(0, 0.5, 0) },
+    front: { pos: new THREE.Vector3(0.01, 1.4, 4.4), target: new THREE.Vector3(0, 0.55, 0) },
+    top: { pos: new THREE.Vector3(0.05, 5.2, 0.05), target: new THREE.Vector3(0, 0.45, 0) }
+  };
+
   const presetBtns = document.querySelectorAll('.btn-preset');
   presetBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       presetBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const preset = btn.dataset.preset;
-      if (deskWorld) {
-        deskWorld.className = 'desk-3d-world view-' + preset;
+      const p = PRESETS[btn.dataset.preset];
+      if (p) {
+        targetCamPos.copy(p.pos);
+        targetControlsTarget.copy(p.target);
       }
     });
   });
 
-  // Hotspots definitions
+  if (btnReset) {
+    btnReset.addEventListener('click', () => {
+      presetBtns.forEach(b => b.classList.remove('active'));
+      const isoBtn = document.querySelector('.btn-preset[data-preset="iso"]');
+      if (isoBtn) isoBtn.classList.add('active');
+      targetCamPos.copy(PRESETS.iso.pos);
+      targetControlsTarget.copy(PRESETS.iso.target);
+    });
+  }
+
+  // --- 8. Anatomy Hotspot Buttons ---
   const HOTSPOT_EXPLANATIONS = {
+    lid: {
+      title: "Откидная деревянная створка:",
+      desc: "Крепилась на латунных шарнирах. Позволяла ученику мгновенно встать по стойке «смирно» при входе учителя без сдвигания мебели и грохота.",
+      cam: new THREE.Vector3(2.8, 2.4, 2.8)
+    },
     angle: {
-      title: "Наклон столешницы 15°:",
-      desc: "Обеспечивает строго перпендикулярное направление оптической оси глаз к тексту, полностью устраняя необходимость нагибать шею и предотвращая школьную близорукость."
+      title: "Наклон столешницы 15° (ГОСТ 11015-77):",
+      desc: "Обеспечивает строго перпендикулярное направление оптической оси глаз к тексту, полностью устраняя необходимость нагибать шею и предотвращая школьную близорукость.",
+      cam: new THREE.Vector3(4.6, 0.7, 0.2)
     },
     distance: {
       title: "Отрицательная дистанция 4 см:",
-      desc: "Передний край скамьи заходит под столешницу на 4 см. При такой геометрии ученик физически не может развалиться или сесть боком — грудная клетка и поясница поддерживаются анатомически верно."
-    },
-    lid: {
-      title: "Откидная деревянная крышка:",
-      desc: "Подвешена на прочных латунных петлях. Давала ученику возможность мгновенно встать по стойке «смирно» при входе учителя без сдвигания мебели и грохота."
+      desc: "Передний край скамьи заходит под столешницу на 4 см. При такой геометрии ученик физически не может развалиться или сесть боком — грудная клетка и поясница поддерживаются анатомически верно.",
+      cam: new THREE.Vector3(4.2, 0.9, 0.3)
     },
     ink: {
-      title: "Чернильница-непроливайка:",
-      desc: "Керамическая или стеклянная емкость с внутренним конусом. Даже при падении чернила не выливались на тетрадь. Заправлялась фиолетовыми чернилами на основе сажи и анилина."
+      title: "Чернильница-непроливайка и желобок:",
+      desc: "Фарфоровая или эбонитовая ёмкость с внутренним конусом. Даже при падении чернила не выливались на тетрадь. Рядом — желобок для перьевой ручки с пером № 86 («звёздочка»).",
+      cam: new THREE.Vector3(1.2, 2.0, -1.2)
+    },
+    footrest: {
+      title: "Подножка и поясничный упор:",
+      desc: "Широкая наклонная подставка для ног обеспечивала разгрузку подколенных кровеносных сосудов, а спинка на уровне поясницы удерживала позвоночный столб в естественном S-образном изгибе.",
+      cam: new THREE.Vector3(3.2, 1.2, 1.5)
     }
   };
 
-  document.querySelectorAll('.desk-pin').forEach(pin => {
-    pin.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const pinType = pin.dataset.pin;
-      const data = HOTSPOT_EXPLANATIONS[pinType];
+  const hotspotBtns = document.querySelectorAll('.dhb-btn');
+  hotspotBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      hotspotBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const pin = btn.dataset.pin;
+      const data = HOTSPOT_EXPLANATIONS[pin];
       if (data && hotspotTitle && hotspotDesc) {
         hotspotTitle.textContent = data.title;
         hotspotDesc.textContent = data.desc;
+        if (data.cam) {
+          targetCamPos.copy(data.cam);
+        }
+        if (pin === 'lid') {
+          setLidState(true);
+        }
       }
     });
   });
@@ -1289,7 +1793,7 @@ function init3DDesk() {
     btnMode3d.addEventListener('click', () => {
       btnMode3d.classList.add('active');
       btnMode2d.classList.remove('active');
-      if (stage3d) stage3d.style.display = 'flex';
+      if (stage3d) stage3d.style.display = 'block';
       if (stage2d) stage2d.style.display = 'none';
     });
 
@@ -1300,6 +1804,41 @@ function init3DDesk() {
       if (stage2d) stage2d.style.display = 'block';
     });
   }
+
+  // --- 9. Resize & Render Loop with Intersection Observer ---
+  let isVisible = true;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      isVisible = entry.isIntersecting;
+    });
+  }, { threshold: 0.1 });
+  observer.observe(container);
+
+  function onWindowResize() {
+    const w = container.clientWidth || 700;
+    const h = container.clientHeight || 480;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  }
+  window.addEventListener('resize', onWindowResize);
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!isVisible) return; // Pause rendering when off-screen
+
+    // Animate lid smooth swing
+    currentLidAngle += (targetLidAngle - currentLidAngle) * 0.14;
+    lidPivot.rotation.x = currentLidAngle;
+
+    // Smooth camera tween
+    camera.position.lerp(targetCamPos, 0.08);
+    controls.target.lerp(targetControlsTarget, 0.08);
+
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
 }
 
 /* --------------------------------------------------------------------------
@@ -1426,3 +1965,800 @@ function initBackToTop() {
   });
 }
 
+
+
+/* ==========================================================================
+   17. POCKET RELICS & MATERIALS SCIENCE INTERACTION
+   ========================================================================== */
+const POCKET_RELICS = {
+  coin15: {
+    emoji: "🪙",
+    title: "15 копеек (Медно-никелевый сплав 1961 г.)",
+    badge: "ВАЛЮТА ДЕТСТВА",
+    desc: "Главная монета советского школьника. Если в кармане звенели 15 копеек, день удался: можно было выпить 5 стаканов газировки с сиропом (по 3 коп.), сходить на утренний киносеанс (10 коп.) и купить булочку за 5 коп. Либо добавить 4 копейки и купить заветный пломбир за 19 коп.",
+    specs: [
+      { label: "Диаметр и вес", val: "19,56 мм • 2,5 грамма" },
+      { label: "Материал", val: "Медно-никелевый сплав (мельхиор)" },
+      { label: "Покупательная способность", val: "5 стаканов лимонада / 7 поездок на трамвае" },
+      { label: "Звук в кармане", val: "Звонкий чистый металлический тембр" }
+    ],
+    secret: "Именно 15-копеечная монета опускалась в монетоприёмники первых советских игровых автоматов («Морской бой», «Магистраль», «Снайпер»)."
+  },
+  knife: {
+    emoji: "🐿️",
+    title: "Складной перочинный ножик «Белка»",
+    badge: "МЕЧТА МАЛЬЧИШЕК",
+    desc: "Культовый складной нож производства завода «Складные ножи» (г. Ворсма, Горьковская область). На черных или коричневых пластмассовых накладках красовалось рельефное изображение белки. Стоил ровно 1 рубль 60 копеек.",
+    specs: [
+      { label: "Цена в СССР", val: "1 руб. 60 коп. (выбито на рукояти)" },
+      { label: "Сталь клинка", val: "Инструментальная сталь У8 / 65Г" },
+      { label: "Длина клинка", val: "85 мм (разрешен ГОСТом)" },
+      { label: "Игры на переменках", val: "«Ножички», «Земля», «Города»" }
+    ],
+    secret: "Этим ножом затачивали карандаши на уроках черчения, вырезали рогатки из веток сирени и свистульки из ивы весной."
+  },
+  slingshot: {
+    emoji: "🪃",
+    title: "Классическая рогатка из аптечного жгута",
+    badge: "ОРУЖИЕ ДВОРА",
+    desc: "Самодельное оружие советского детства. Срезалась прочная V-образная развилка из ясеня или сирени, шлифовалась стеклом. В аптеке покупался серый резиновый бинт (жгут) за 11 копеек. «Кожетком» служил язычок от старого кожаного ботинка.",
+    specs: [
+      { label: "Дальность стрельбы", val: "До 40–50 метров" },
+      { label: "Боеприпасы", val: "Гравий, шарики от подшипников, рябина" },
+      { label: "Цена материалов", val: "11 копеек (аптечный жгут)" },
+      { label: "Школьный статус", val: "Конфисковывалась завучем мгновенно" }
+    ],
+    secret: "Опытный стрелок мог с 15 метров сбить консервную банку с забора или попасть в спичечный коробок."
+  },
+  beetle: {
+    emoji: "🪲",
+    title: "Спичечный коробок с майским жуком",
+    badge: "ТАЙНЫЙ ПИТОМЕЦ",
+    desc: "В мае каждый уважающий себя советский школьник носил в кармане коробок спичек фабрики «Балабаново» (1 копейка) с проделанными иголкой дырочками для воздуха. Внутри сидел живой хрущ (майский жук) на свежих березовых листьях.",
+    specs: [
+      { label: "Вместимость", val: "1–2 отборных майских жука" },
+      { label: "Корм", val: "Молодые клейкие листья берёзы" },
+      { label: "Особый звук", val: "Характерное шуршание лапками на уроке" },
+      { label: "Степень риска", val: "Побег жука посреди контрольной работы" }
+    ],
+    secret: "Иногда к лапке жука привязывали длинную тонкую нитку от катушки № 40 и запускали летать по школьному коридору, как живой вертолёт."
+  },
+  "tram-ticket": {
+    emoji: "🎫",
+    title: "Счастливый трамвайный билетик (3 коп.)",
+    badge: "МАГИЯ ЦИФР",
+    desc: "Абонементный талон на проезд в городском трамвае за 3 копейки. В салоне стоял механический компостер — пассажир сам вставлял билет и нажимал рычаг, пробивая индивидуальный узор отверстий. Билет считался счастливым, если сумма первых трёх цифр шестизначного номера совпадала с суммой последних трёх!",
+    specs: [
+      { label: "Стоимость", val: "Трамвай — 3 коп., Троллейбус — 4 коп., Автобус — 5 коп." },
+      { label: "Ритуал", val: "Счастливый билет полагалось... съесть!" },
+      { label: "Контроль", val: "Штраф за безбилетный проезд — 1 рубль" },
+      { label: "Компостер", val: "Механический чугунный перфоратор" }
+    ],
+    secret: "Коллекции прокомпостированных счастливых билетиков бережно хранили между страницами школьного словаря или под обложкой дневника."
+  },
+  "button-pin": {
+    emoji: "📌",
+    title: "Канцелярская медная кнопка",
+    badge: "ПАРТИЗАНСКИЙ ШАЛОСТНИК",
+    desc: "Штампованная круглая металлическая кнопка с острым отогнутым треугольным шипом. Официально использовалась для прикалывания стенгазеты «Молния» к фанерному щиту. Неофициально — подкладывалась на учительский стул или на стул соседа по парте.",
+    specs: [
+      { label: "Цена за коробку (100 шт.)", val: "12 копеек" },
+      { label: "Материал", val: "Омеднённая сталь" },
+      { label: "Последствия шалости", val: "Вызов родителей и двойка по поведению" },
+      { label: "Легендарность", val: "Главный сюжет детского киножурнала «Ералаш»" }
+    ],
+    secret: "Опытный учитель перед тем, как сесть на деревянный стул, всегда незаметно проводил ладонью по сиденью."
+  }
+};
+
+function initPocketsAndMaterials() {
+  const pocketItems = document.querySelectorAll('.pocket-item');
+  const dossierCard = document.getElementById('pocket-dossier-card');
+
+  function renderRelic(relicKey) {
+    const relic = POCKET_RELICS[relicKey];
+    if (!relic || !dossierCard) return;
+
+    dossierCard.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <span style="font-size:2.8rem;">${relic.emoji}</span>
+        <span class="ih-badge">${relic.badge}</span>
+      </div>
+      <h3 style="font-family:var(--font-display);font-size:1.6rem;color:var(--navy-ink);margin-bottom:10px;">${relic.title}</h3>
+      <p style="font-size:0.96rem;line-height:1.6;color:var(--text-main);margin-bottom:18px;">${relic.desc}</p>
+      
+      <table class="inspector-specs-table">
+        <tbody>
+          ${relic.specs.map(s => `<tr><th>${s.label}</th><td>${s.val}</td></tr>`).join('')}
+        </tbody>
+      </table>
+
+      <div class="inspector-fact-quote">
+        <strong>💡 Исторический секрет:</strong> ${relic.secret}
+      </div>
+    `;
+  }
+
+  pocketItems.forEach(item => {
+    item.addEventListener('click', () => {
+      pocketItems.forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      renderRelic(item.dataset.relic);
+    });
+  });
+
+  // Render initial relic
+  renderRelic('coin15');
+}
+
+/* ==========================================================================
+   18. ARCHIVAL INSPECTOR & COMPREHENSIVE SOVIET GLOSSARY
+   ========================================================================== */
+const GLOSSARY_DATA = {
+  likbez: {
+    title: "Ликбез (Ликвидация безграмотности)",
+    category: "study",
+    catLabel: "Обучение & Реформы",
+    epoch: "1919–1940 гг.",
+    badge: "ДЕКРЕТ СОВНАРКОМА",
+    desc: "Государственная кампания по обучению грамоте всего взрослого населения страны. 26 декабря 1919 года В. И. Ленин подписал декрет: все граждане от 8 до 50 лет, не умевшие читать или писать, обязаны были учиться грамоте на родном или русском языке. За 20 лет уровень грамотности в СССР поднялся с 21% до 89% — невиданный в истории скачок!",
+    specs: [
+      { label: "Нормативный документ", val: "Декрет СНК РСФСР от 26.12.1919" },
+      { label: "Охвачено обучением", val: "Свыше 50 миллионов взрослых людей" },
+      { label: "Формат занятий", val: "Избы-читальни, вечерние школы, ликпункты" },
+      { label: "Главный лозунг", val: "«Грамотный, обучи неграмотного!»" }
+    ],
+    quote: "«Безграмотный человек стоит вне политики, его сначала надо научить азбуке» — В. И. Ленин."
+  },
+  rabfak: {
+    title: "Рабфак (Рабочий факультет)",
+    category: "study",
+    catLabel: "Обучение & ВУЗы",
+    epoch: "1919–1940 гг.",
+    badge: "СОЦИАЛЬНЫЙ ЛИФТ",
+    desc: "Специальные общеобразовательные отделения при университетах и институтах для подготовки рабочей и крестьянской молодежи к высшему образованию. Выпускник рабфака получал аттестат зрелости и право внеконкурсного поступления в любой ВУЗ СССР.",
+    specs: [
+      { label: "Срок обучения", val: "3 года (вечерний) / 4 года (заочный)" },
+      { label: "Состав учащихся", val: "Рабочие от станка и крестьяне от сохи" },
+      { label: "Стипендия", val: "100% государственное обеспечение" },
+      { label: "Результат", val: "Формирование новой советской научно-технической элиты" }
+    ],
+    quote: "Рабфаки окончили будущие академики, конструкторы ракетных систем и министры тяжелой промышленности СССР."
+  },
+  "erisman-desk": {
+    title: "Школьная парта Эрисмана (ГОСТ 11015-77)",
+    category: "study",
+    catLabel: "Предметы & Мебель",
+    epoch: "1870–1980-е гг.",
+    badge: "ЗОЛОТОЙ СТАНДАРТ ЗДОРОВЬЯ",
+    desc: "Конструкция школьной мебели, созданная выдающимся гигиенистом Фёдором Эрисманом и доработанная ссыльным революционером Петром Коротковым (который добавил откидную крышку и желобок для чернильницы). Жесткая связь стола со скамьей и наклон столешницы 15° гарантировали ровную осанку и сохранение детского зрения.",
+    specs: [
+      { label: "Угол наклона крышки", val: "Ровно 15 градусов" },
+      { label: "Дистанция сиденья", val: "Отрицательная (-4 см, край стола нависает над скамьей)" },
+      { label: "Материал", val: "Чугунный литой каркас, массив дуба и сосны" },
+      { label: "Срок службы", val: "40–50 лет непрерывной эксплуатации" }
+    ],
+    quote: "Парта Эрисмана не позволяла ребенку сидеть криво, опираться грудью на стол или сутулиться — физика конструкции принуждала держать спину прямо."
+  },
+  inkwell: {
+    title: "Чернильница-непроливайка & Перо № 86",
+    category: "relics",
+    catLabel: "Школьные реликвии",
+    epoch: "До конца 1960-х гг.",
+    badge: "ИНСТРУМЕНТ КАЛЛИГРАФИИ",
+    desc: "Фарфоровый или эбонитовый стаканчик с конусообразной воронкой внутри. Даже при переворачивании чернила не выливались наружу. В нее макали стальное перо № 86 («звёздочка» или «рондо»), вставленное в деревянную ручку. Уроки чистописания воспитывали филигранную моторику и концентрацию.",
+    specs: [
+      { label: "Чернила", val: "Фиолетовые на анилиновой основе (заправка 2 коп.)" },
+      { label: "Тетрадь", val: "В косую линейку с промокашкой (2 коп.)" },
+      { label: "Запрет", val: "Шариковые ручки были строго запрещены до 1968 г." },
+      { label: "Цена пера", val: "1 копейка за штуку" }
+    ],
+    quote: "Нажим — волосная линия, отпуск — тончайшая нить. Почерк советского выпускника 1950-х годов выглядел как типографская гравюра."
+  },
+  upk: {
+    title: "УПК (Учебно-производственный комбинат)",
+    category: "life",
+    catLabel: "Труд & Профессия",
+    epoch: "1974–1991 гг.",
+    badge: "ПЕРВАЯ ПРОФЕССИЯ",
+    desc: "Один день в неделю (обычно четверг) ученики 9–10 классов проводили не за партами, а на реальных заводах, в автопарках и вычислительных центрах. К выпуску из школы вместе с аттестатом школьник получал настоящее государственное свидетельство с рабочим разрядом!",
+    specs: [
+      { label: "Частота занятий", val: "1 полный рабочий день в неделю (6 часов)" },
+      { label: "Профессии юношей", val: "Автослесарь, токарь, фрезеровщик, водитель категории «С»" },
+      { label: "Профессии девушек", val: "Оператор ЭВМ (перфораторщица), медсестра, швея-мотористка" },
+      { label: "Итог", val: "Присвоение 2–3 квалификационного разряда" }
+    ],
+    quote: "В 17 лет советский десятиклассник умел полностью перебрать карбюратор грузовика ГАЗ-53 или написать программу на перфокартах."
+  },
+  sptu: {
+    title: "СПТУ / ПТУ (Профтехучилища)",
+    category: "study",
+    catLabel: "Образование & Карьера",
+    epoch: "1940–1991 гг.",
+    badge: "РАБОЧАЯ ГВАРДИЯ",
+    desc: "Средние профессионально-технические училища, куда поступали после 8 класса. ПТУ давали полное среднее образование плюс высококвалифицированную рабочую специальность. Учащиеся находились на полном государственном обеспечении: бесплатная форма, 3-разовое питание, общежитие и стипендия.",
+    specs: [
+      { label: "Срок обучения", val: "3 года (на базе 8 классов)" },
+      { label: "Гособеспечение", val: "Бесплатная одежда, питание, проезд" },
+      { label: "Стипендия", val: "15–40 рублей + 50% оплаты за практику" },
+      { label: "Зарплата на старте", val: "180–300 рублей (больше молодого инженера!)" }
+    ],
+    quote: "Рабочий класс в СССР обладал колоссальным престижем и социальной защищенностью: путевки в санатории, квартиры от завода и почет на Доске почета."
+  },
+  "gold-medal": {
+    title: "Золотая медаль выпускника школы",
+    category: "study",
+    catLabel: "Награды & Экзамены",
+    epoch: "С 1945 года",
+    badge: "ВЫСШАЯ ДОБЛЕСТЬ",
+    desc: "Награда, учрежденная СНК СССР в мае 1945 года для поощрения выдающихся успехов в учебе и примерного поведения. До 1954 года чеканилась из золота 583 пробы (вес 15,6 г чистого золота). Медалист имел законное право поступить в любой ВУЗ СССР, сдав всего один профильный экзамен на «отлично».",
+    specs: [
+      { label: "Критерий", val: "Оценка «5» (отлично) по всем предметам и поведению" },
+      { label: "Материал до 1954 г.", val: "Золото 583 пробы (15,6 г)" },
+      { label: "Материал после 1960 г.", val: "Томпак с гальваническим золочением" },
+      { label: "Льгота", val: "Зачисление в ВУЗ по результатам одного экзамена" }
+    ],
+    quote: "Золотая медаль открывала двери Московского государственного университета и Бауманки без изнурительного многоступенчатого конкурса."
+  },
+  nvp: {
+    title: "НВП (Начальная военная подготовка)",
+    category: "study",
+    catLabel: "Обучение & Предметы",
+    epoch: "1968–1990 гг.",
+    badge: "ГОТОВ К ЗАЩИТЕ РОДИНЫ",
+    desc: "Обязательный предмет для учащихся 9–10 классов. Преподавался кадровыми офицерами запаса («военруками»). Включал изучение устройства автомата Калашникова АК-47/АК-74, тактическую подготовку, метание учебных гранат, защиту от ОМП (надевание противогаза ГП-5 за 7 секунд) и основы первой помощи.",
+    specs: [
+      { label: "Норматив разборки АК", val: "15 секунд (отлично)" },
+      { label: "Норматив сборки АК", val: "25 секунд (отлично)" },
+      { label: "Одевание противогаза", val: "7 секунд по команде «Газы!»" },
+      { label: "Полевые сборы", val: "Войсковые стрельбища боевыми патронами" }
+    ],
+    quote: "Каждый советский юноша к моменту призыва в армию уже уверенно владел стрелковым оружием и знал воинский устав наизусть."
+  },
+  "slide-rule": {
+    title: "Логарифмическая линейка",
+    category: "relics",
+    catLabel: "Инженерные реликвии",
+    epoch: "До эпохи микрокалькуляторов",
+    badge: "АНАЛОГОВЫЙ КОМПЬЮТЕР",
+    desc: "Счетный инструмент советских инженеров и старшеклассников. С помощью подвижного движка и прозрачного визира позволяла мгновенно умножать, делить, возводить в степень, извлекать квадратные и кубические корни, вычислять тригонометрические функции и логарифмы.",
+    specs: [
+      { label: "Точность", val: "3–4 значащие цифры" },
+      { label: "Материал", val: "Берёзовый шпон, целлулоид, винипласт" },
+      { label: "Цена", val: "1 рубль 80 копеек" },
+      { label: "Исторический факт", val: "На логарифмических линейках рассчитали ракету Гагарина!" }
+    ],
+    quote: "Сергей Королёв и Игорь Курчатов создавали ракетно-ядерный щит сверхдержавы с помощью обычной деревянной счетной линейки."
+  },
+  "drafting-set": {
+    title: "Готовальня чертежная завода «Готовальня»",
+    category: "relics",
+    catLabel: "Школьные реликвии",
+    epoch: "1950–1980-е гг.",
+    badge: "ИНСТРУМЕНТ ТОЧНОСТИ",
+    desc: "Бархатный футляр с набором профессиональных чертежных инструментов: кронциркуль, разметочный циркуль, рейсфедеры, удлинитель и баночка с графитовыми грифелями. Изготавливалась из высококачественной латуни с никелированием и инструментальной стали 65Г.",
+    specs: [
+      { label: "Самый массовый набор", val: "«НЧК-14» (14 предметов)" },
+      { label: "Цена в магазине", val: "4 рубля 50 копеек" },
+      { label: "Футляр", val: "Дерево, обтянутое ледерином, с синим бархатом" },
+      { label: "Срок службы", val: "Передавалась от деда к внуку" }
+    ],
+    quote: "Черчение было обязательным школьным предметом с 7 по 8 класс. Без идеального чертежа гайки в разрезе получить аттестат было невозможно."
+  },
+  lto: {
+    title: "ЛТО (Лагерь труда и отдыха) & «На картошку»",
+    category: "life",
+    catLabel: "Быт & Труд",
+    epoch: "1960–1980-е гг.",
+    badge: "ТРУДОВОЙ ДЕСАНТ",
+    desc: "Трудовая четверть советских школьников и студентов. В сентябре или летом классы выезжали в подшефные колхозы и совхозы на сбор урожая: картофеля, моркови, яблок или сахарной свёклы. Сочетание реального физического труда, полевой кухни, вечерних костров и песен под гитару.",
+    specs: [
+      { label: "Продолжительность", val: "От 2 до 4 недель" },
+      { label: "Оплата труда", val: "Заработанные деньги шли на классные экскурсии" },
+      { label: "Быт", val: "Сельские школы, деревянные домики, котел с кашей" },
+      { label: "Фольклор", val: "«Ты помнишь, товарищ, как вместе картошку копали...»" }
+    ],
+    quote: "«На картошке» формировалась настоящая дружба, закалялся характер и исчезали любые городские предрассудки."
+  },
+  subbotnik: {
+    title: "Ленинский коммунистический субботник",
+    category: "life",
+    catLabel: "Быт & Традиции",
+    epoch: "Ежегодно 22 апреля",
+    badge: "ТРУД НА БЛАГО ОБЩЕСТВА",
+    desc: "Традиция добровольного бесплатного труда, зародившаяся весной 1919 года на станции Москва-Сортировочная. 22 апреля вся советская школа дружно выходила на благоустройство: белили стволы деревьев известью, мыли окна, красили заборы, высаживали кусты сирени под звуки маршей школьного радиоузла.",
+    specs: [
+      { label: "Дата проведения", val: "Суббота, ближайшая к 22 апреля (день рождения Ленина)" },
+      { label: "Инвентарь", val: "Мётлы, грабли, ведра, гашеная известь, газеты" },
+      { label: "Особенность", val: "Директор и первоклассник трудились плечом к плечу" },
+      { label: "Атмосфера", val: "Всесоюзный весенний праздник чистоты" }
+    ],
+    quote: "«Великий почин» — субботники воспитывали бережное отношение к школе и городу: сломать посаженное своими руками дерево считалось позором."
+  },
+  "pioneer-tie": {
+    title: "Пионерский галстук",
+    category: "org",
+    catLabel: "Организации & Идеология",
+    epoch: "1922–1991 гг.",
+    badge: "ЧАСТИЦА ЗНАМЕНИ",
+    desc: "Алая треугольная косынка, символ принадлежности к Всесоюзной пионерской организации им. В. И. Ленина. Три конца галстука символизировали нерушимую связь трех поколений советских людей: коммунистов, комсомольцев и пионеров. Завязывался специальным прямым узлом.",
+    specs: [
+      { label: "Материал", val: "Ацетатный шёлк (55 коп.) или шерстяной креп (75 коп.)" },
+      { label: "Утренний ритуал", val: "Ежедневная глажка горячим утюгом через мокрую марлю" },
+      { label: "Особый статус", val: "Забыть галстук дома приравнивалось к ЧП" },
+      { label: "Девиз пионера", val: "«Будь готов! — Всегда готов!»" }
+    ],
+    quote: "«Как повяжешь галстук, береги его: он ведь с красным знаменем цвета одного!» — Степан Щипачёв."
+  },
+  "oktyabryata-star": {
+    title: "Октябрятская звёздочка и значок",
+    category: "org",
+    catLabel: "Организации & Идеология",
+    epoch: "1923–1991 гг.",
+    badge: "ПЕРВАЯ СТУПЕНЬ (1–3 КЛАСС)",
+    desc: "Первая ступень советской детской организации. Октябрятами становились все ученики 1-го класса в канун 7 ноября. На груди носили рубиновую пятиконечную звездочку с золотым барельефом юного кудрявого Володи Ульянова. Класс делился на микрогруппы («звёздочки») ровно по 5 человек.",
+    specs: [
+      { label: "Возраст", val: "7–9 лет (1–3 классы)" },
+      { label: "Структура звёздочки", val: "Командир, санитар, цветовод, библиотекарь, хозяин" },
+      { label: "Материал значка", val: "Рубиновый пластик или эмалированный металл (15 коп.)" },
+      { label: "Правило", val: "«Октябрята — дружные ребята, читают и рисуют, играют и поют!»" }
+    ],
+    quote: "Звёздочка учила 7-летних детей взаимовыручке: если один заболел, санитар и командир обязательно навещали его дома с уроками."
+  },
+  zarnitsa: {
+    title: "Военно-спортивная игра «Зарница»",
+    category: "org",
+    catLabel: "Организации & Спорт",
+    epoch: "С 1967 года",
+    badge: "ГЛАВНОЕ ПРИКЛЮЧЕНИЕ ГОДА",
+    desc: "Всесоюзная военно-спортивная игра для пионеров, в которой участвовали до 20 миллионов подростков по всей стране. Финал игры проводился на настоящих военных полигонах с привлечением бронетранспортеров БТР, холостой стрельбы и армейской авиации. Главная задача — сорвать бумажный погон с плеча «противника».",
+    specs: [
+      { label: "Организаторы", val: "ЦК ВЛКСМ, Министерство обороны СССР, ДОСААФ" },
+      { label: "Дисциплины", val: "Ориентирование по компасу, марш-бросок, полоса препятствий" },
+      { label: "Правило поражения", val: "Сорванный погон означал «убит» или «ранен»" },
+      { label: "Обед", val: "Солдатская гречневая каша с тушенкой из полевой кухни" }
+    ],
+    quote: "«Зарница» воспитывала хладнокровие, командную слаженность и умение ориентироваться в лесу без гаджетов."
+  },
+  raspredelenie: {
+    title: "Государственное персональное распределение",
+    category: "study",
+    catLabel: "ВУЗы & Карьера",
+    epoch: "1930–1991 гг.",
+    badge: "ГАРАНТИЯ ТРУДОУСТРОЙСТВА",
+    desc: "Государственная система планового распределения выпускников ВУЗов и техникумов. Государство оплачивало учебу студента и платило стипендию, взамен выпускник обязан был отработать ровно 3 года по выданной путевке. Предприятие обязано было обеспечить молодого специалиста жильем и «подъемными» средствами.",
+    specs: [
+      { label: "Срок отработки", val: "Ровно 3 года" },
+      { label: "Привилегия медалистов", val: "Отличники («краснодипломники») выбирали город первыми" },
+      { label: "Гарантии", val: "Запрет на увольнение в течение 3 лет, бронь на жилье" },
+      { label: "География", val: "От закрытых НИИ Подмосковья до БАМа и Чукотки" }
+    ],
+    quote: "В СССР выпускник института не знал страха безработицы: в день получения диплома рабочее место и заработная плата были гарантированы законом."
+  },
+  diafilm: {
+    title: "Диафильмы & Проектор «ФД-2»",
+    category: "relics",
+    catLabel: "Школьные реликвии",
+    epoch: "1950–1980-е гг.",
+    badge: "ДОМАШНИЙ КИНОТЕАТР",
+    desc: "Студийная 35-миллиметровая пленка с позитивными цветными или черно-белыми кадрами и титрами внизу. Диафильмы производились студией «Диафильм» Госкино СССР миллионными тиражами: сказки, экранизации классики, учебные пособия по физике, астрономии и географии.",
+    specs: [
+      { label: "Цена пленки в тубусе", val: "30 копеек" },
+      { label: "Экран", val: "Белая простыня, приколотая кнопками к обоям" },
+      { label: "Проекторы", val: "«ФД-2», «Сказка», «Дэфи» (цена от 9 до 14 руб.)" },
+      { label: "Атмосфера", val: "Темная комната, запах нагретой лампы и щелчки кадропротяжки" }
+    ],
+    quote: "Уроки географии и биологии с диафильмами на школьном экране ждали с таким же трепетом, как мультфильмы в кинотеатре."
+  },
+  timur: {
+    title: "Тимуровское движение",
+    category: "org",
+    catLabel: "Организации & Волонтёрство",
+    epoch: "С 1940 года",
+    badge: "ТАЙНОЕ ДОБРО",
+    desc: "Массовое пионерское патриотическое движение, возникшее под влиянием повести Аркадия Гайдара «Тимур и его команда». Группы ребят тайно брали шефство над семьями фронтовиков, ветеранов и одинокими пожилыми людьми: кололи дрова, носили воду из колодца, пропалывали огороды, оставляя на калитке знак красной пятиконечной звезды.",
+    specs: [
+      { label: "Основатель образа", val: "Писатель Аркадий Гайдар (1940 г.)" },
+      { label: "Принцип", val: "Помогать бескорыстно и тайно, не требуя похвалы" },
+      { label: "Опознавательный знак", val: "Красная звезда на заборе подшефного дома" },
+      { label: "Масштаб", val: "Миллионы школьников в каждом городе и деревне" }
+    ],
+    quote: "Тимуровцы стали прообразом современного добровольчества задолго до появления слова «волонтёр»."
+  },
+  makulatura: {
+    title: "Сбор макулатуры и металлолома («Миллион — Родине!»)",
+    category: "life",
+    catLabel: "Быт & Труд",
+    epoch: "Ежегодно весной и осенью",
+    badge: "ВСЕНАРОДНАЯ ОПЕРАЦИЯ",
+    desc: "Массовые кампании пионерской организации по вторичной переработке сырья. Школьники обходили квартиры микрорайона, собирая старые газеты («Правда», «Известия») и журналы. Металлолом собирали на стройках и пустырях: старые трубы, рельсы, батареи. Спасенные тонны бумаги берегли советские леса, а металл шел на трактора и тепловозы.",
+    specs: [
+      { label: "Норматив на ученика", val: "15–20 кг макулатуры" },
+      { label: "Главный приз", val: "Путевка в пионерлагерь «Артек» или «Орлёнок»" },
+      { label: "Экологический эффект", val: "Каждые 60 кг макулатуры спасали одно дерево" },
+      { label: "Тара", val: "Связки бечевкой, взвешивание ручным пружинным безменом" }
+    ],
+    quote: "Советский школьник с 3-го класса понимал ценность ресурсов: бумага и металл не выбрасывались на помойку, а возвращались в экономику."
+  },
+  stewards: {
+    title: "Институт старост, санитарные тройки & Дежурство",
+    category: "life",
+    catLabel: "Самоуправление & Быт",
+    epoch: "Вся советская эпоха",
+    badge: "ШКОЛЬНОЕ САМОУПРАВЛЕНИЕ",
+    desc: "Развитая система детского коллективного управления классом. Староста — избираемый или назначаемый лидер, отвечавший за дисциплину, журнал и связь с учителями. Санитары проверяли чистоту рук, ногтей и ушей перед уроками. Дежурные после уроков мыли доску, посыпали пол влажными опилками и мыли класс швабрами.",
+    specs: [
+      { label: "Роли в классе", val: "Староста, физорг, культорг, санитар, редактор стенгазеты" },
+      { label: "Знак отличия", val: "Красная нарукавная повязка «ДЕЖУРНЫЙ»" },
+      { label: "Стенгазета", val: "«Колючка» или «Молния» (критика прогульщиков и двоечников)" },
+      { label: "Педагогика", val: "Система воспитания в коллективе А. С. Макаренко" }
+    ],
+    quote: "Уборщицы в советской школе мыли только общие коридоры. Свой класс ученики убирали сами, поэтому сорить на пол никому даже в голову не приходило."
+  }
+};
+
+function initArchivalInspectorAndGlossary() {
+  const inspectorModal = document.getElementById('inspector-modal');
+  const inspectorCloseBtn = document.getElementById('inspector-close-btn');
+  const inspectorContent = document.getElementById('inspector-card-content');
+
+  const glossaryBtn = document.getElementById('glossary-btn');
+  const glossaryModal = document.getElementById('glossary-modal');
+  const glossaryCloseBtn = document.getElementById('glossary-close-btn');
+  const glossarySearchInput = document.getElementById('glossary-search-input');
+  const glossaryFilterChips = document.querySelectorAll('.gf-chip');
+  const glossaryGrid = document.getElementById('glossary-cards-grid');
+
+  if (!inspectorModal || !inspectorContent) return;
+
+  // Open Inspector
+  function openInspector(termKey) {
+    const data = GLOSSARY_DATA[termKey];
+    if (!data) return;
+
+    inspectorContent.innerHTML = `
+      <div class="inspector-header">
+        <span class="ih-badge">${data.badge}</span>
+        <h3>${data.title}</h3>
+        <div class="ih-meta">Категория: ${data.catLabel} • Период: ${data.epoch}</div>
+      </div>
+      <div class="inspector-body">
+        <p>${data.desc}</p>
+        <table class="inspector-specs-table">
+          <tbody>
+            ${data.specs.map(s => `<tr><th>${s.label}</th><td>${s.val}</td></tr>`).join('')}
+          </tbody>
+        </table>
+        <div class="inspector-fact-quote">
+          <strong>Цитата эпохи:</strong> ${data.quote}
+        </div>
+      </div>
+    `;
+
+    inspectorModal.classList.add('is-active');
+    inspectorModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeInspector() {
+    inspectorModal.classList.remove('is-active');
+    inspectorModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  if (inspectorCloseBtn) inspectorCloseBtn.addEventListener('click', closeInspector);
+
+  inspectorModal.addEventListener('click', (e) => {
+    if (e.target === inspectorModal) closeInspector();
+  });
+
+  // Global delegation for term chips and term links
+  document.addEventListener('click', (e) => {
+    const termTarget = e.target.closest('.term-chip, .term-link, [data-term]');
+    if (termTarget) {
+      const termKey = termTarget.dataset.term;
+      if (termKey && GLOSSARY_DATA[termKey]) {
+        e.preventDefault();
+        openInspector(termKey);
+      }
+    }
+  });
+
+  // --- Glossary Modal Logic ---
+  let activeCategory = 'all';
+  let searchTerm = '';
+
+  function renderGlossaryCards() {
+    if (!glossaryGrid) return;
+
+    const keys = Object.keys(GLOSSARY_DATA).filter(k => {
+      const item = GLOSSARY_DATA[k];
+      const matchCat = (activeCategory === 'all' || item.category === activeCategory);
+      const query = searchTerm.toLowerCase().trim();
+      const matchSearch = !query || 
+        item.title.toLowerCase().includes(query) || 
+        item.desc.toLowerCase().includes(query) ||
+        item.catLabel.toLowerCase().includes(query);
+      return matchCat && matchSearch;
+    });
+
+    if (keys.length === 0) {
+      glossaryGrid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+          По запросу «${searchTerm}» ничего не найдено в советских архивах.
+        </div>
+      `;
+      return;
+    }
+
+    glossaryGrid.innerHTML = keys.map(k => {
+      const item = GLOSSARY_DATA[k];
+      return `
+        <div class="glossary-term-card" data-term="${k}">
+          <span class="gtc-cat">${item.catLabel}</span>
+          <h4 class="gtc-title">${item.title}</h4>
+          <p class="gtc-desc">${item.desc}</p>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function openGlossary() {
+    if (!glossaryModal) return;
+    renderGlossaryCards();
+    glossaryModal.classList.add('is-active');
+    glossaryModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    if (glossarySearchInput) {
+      setTimeout(() => glossarySearchInput.focus(), 100);
+    }
+  }
+
+  function closeGlossary() {
+    if (!glossaryModal) return;
+    glossaryModal.classList.remove('is-active');
+    glossaryModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  if (glossaryBtn) glossaryBtn.addEventListener('click', openGlossary);
+  if (glossaryCloseBtn) glossaryCloseBtn.addEventListener('click', closeGlossary);
+
+  if (glossaryModal) {
+    glossaryModal.addEventListener('click', (e) => {
+      if (e.target === glossaryModal) closeGlossary();
+    });
+  }
+
+  if (glossarySearchInput) {
+    glossarySearchInput.addEventListener('input', (e) => {
+      searchTerm = e.target.value;
+      renderGlossaryCards();
+    });
+  }
+
+  glossaryFilterChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      glossaryFilterChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeCategory = chip.dataset.cat;
+      renderGlossaryCards();
+    });
+  });
+
+  // ESC key listener for both modals
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeInspector();
+      closeGlossary();
+    }
+  });
+}
+
+/* ==========================================================================
+   19. TEAM PRESENTATION SPEECH PROMPTER MODAL
+   ========================================================================== */
+const TEAM_SPEECH_DATA = {
+  all: {
+    title: "Полный сценарий доклада команды (4 спикера, 5–6 минут)",
+    sections: [
+      {
+        speaker: 1,
+        title: "Спикер 1: Вступление, Ликбез и суровая школьная форма",
+        time: "0:00 – 1:30",
+        badgeClass: "speaker-1-badge",
+        text: `
+          <p><strong>[Действие: <span class="action-pill">🔔 Нажать звонок в шапке</span>]</strong></p>
+          <p>«Здравствуйте, уважаемые члены жюри и слушатели! Этот звонок знаком каждому советскому человеку. Сегодня наша команда представляет интерактивную монографию, посвященную феномену советского образования — системы, которая всего за полвека превратила страну с 80% неграмотности в главную космическую и научно-инженерную сверхдержаву мира.</p>
+          <p>Всё началось в декабре 1919 года с ленинского Декрета о Ликбезе. Обучение стало не привилегией, а всеобщей конституционной обязанностью. В 1930-е годы вводится всеобщая семилетка, а к 1970-м — обязательное 10-летнее среднее образование.</p>
+          <p>Обратите внимание на школьную форму: коричневое шерстяное платье с черным повседневным или белым праздничным кружевным фартуком у девочек и строгие полушерстяные синие костюмы у мальчиков. Форма стоила копейки, шилась из 100% овечьей шерсти с лавсаном и полностью стирала любое материальное неравенство среди детей — в классе все были равны!»</p>
+        `
+      },
+      {
+        speaker: 2,
+        title: "Спикер 2: Парта Эрисмана, чистописание и анатомия советских вещей",
+        time: "1:30 – 3:00",
+        badgeClass: "speaker-2-badge",
+        text: `
+          <p><strong>[Действие: <span class="action-pill">🪑 Покрутить 3D парту и поднять створку</span>]</strong></p>
+          <p>«Переходим к инженерному шедевру советской школы — знаменитой парте Эрисмана по ГОСТ 11015-77. Посмотрите на наш интерактивный 3D-тренажер: стол и скамья объединены в жесткую конструкцию на чугунном каркасе. Столешница наклонена ровно под углом 15 градусов — луч зрения падает строго перпендикулярно строке тетради, полностью защищая ребенка от сколиоза и близорукости.</p>
+          <p>А теперь главный фокус <em>(клик на створку)</em>: откидная крышка на шарнирах! Она позволяла классу мгновенно и абсолютно бесшумно вставать по стойке «смирно» при входе учителя.</p>
+          <p>До конца 1960-х годов писали только стальными перьями № 86 и чернильницами-непроливайками. Шариковые ручки были под строгим запретом: считалось, что именно перо формирует мелкую моторику мозга. А школьные вещи — от готовален из рессорной стали 65Г до деревянных линеек — производились по военным ГОСТам и служили десятилетиями!»</p>
+        `
+      },
+      {
+        speaker: 3,
+        title: "Спикер 3: Иерархия, самоуправление, дежурство и субботники",
+        time: "3:00 – 4:15",
+        badgeClass: "speaker-3-badge",
+        text: `
+          <p>«Советская школа никогда не оказывала «образовательных услуг». Она воспитывала гражданина через коллективный труд. Каждый ребенок проходил нерушимую возрастную иерархию: с 7 лет — октябрята со звездочкой, с 10 лет — пионеры с красным галстуком, а с 14 лет — Ленинский комсомол (ВЛКСМ).</p>
+          <p>Класс управлялся самими учениками! Староста отмечал отсутствующих и следил за порядком. А каждую неделю назначалась пара дежурных с красными нарукавными повязками. Уборщицы мыли только коридоры. Кабинеты убирали сами дети: поднимали стулья на парты, посыпали дощатый пол влажными опилками, чтобы связать меловую пыль, и мыли класс шваброй.</p>
+          <p>Дважды в год школьники спасали экономику страны: операция «Миллион — Родине!» по сбору макулатуры и металлолома, апрельские Ленинские субботники и осенние выезды старшеклассников «на картошку» в колхозы закаляли характер на всю оставшуюся жизнь!»</p>
+        `
+      },
+      {
+        speaker: 4,
+        title: "Спикер 4: Развилка ВУЗ/ПТУ, калькулятор цен и финал",
+        time: "4:15 – 5:30",
+        badgeClass: "speaker-4-badge",
+        text: `
+          <p><strong>[Действие: <span class="action-pill">🪙 Кликнуть монету 15 коп. в калькуляторе</span>]</strong></p>
+          <p>«После 8 класса перед советским подростком вставал выбор. СПТУ давали рабочую специальность на полном гособеспечении — выпускник к 18 годам зарабатывал до 250 рублей! А после 10 класса лучших ждали ВУЗы. Никакого платного обучения не существовало, студенты получали стипендию, а золотая медаль давала право поступления всего по одному профильному экзамену.</p>
+          <p>А платой за бесплатный ВУЗ было обязательное 3-летнее Государственное распределение на предприятия страны — но зато никто не знал страха безработицы!</p>
+          <p>Посмотрите на наш калькулятор цен: на обычные 15-20 копеек карманных денег можно было купить стакан газировки с сиропом, школьную тетрадь, билет в кино и порцию пломбира в вафельном стаканчике.</p>
+          <p>Советское образование доказало: когда государство инвестирует в фундаментальную науку, дисциплину и уважение к учителю — нация способна первой покорить космос и построить великую державу. Спасибо за внимание! Наш сайт открыт для ваших вопросов и прохождения Всесоюзного экзамена!»</p>
+        `
+      }
+    ]
+  },
+  1: {
+    title: "Речь Спикера 1 (Ведущий / Историк) • Хронометраж: 1 мин 30 сек",
+    sections: [
+      {
+        speaker: 1,
+        title: "Вступление, Ликбез и суровая школьная форма",
+        time: "0:00 – 1:30",
+        badgeClass: "speaker-1-badge",
+        text: `
+          <p><strong>[Действие: <span class="action-pill">🔔 Нажать звонок в шапке сайта</span>]</strong></p>
+          <p>«Здравствуйте, уважаемые члены жюри и слушатели! Этот звонок знаком каждому советскому человеку. Сегодня наша команда представляет интерактивную монографию, посвященную феномену советского образования — системы, которая всего за полвека превратила страну с 80% неграмотности в главную космическую и научно-инженерную сверхдержаву мира.</p>
+          <p>Всё началось в декабре 1919 года с ленинского Декрета о Ликбезе. Обучение стало не привилегией, а всеобщей конституционной обязанностью. В 1930-е годы вводится всеобщая семилетка, а к 1970-м — обязательное 10-летнее среднее образование.</p>
+          <p>Обратите внимание на школьную форму: коричневое шерстяное платье с черным повседневным или белым праздничным кружевным фартуком у девочек и строгие полушерстяные синие костюмы у мальчиков. Форма стоила копейки, шилась из 100% овечьей шерсти с лавсаном и полностью стирала любое материальное неравенство среди детей — в классе все были равны! Передаю слово нашему инженеру!»</p>
+        `
+      }
+    ]
+  },
+  2: {
+    title: "Речь Спикера 2 (Инженер / Аналитик) • Хронометраж: 1 мин 30 сек",
+    sections: [
+      {
+        speaker: 2,
+        title: "Парта Эрисмана, чистописание и материаловедение СССР",
+        time: "1:30 – 3:00",
+        badgeClass: "speaker-2-badge",
+        text: `
+          <p><strong>[Действие: <span class="action-pill">🪑 Покрутить 3D парту и нажать «Поднять крышку»</span>]</strong></p>
+          <p>«Переходим к инженерному шедевру советской школы — знаменитой парте Эрисмана по ГОСТ 11015-77. Посмотрите на наш интерактивный 3D-тренажер: стол и скамья объединены в жесткую конструкцию на чугунном каркасе. Столешница наклонена ровно под углом 15 градусов — луч зрения падает строго перпендикулярно строке тетради, полностью защищая ребенка от сколиоза и близорукости.</p>
+          <p>А теперь главный фокус <em>(клик на створку парты)</em>: откидная крышка на шарнирах! Она позволяла классу мгновенно и абсолютно бесшумно вставать по стойке «смирно» при входе учителя.</p>
+          <p>До конца 1960-х годов писали только стальными перьями № 86 и чернильницами-непроливайками. Шариковые ручки были под строгим запретом: считалось, что именно перо формирует мелкую моторику мозга. А школьные вещи — от готовален из рессорной стали 65Г до деревянных линеек — производились по военным ГОСТам из натурального сырья и служили десятилетиями!»</p>
+        `
+      }
+    ]
+  },
+  3: {
+    title: "Речь Спикера 3 (Социолог / Куратор) • Хронометраж: 1 мин 15 сек",
+    sections: [
+      {
+        speaker: 3,
+        title: "Иерархия, самоуправление, дежурство и субботники",
+        time: "3:00 – 4:15",
+        badgeClass: "speaker-3-badge",
+        text: `
+          <p>«Советская школа никогда не оказывала «образовательных услуг». Она воспитывала гражданина через коллективный труд. Каждый ребенок проходил нерушимую возрастную иерархию: с 7 лет — октябрята со звездочкой, с 10 лет — пионеры с красным галстуком, а с 14 лет — Ленинский комсомол (ВЛКСМ).</p>
+          <p>Класс управлялся самими учениками! Староста отмечал отсутствующих и следил за порядком. А каждую неделю назначалась пара дежурных с красными нарукавными повязками. Уборщицы мыли только коридоры. Кабинеты убирали сами дети: поднимали стулья на парты, посыпали дощатый пол влажными опилками, чтобы связать меловую пыль, и мыли класс шваброй.</p>
+          <p>Дважды в год школьники спасали экономику страны: операция «Миллион — Родине!» по сбору макулатуры и металлолома, апрельские Ленинские субботники и осенние выезды старшеклассников «на картошку» в колхозы закаляли характер на всю оставшуюся жизнь!»</p>
+        `
+      }
+    ]
+  },
+  4: {
+    title: "Речь Спикера 4 (Экономист / Финал) • Хронометраж: 1 мин 15 сек",
+    sections: [
+      {
+        speaker: 4,
+        title: "Развилка ВУЗ/ПТУ, калькулятор цен эпохи и заключение",
+        time: "4:15 – 5:30",
+        badgeClass: "speaker-4-badge",
+        text: `
+          <p><strong>[Действие: <span class="action-pill">🪙 Кликнуть 15 копеек в калькуляторе и показать чек</span>]</strong></p>
+          <p>«После 8 класса перед советским подростком вставал выбор. СПТУ давали рабочую специальность на полном гособеспечении — выпускник к 18 годам зарабатывал до 250 рублей! А после 10 класса лучших ждали ВУЗы. Никакого платного обучения не существовало, студенты получали стипендию, а золотая медаль давала право поступления всего по одному профильному экзамену.</p>
+          <p>А платой за бесплатный ВУЗ было обязательное 3-летнее Государственное распределение на предприятия страны — но зато никто не знал страха безработицы!</p>
+          <p>Посмотрите на наш калькулятор цен: на обычные 15-20 копеек карманных денег можно было купить стакан газировки с сиропом, школьную тетрадь, билет в кино и порцию пломбира в вафельном стаканчике.</p>
+          <p>Советское образование доказало: когда государство инвестирует в фундаментальную науку, дисциплину и уважение к учителю — нация способна первой покорить космос и построить великую державу. Спасибо за внимание! Наш сайт открыт для ваших вопросов и прохождения Всесоюзного экзамена!»</p>
+        `
+      }
+    ]
+  }
+};
+
+function initTeamSpeechPrompter() {
+  const speechBtn = document.getElementById('team-speech-btn');
+  const speechModal = document.getElementById('speech-modal');
+  const speechCloseBtn = document.getElementById('speech-close-btn');
+  const speechCloseFooter = document.getElementById('btn-close-speech-footer');
+  const speechBody = document.getElementById('speech-content-body');
+  const tabBtns = document.querySelectorAll('.speech-tab-btn');
+  const copyBtn = document.getElementById('btn-copy-speech');
+
+  if (!speechModal || !speechBody) return;
+
+  function renderSpeech(speakerKey) {
+    const data = TEAM_SPEECH_DATA[speakerKey];
+    if (!data) return;
+
+    speechBody.innerHTML = `
+      <div style="font-family:var(--font-mono);font-size:0.82rem;color:var(--amber-gold);margin-bottom:16px;text-transform:uppercase;font-weight:700;">
+        ${data.title}
+      </div>
+      ${data.sections.map(sec => `
+        <div class="speech-section-card">
+          <div class="ssc-speaker-badge ${sec.badgeClass}">
+            <span>👤 Спикер ${sec.speaker}</span> • <span>⏱️ ${sec.time}</span>
+          </div>
+          <h4 style="font-family:var(--font-display);font-size:1.15rem;color:var(--navy-ink);margin-bottom:8px;">${sec.title}</h4>
+          <div style="font-size:0.95rem;line-height:1.65;color:var(--text-main);">
+            ${sec.text}
+          </div>
+        </div>
+      `).join('')}
+    `;
+  }
+
+  function openSpeech() {
+    renderSpeech('all');
+    speechModal.classList.add('is-active');
+    speechModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSpeech() {
+    speechModal.classList.remove('is-active');
+    speechModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  if (speechBtn) speechBtn.addEventListener('click', openSpeech);
+  if (speechCloseBtn) speechCloseBtn.addEventListener('click', closeSpeech);
+  if (speechCloseFooter) speechCloseFooter.addEventListener('click', closeSpeech);
+
+  speechModal.addEventListener('click', (e) => {
+    if (e.target === speechModal) closeSpeech();
+  });
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderSpeech(btn.dataset.speaker);
+    });
+  });
+
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      const activeTab = document.querySelector('.speech-tab-btn.active');
+      const speakerKey = activeTab ? activeTab.dataset.speaker : 'all';
+      const data = TEAM_SPEECH_DATA[speakerKey];
+      if (!data) return;
+
+      const plainText = data.sections.map(s => `[СПИКЕР ${s.speaker} (${s.time}) — ${s.title}]\n` + s.text.replace(/<[^>]+>/g, '').trim()).join('\n\n');
+      navigator.clipboard.writeText(plainText).then(() => {
+        const origText = copyBtn.textContent;
+        copyBtn.textContent = '✅ Текст скопирован!';
+        setTimeout(() => { copyBtn.textContent = origText; }, 2000);
+      }).catch(() => {
+        copyBtn.textContent = 'Выделите текст вручную';
+      });
+    });
+  }
+}
