@@ -3336,7 +3336,8 @@ body {
 
 .btn-card-flip-back:hover {
   background: var(--bright-red);
-  transform: translateY(-2px);
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.35);
 }
 
 /* 4. 3D Erisman Desk Simulator */
