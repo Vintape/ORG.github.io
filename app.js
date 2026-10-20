@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initPriceCalculator();
   initPocketsAndMaterials();
   initArchivalInspectorAndGlossary();
-  initTeamSpeechPrompter();
   initQuiz();
   initNavigation();
   initScrollProgress();
@@ -1078,7 +1077,7 @@ function initChalkDustCanvas() {
 }
 
 /* --------------------------------------------------------------------------
-   11. HERO 3D ARTIFACT SHOWCASE: GOLD MEDAL & PIONEER BADGE
+   11. HERO 3D ARTIFACT SHOWCASE: THREE.JS WEBGL GOLD MEDAL & PIONEER BADGE
    -------------------------------------------------------------------------- */
 const ARTIFACT_DATA = {
   medal: {
@@ -1108,12 +1107,10 @@ const ARTIFACT_DATA = {
 };
 
 function initHero3DArtifact() {
+  const canvas = document.getElementById('artifact-canvas');
   const stage = document.getElementById('artifact-stage');
-  const scene = document.getElementById('artifact-3d-scene');
   const tabMedal = document.getElementById('tab-medal');
   const tabBadge = document.getElementById('tab-badge');
-  const modelMedal = document.getElementById('model-medal');
-  const modelBadge = document.getElementById('model-badge');
 
   const btnSpin = document.getElementById('btn-spin-artifact');
   const btnFlip = document.getElementById('btn-flip-artifact');
@@ -1125,139 +1122,839 @@ function initHero3DArtifact() {
   const dossierDesc = document.getElementById('dossier-desc');
   const dossierSpecs = document.getElementById('dossier-specs');
 
-  if (!stage || !scene) return;
+  if (!canvas || !stage || typeof THREE === 'undefined') return;
 
-  let currentArtifact = 'medal';
-  let rotX = 10;
-  let rotY = 15;
-  let isDragging = false;
-  let lastMouseX = 0;
-  let lastMouseY = 0;
-  let isAutoSpinning = false;
-  let spinAnimationId = null;
+  // Scene setup
+  const scene = new THREE.Scene();
 
-  function updateTransform(smooth = false) {
-    scene.style.transition = smooth ? 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)' : 'transform 0.05s ease-out';
-    scene.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+  const width = canvas.clientWidth || 320;
+  const height = canvas.clientHeight || 340;
+  const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 50);
+  camera.position.set(0, 0, 3.4);
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    alpha: true,
+    powerPreference: 'high-performance'
+  });
+  renderer.setSize(width, height, false);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+
+  // OrbitControls
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 2.0;
+  controls.maxDistance = 5.5;
+  controls.enablePan = false;
+  controls.rotateSpeed = 0.8;
+  controls.autoRotate = false;
+  controls.autoRotateSpeed = 3.5;
+
+  // Lighting
+  const ambLight = new THREE.AmbientLight(0xfff5ea, 1.2);
+  scene.add(ambLight);
+
+  const keyLight = new THREE.DirectionalLight(0xfffaec, 2.2);
+  keyLight.position.set(3, 4, 3.5);
+  scene.add(keyLight);
+
+  const fillLight = new THREE.DirectionalLight(0x90caf9, 0.7);
+  fillLight.position.set(-3, -2, 2.5);
+  scene.add(fillLight);
+
+  const rimLight = new THREE.DirectionalLight(0xffd54f, 1.5);
+  rimLight.position.set(0, 4, -3);
+  scene.add(rimLight);
+
+  const backLight = new THREE.DirectionalLight(0xff8f00, 1.0);
+  backLight.position.set(-2, -3, -2.5);
+  scene.add(backLight);
+
+  // Group wrappers
+  const mainGroup = new THREE.Group();
+  scene.add(mainGroup);
+
+  const medalGroup = new THREE.Group();
+  const badgeGroup = new THREE.Group();
+  badgeGroup.visible = false;
+  mainGroup.add(medalGroup);
+  mainGroup.add(badgeGroup);
+
+  // --- PROCEDURAL TEXTURES FOR GOLD MEDAL ---
+  function createMedalObverseTexture() {
+    const c = document.createElement('canvas');
+    c.width = 1024;
+    c.height = 1024;
+    const ctx = c.getContext('2d');
+
+    // Base Gold background
+    const bgGrad = ctx.createRadialGradient(512, 512, 50, 512, 512, 512);
+    bgGrad.addColorStop(0, '#FFE89E');
+    bgGrad.addColorStop(0.4, '#F7C644');
+    bgGrad.addColorStop(0.8, '#D89312');
+    bgGrad.addColorStop(1, '#9C6202');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, 1024, 1024);
+
+    // Subtle brushed metal concentric rings
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 1.5;
+    for (let r = 80; r < 500; r += 6) {
+      ctx.beginPath();
+      ctx.arc(512, 512, r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Outer rim border
+    ctx.lineWidth = 26;
+    ctx.strokeStyle = '#FDE49E';
+    ctx.beginPath();
+    ctx.arc(512, 512, 492, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#7D4700';
+    ctx.beginPath();
+    ctx.arc(512, 512, 478, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Beaded ring (точечный ободок)
+    const numDots = 96;
+    for (let i = 0; i < numDots; i++) {
+      const angle = (i / numDots) * Math.PI * 2;
+      const x = 512 + Math.cos(angle) * 464;
+      const y = 512 + Math.sin(angle) * 464;
+      ctx.fillStyle = '#FFF2B2';
+      ctx.beginPath();
+      ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#6D3C00';
+      ctx.beginPath();
+      ctx.arc(x + 1, y + 1, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Sunburst rays from center
+    ctx.save();
+    ctx.translate(512, 512);
+    ctx.strokeStyle = 'rgba(255, 245, 180, 0.45)';
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 48; i++) {
+      ctx.rotate((Math.PI * 2) / 48);
+      ctx.beginPath();
+      ctx.moveTo(110, 0);
+      ctx.lineTo(390, 0);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Curved Text: «ЗА ОТЛИЧНЫЕ УСПЕХИ» (top arch)
+    ctx.save();
+    ctx.translate(512, 512);
+    ctx.font = '900 46px "JetBrains Mono", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const topText = 'ЗА ОТЛИЧНЫЕ УСПЕХИ';
+    const topRadius = 390;
+    const startAngle = -Math.PI * 0.72;
+    const endAngle = -Math.PI * 0.28;
+    const stepAngle = (endAngle - startAngle) / (topText.length - 1);
+
+    for (let i = 0; i < topText.length; i++) {
+      const charAngle = startAngle + i * stepAngle;
+      ctx.save();
+      ctx.rotate(charAngle + Math.PI / 2);
+      ctx.translate(0, -topRadius);
+      // Emboss shadow & highlight
+      ctx.fillStyle = '#5A3100';
+      ctx.fillText(topText[i], 2, 2);
+      ctx.fillStyle = '#FFF8D1';
+      ctx.fillText(topText[i], 0, 0);
+      ctx.restore();
+    }
+    ctx.restore();
+
+    // Bottom motto arch: «В УЧЕНИИ, ТРУДЕ И ЗА ПРИМЕРНОЕ ПОВЕДЕНИЕ»
+    ctx.save();
+    ctx.translate(512, 512);
+    ctx.font = '800 28px "JetBrains Mono", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const botText = 'В УЧЕНИИ, ТРУДЕ И ЗА ПРИМЕРНОЕ ПОВЕДЕНИЕ';
+    const botRadius = 410;
+    const bStartAngle = Math.PI * 0.74;
+    const bEndAngle = Math.PI * 0.26;
+    const bStepAngle = (bEndAngle - bStartAngle) / (botText.length - 1);
+
+    for (let i = 0; i < botText.length; i++) {
+      const charAngle = bStartAngle + i * bStepAngle;
+      ctx.save();
+      ctx.rotate(charAngle - Math.PI / 2);
+      ctx.translate(0, botRadius);
+      ctx.fillStyle = '#5A3100';
+      ctx.fillText(botText[i], 1.5, 1.5);
+      ctx.fillStyle = '#FFF8D1';
+      ctx.fillText(botText[i], 0, 0);
+      ctx.restore();
+    }
+    ctx.restore();
+
+    // Laurel Branches (левая и правая лавровые ветви)
+    ctx.save();
+    ctx.strokeStyle = '#FFE082';
+    ctx.fillStyle = '#D98200';
+    ctx.lineWidth = 4;
+    for (let angle = 0.55 * Math.PI; angle < 0.95 * Math.PI; angle += 0.08) {
+      const lx = 512 + Math.cos(angle) * 310;
+      const ly = 512 + Math.sin(angle) * 310;
+      ctx.beginPath();
+      ctx.ellipse(lx, ly, 22, 10, angle + 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+    for (let angle = 0.05 * Math.PI; angle < 0.45 * Math.PI; angle += 0.08) {
+      const rx = 512 + Math.cos(angle) * 310;
+      const ry = 512 + Math.sin(angle) * 310;
+      ctx.beginPath();
+      ctx.ellipse(rx, ry, 22, 10, angle - 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Open Book at Center
+    ctx.save();
+    ctx.translate(512, 590);
+    // Shadow
+    ctx.fillStyle = 'rgba(70, 38, 0, 0.4)';
+    ctx.fillRect(-122, -48, 244, 96);
+    // Pages
+    ctx.fillStyle = '#FFF8DC';
+    ctx.strokeStyle = '#7D4700';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, -40);
+    ctx.quadraticCurveTo(-65, -55, -125, -42);
+    ctx.lineTo(-125, 45);
+    ctx.quadraticCurveTo(-65, 30, 0, 48);
+    ctx.quadraticCurveTo(65, 30, 125, 45);
+    ctx.lineTo(125, -42);
+    ctx.quadraticCurveTo(65, -55, 0, -40);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // Spine
+    ctx.beginPath();
+    ctx.moveTo(0, -40);
+    ctx.lineTo(0, 48);
+    ctx.lineWidth = 5;
+    ctx.stroke();
+    // Ruled lines in book
+    ctx.strokeStyle = 'rgba(100, 60, 10, 0.4)';
+    ctx.lineWidth = 2.5;
+    for (let y = -26; y <= 26; y += 13) {
+      ctx.beginPath();
+      ctx.moveTo(-110, y);
+      ctx.lineTo(-15, y);
+      ctx.moveTo(15, y);
+      ctx.lineTo(110, y);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Center Red Enamel Star above book
+    ctx.save();
+    ctx.translate(512, 420);
+    function drawStar(radius, inset, n = 5) {
+      ctx.beginPath();
+      for (let i = 0; i < n * 2; i++) {
+        const r = i % 2 === 0 ? radius : inset;
+        const a = (i * Math.PI) / n - Math.PI / 2;
+        const x = Math.cos(a) * r;
+        const y = Math.sin(a) * r;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+    }
+
+    // Outer star gold trim
+    ctx.fillStyle = '#FFE082';
+    drawStar(112, 48);
+    ctx.fill();
+
+    // Inner ruby star
+    const rubyGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 100);
+    rubyGrad.addColorStop(0, '#FF1744');
+    rubyGrad.addColorStop(0.65, '#D50000');
+    rubyGrad.addColorStop(1, '#8B0000');
+    ctx.fillStyle = rubyGrad;
+    drawStar(98, 42);
+    ctx.fill();
+    ctx.strokeStyle = '#FFE082';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Facet lines on star
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 5; i++) {
+      const a = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(Math.cos(a) * 98, Math.sin(a) * 98);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Hallmark at bottom: «ГОСЗНАК СССР»
+    ctx.font = '900 20px "JetBrains Mono", sans-serif';
+    ctx.fillStyle = '#7A4302';
+    ctx.textAlign = 'center';
+    ctx.fillText('ГОЗНАК СССР', 512, 920);
+
+    return new THREE.CanvasTexture(c);
   }
 
-  // Mouse / Touch drag rotation
-  stage.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    lastMouseX = e.clientX;
-    lastMouseY = e.clientY;
-    stopAutoSpin();
-  });
+  function createMedalReverseTexture() {
+    const c = document.createElement('canvas');
+    c.width = 1024;
+    c.height = 1024;
+    const ctx = c.getContext('2d');
 
-  window.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    const deltaX = e.clientX - lastMouseX;
-    const deltaY = e.clientY - lastMouseY;
-    lastMouseX = e.clientX;
-    lastMouseY = e.clientY;
+    // Base Gold background
+    const bgGrad = ctx.createRadialGradient(512, 512, 50, 512, 512, 512);
+    bgGrad.addColorStop(0, '#FFE89E');
+    bgGrad.addColorStop(0.4, '#F7C644');
+    bgGrad.addColorStop(0.8, '#D89312');
+    bgGrad.addColorStop(1, '#9C6202');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, 1024, 1024);
 
-    rotY += deltaX * 0.8;
-    rotX -= deltaY * 0.8;
-    rotX = Math.max(-65, Math.min(65, rotX));
-    updateTransform(false);
-  });
+    // Milled border
+    ctx.lineWidth = 26;
+    ctx.strokeStyle = '#FDE49E';
+    ctx.beginPath();
+    ctx.arc(512, 512, 492, 0, Math.PI * 2);
+    ctx.stroke();
 
-  window.addEventListener('mouseup', () => {
-    isDragging = false;
-  });
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#7D4700';
+    ctx.beginPath();
+    ctx.arc(512, 512, 478, 0, Math.PI * 2);
+    ctx.stroke();
 
-  // Touch support
-  stage.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-      isDragging = true;
-      lastMouseX = e.touches[0].clientX;
-      lastMouseY = e.touches[0].clientY;
-      stopAutoSpin();
+    // Circular USSR Motto: «СОЮЗ СОВЕТСКИХ СОЦИАЛИСТИЧЕСКИХ РЕСПУБЛИК»
+    ctx.save();
+    ctx.translate(512, 512);
+    ctx.font = '900 36px "JetBrains Mono", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const ussrText = 'СОЮЗ СОВЕТСКИХ СОЦИАЛИСТИЧЕСКИХ РЕСПУБЛИК';
+    const ussrRadius = 410;
+    const startAngle = -Math.PI * 0.88;
+    const endAngle = -Math.PI * 0.12;
+    const stepAngle = (endAngle - startAngle) / (ussrText.length - 1);
+
+    for (let i = 0; i < ussrText.length; i++) {
+      const charAngle = startAngle + i * stepAngle;
+      ctx.save();
+      ctx.rotate(charAngle + Math.PI / 2);
+      ctx.translate(0, -ussrRadius);
+      ctx.fillStyle = '#5A3100';
+      ctx.fillText(ussrText[i], 2, 2);
+      ctx.fillStyle = '#FFF8D1';
+      ctx.fillText(ussrText[i], 0, 0);
+      ctx.restore();
     }
-  }, { passive: true });
+    ctx.restore();
 
-  window.addEventListener('touchmove', (e) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    const deltaX = e.touches[0].clientX - lastMouseX;
-    const deltaY = e.touches[0].clientY - lastMouseY;
-    lastMouseX = e.touches[0].clientX;
-    lastMouseY = e.touches[0].clientY;
+    // STATE EMBLEM OF THE USSR (Герб СССР)
+    ctx.save();
+    ctx.translate(512, 470);
 
-    rotY += deltaX * 0.8;
-    rotX -= deltaY * 0.8;
-    rotX = Math.max(-65, Math.min(65, rotX));
-    updateTransform(false);
-  }, { passive: true });
+    // Globe
+    ctx.strokeStyle = '#FFE082';
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.arc(0, 0, 160, 0, Math.PI * 2);
+    ctx.stroke();
 
-  window.addEventListener('touchend', () => {
-    isDragging = false;
+    // Globe grid lines
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 85, 160, 0, 0, Math.PI * 2);
+    ctx.moveTo(-160, 0);
+    ctx.lineTo(160, 0);
+    ctx.moveTo(-138, -80);
+    ctx.lineTo(138, -80);
+    ctx.moveTo(-138, 80);
+    ctx.lineTo(138, 80);
+    ctx.stroke();
+
+    // Rising Sun at bottom
+    ctx.fillStyle = '#FFF176';
+    ctx.beginPath();
+    ctx.arc(0, 160, 75, Math.PI, 0, false);
+    ctx.fill();
+
+    // Wheat Sheaves tied with ribbons
+    ctx.strokeStyle = '#FFD54F';
+    ctx.lineWidth = 14;
+    ctx.beginPath();
+    ctx.arc(0, 30, 205, Math.PI * 0.78, Math.PI * 1.25);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 30, 205, -Math.PI * 0.25, Math.PI * 0.22);
+    ctx.stroke();
+
+    // Ribbons
+    ctx.strokeStyle = '#C62828';
+    ctx.lineWidth = 10;
+    for (let dy = -80; dy <= 120; dy += 45) {
+      ctx.beginPath();
+      ctx.moveTo(-218, dy);
+      ctx.lineTo(-192, dy + 18);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(218, dy);
+      ctx.lineTo(192, dy + 18);
+      ctx.stroke();
+    }
+
+    // Crossed Hammer and Sickle
+    ctx.lineWidth = 14;
+    ctx.strokeStyle = '#FFE57F';
+    ctx.fillStyle = '#FFE57F';
+    ctx.beginPath();
+    ctx.moveTo(-45, 60);
+    ctx.lineTo(55, -40);
+    ctx.stroke();
+    ctx.fillRect(40, -55, 30, 18);
+    ctx.beginPath();
+    ctx.arc(5, -10, 68, Math.PI * 0.25, Math.PI * 1.35, false);
+    ctx.lineWidth = 16;
+    ctx.stroke();
+    ctx.fillStyle = '#795548';
+    ctx.fillRect(-52, 45, 14, 30);
+
+    // Top Soviet Star
+    ctx.fillStyle = '#D50000';
+    ctx.strokeStyle = '#FFE082';
+    ctx.lineWidth = 3;
+    ctx.save();
+    ctx.translate(0, -220);
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const r = i % 2 === 0 ? 32 : 14;
+      const a = (i * Math.PI) / 5 - Math.PI / 2;
+      const x = Math.cos(a) * r;
+      const y = Math.sin(a) * r;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.restore();
+
+    // Mintmark plaque at bottom
+    ctx.save();
+    ctx.translate(512, 850);
+    ctx.strokeStyle = '#7D4700';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(-250, -40, 500, 80);
+    ctx.fillStyle = 'rgba(255, 245, 180, 0.2)';
+    ctx.fillRect(-250, -40, 500, 80);
+
+    ctx.font = '900 24px "JetBrains Mono", sans-serif';
+    ctx.fillStyle = '#5A3100';
+    ctx.textAlign = 'center';
+    ctx.fillText('МОНЕТНЫЙ ДВОР • ЛМД', 0, -8);
+    ctx.font = '800 22px "JetBrains Mono", sans-serif';
+    ctx.fillText('ЗОЛОТО 583° • ВЕС 15.6 г', 0, 22);
+    ctx.restore();
+
+    return new THREE.CanvasTexture(c);
+  }
+
+  function createMilledEdgeTexture() {
+    const c = document.createElement('canvas');
+    c.width = 512;
+    c.height = 64;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#D89312';
+    ctx.fillRect(0, 0, 512, 64);
+
+    for (let x = 0; x < 512; x += 4) {
+      ctx.fillStyle = x % 8 === 0 ? '#FFE89E' : '#7D4700';
+      ctx.fillRect(x, 0, 2.5, 64);
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = THREE.RepeatWrapping;
+    t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(16, 1);
+    return t;
+  }
+
+  // Build Gold Medal 3D Mesh
+  const obverseTex = createMedalObverseTexture();
+  const reverseTex = createMedalReverseTexture();
+  const edgeTex = createMilledEdgeTexture();
+
+  const goldRimMat = new THREE.MeshStandardMaterial({
+    color: 0xE5A93C,
+    metalness: 0.92,
+    roughness: 0.26,
+    bumpMap: edgeTex,
+    bumpScale: 0.04
   });
 
-  // Interactive Buttons
+  const goldObverseMat = new THREE.MeshStandardMaterial({
+    color: 0xF7BF44,
+    metalness: 0.88,
+    roughness: 0.22,
+    map: obverseTex,
+    bumpMap: obverseTex,
+    bumpScale: 0.04
+  });
+
+  const goldReverseMat = new THREE.MeshStandardMaterial({
+    color: 0xF7BF44,
+    metalness: 0.88,
+    roughness: 0.22,
+    map: reverseTex,
+    bumpMap: reverseTex,
+    bumpScale: 0.04
+  });
+
+  const medalGeo = new THREE.CylinderGeometry(1.24, 1.24, 0.13, 64);
+  const medalMesh = new THREE.Mesh(medalGeo, [goldRimMat, goldObverseMat, goldReverseMat]);
+  medalMesh.rotation.x = Math.PI / 2;
+  medalMesh.rotation.y = 0;
+  medalGroup.add(medalMesh);
+
+  // --- BUILD 3D PIONEER BADGE ---
+  function buildPioneerBadge() {
+    const badge = new THREE.Group();
+
+    // 1. Faceted Ruby Star Geometry
+    const starGeo = new THREE.BufferGeometry();
+    const vertices = [];
+    const uvs = [];
+
+    const outerR = 1.05;
+    const innerR = 0.44;
+    const zApex = 0.16;
+    const zBase = 0;
+
+    for (let i = 0; i < 5; i++) {
+      const tipAngle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+      const valley1Angle = tipAngle - Math.PI / 5;
+      const valley2Angle = tipAngle + Math.PI / 5;
+
+      const tipX = Math.cos(tipAngle) * outerR;
+      const tipY = Math.sin(tipAngle) * outerR;
+
+      const v1X = Math.cos(valley1Angle) * innerR;
+      const v1Y = Math.sin(valley1Angle) * innerR;
+
+      const v2X = Math.cos(valley2Angle) * innerR;
+      const v2Y = Math.sin(valley2Angle) * innerR;
+
+      vertices.push(0, 0, zApex,  v1X, v1Y, zBase,  tipX, tipY, zBase);
+      uvs.push(0.5, 0.5,  0.5 + (v1X / outerR) * 0.5, 0.5 + (v1Y / outerR) * 0.5,  0.5 + (tipX / outerR) * 0.5, 0.5 + (tipY / outerR) * 0.5);
+
+      vertices.push(0, 0, zApex,  tipX, tipY, zBase,  v2X, v2Y, zBase);
+      uvs.push(0.5, 0.5,  0.5 + (tipX / outerR) * 0.5, 0.5 + (tipY / outerR) * 0.5,  0.5 + (v2X / outerR) * 0.5, 0.5 + (v2Y / outerR) * 0.5);
+    }
+
+    starGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    starGeo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    starGeo.computeVertexNormals();
+
+    const rubyEnamelMat = new THREE.MeshStandardMaterial({
+      color: 0xB71C1C,
+      roughness: 0.12,
+      metalness: 0.18,
+      emissive: 0x240000
+    });
+
+    const starMesh = new THREE.Mesh(starGeo, rubyEnamelMat);
+    badge.add(starMesh);
+
+    // Star Gold Edge Border
+    const starBackplateGeo = new THREE.CylinderGeometry(1.06, 1.06, 0.04, 5);
+    const goldPlateMat = new THREE.MeshStandardMaterial({
+      color: 0xE5A93C,
+      metalness: 0.88,
+      roughness: 0.28
+    });
+    const starBackplate = new THREE.Mesh(starBackplateGeo, goldPlateMat);
+    starBackplate.rotation.x = Math.PI / 2;
+    starBackplate.rotation.y = -Math.PI / 10;
+    starBackplate.position.z = -0.02;
+    badge.add(starBackplate);
+
+    // 2. Three Tongues of Fire
+    const flameShape = new THREE.Shape();
+    flameShape.moveTo(-0.48, 0.65);
+    flameShape.bezierCurveTo(-0.62, 0.95, -0.42, 1.35, -0.28, 1.45);
+    flameShape.bezierCurveTo(-0.24, 1.32, -0.26, 1.15, -0.16, 1.05);
+    flameShape.bezierCurveTo(-0.12, 1.45, 0.0, 1.68, 0.0, 1.72);
+    flameShape.bezierCurveTo(0.0, 1.68, 0.12, 1.45, 0.16, 1.05);
+    flameShape.bezierCurveTo(0.26, 1.15, 0.24, 1.32, 0.28, 1.45);
+    flameShape.bezierCurveTo(0.42, 1.35, 0.62, 0.95, 0.48, 0.65);
+    flameShape.closePath();
+
+    const flameExtrudeSettings = {
+      depth: 0.07,
+      bevelEnabled: true,
+      bevelSegments: 4,
+      steps: 1,
+      bevelSize: 0.025,
+      bevelThickness: 0.025
+    };
+
+    const flameGeo = new THREE.ExtrudeGeometry(flameShape, flameExtrudeSettings);
+    const flameMat = new THREE.MeshStandardMaterial({
+      color: 0xE65100,
+      metalness: 0.65,
+      roughness: 0.25,
+      emissive: 0x4a1200
+    });
+    const flameMesh = new THREE.Mesh(flameGeo, flameMat);
+    flameMesh.position.z = 0.04;
+    badge.add(flameMesh);
+
+    // Inner gold flame core
+    const innerFlameShape = new THREE.Shape();
+    innerFlameShape.moveTo(-0.25, 0.72);
+    innerFlameShape.bezierCurveTo(-0.35, 0.95, -0.20, 1.25, -0.14, 1.30);
+    innerFlameShape.bezierCurveTo(-0.10, 1.15, 0, 1.50, 0, 1.52);
+    innerFlameShape.bezierCurveTo(0, 1.50, 0.10, 1.15, 0.14, 1.30);
+    innerFlameShape.bezierCurveTo(0.20, 1.25, 0.35, 0.95, 0.25, 0.72);
+    innerFlameShape.closePath();
+
+    const innerFlameGeo = new THREE.ExtrudeGeometry(innerFlameShape, { depth: 0.04, bevelEnabled: false });
+    const innerFlameMat = new THREE.MeshStandardMaterial({
+      color: 0xFFB300,
+      metalness: 0.8,
+      roughness: 0.2
+    });
+    const innerFlameMesh = new THREE.Mesh(innerFlameGeo, innerFlameMat);
+    innerFlameMesh.position.z = 0.11;
+    badge.add(innerFlameMesh);
+
+    // 3. Central Lenin Medallion
+    const leninCanvas = document.createElement('canvas');
+    leninCanvas.width = 512;
+    leninCanvas.height = 512;
+    const lctx = leninCanvas.getContext('2d');
+
+    const lgrad = lctx.createRadialGradient(256, 256, 20, 256, 256, 256);
+    lgrad.addColorStop(0, '#FFE082');
+    lgrad.addColorStop(0.6, '#FFB300');
+    lgrad.addColorStop(1, '#945800');
+    lctx.fillStyle = lgrad;
+    lctx.beginPath();
+    lctx.arc(256, 256, 250, 0, Math.PI * 2);
+    lctx.fill();
+
+    lctx.fillStyle = '#6D3600';
+    lctx.beginPath();
+    lctx.ellipse(256, 225, 120, 140, -0.12, 0, Math.PI * 2);
+    lctx.fill();
+
+    lctx.fillStyle = '#FFF8D1';
+    lctx.beginPath();
+    lctx.arc(245, 185, 30, 0, Math.PI * 2);
+    lctx.arc(230, 240, 45, 0, Math.PI * 2);
+    lctx.arc(265, 320, 55, 0, Math.PI * 2);
+    lctx.fill();
+
+    const leninTex = new THREE.CanvasTexture(leninCanvas);
+    const medallionGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.05, 32);
+    const medallionMat = new THREE.MeshStandardMaterial({
+      color: 0xF7BF44,
+      metalness: 0.90,
+      roughness: 0.22,
+      map: leninTex,
+      bumpMap: leninTex,
+      bumpScale: 0.04
+    });
+    const medallionMesh = new THREE.Mesh(medallionGeo, [goldRimMat, medallionMat, goldRimMat]);
+    medallionMesh.rotation.x = Math.PI / 2;
+    medallionMesh.position.z = 0.17;
+    badge.add(medallionMesh);
+
+    // 4. Ribbon Bar at Bottom with «ВСЕГДА ГОТОВ!»
+    const ribbonCanvas = document.createElement('canvas');
+    ribbonCanvas.width = 512;
+    ribbonCanvas.height = 128;
+    const rctx = ribbonCanvas.getContext('2d');
+    rctx.fillStyle = '#B71C1C';
+    rctx.fillRect(0, 0, 512, 128);
+    rctx.lineWidth = 10;
+    rctx.strokeStyle = '#FFE082';
+    rctx.strokeRect(5, 5, 502, 118);
+
+    rctx.font = '900 58px "JetBrains Mono", sans-serif';
+    rctx.fillStyle = '#FFFDE7';
+    rctx.textAlign = 'center';
+    rctx.textBaseline = 'middle';
+    rctx.fillText('ВСЕГДА ГОТОВ!', 256, 64);
+
+    const ribbonTex = new THREE.CanvasTexture(ribbonCanvas);
+    const ribbonGeo = new THREE.BoxGeometry(1.22, 0.28, 0.06);
+    const ribbonMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      map: ribbonTex,
+      metalness: 0.4,
+      roughness: 0.3
+    });
+    const ribbonMesh = new THREE.Mesh(ribbonGeo, ribbonMat);
+    ribbonMesh.position.set(0, -0.66, 0.12);
+    badge.add(ribbonMesh);
+
+    // 5. Reverse Assembly: Brass Backplate, Pin & Needle
+    const backplateMat = new THREE.MeshStandardMaterial({
+      color: 0x8D6E63,
+      metalness: 0.72,
+      roughness: 0.38
+    });
+    const needleMat = new THREE.MeshStandardMaterial({
+      color: 0xCFD8DC,
+      metalness: 0.95,
+      roughness: 0.15
+    });
+
+    const needleGeo = new THREE.CylinderGeometry(0.016, 0.016, 1.25, 12);
+    const needleMesh = new THREE.Mesh(needleGeo, needleMat);
+    needleMesh.rotation.z = Math.PI / 2;
+    needleMesh.position.set(0, 0.1, -0.06);
+    badge.add(needleMesh);
+
+    const hingeGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.08, 12);
+    const hingeMesh = new THREE.Mesh(hingeGeo, backplateMat);
+    hingeMesh.position.set(-0.55, 0.1, -0.06);
+    badge.add(hingeMesh);
+
+    const claspGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
+    const claspMesh = new THREE.Mesh(claspGeo, backplateMat);
+    claspMesh.position.set(0.55, 0.1, -0.06);
+    badge.add(claspMesh);
+
+    return badge;
+  }
+
+  const badge3D = buildPioneerBadge();
+  badgeGroup.add(badge3D);
+
+  mainGroup.position.set(0, 0, 0);
+
+  // Animation Loop with IntersectionObserver
+  let isVisible = true;
+  let targetRotY = 0;
+  let currentRotY = 0;
+  let isFlipping = false;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      isVisible = entry.isIntersecting;
+    });
+  }, { threshold: 0.1 });
+  observer.observe(stage);
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!isVisible) return;
+
+    controls.update();
+
+    if (isFlipping) {
+      currentRotY += (targetRotY - currentRotY) * 0.1;
+      mainGroup.rotation.y = currentRotY;
+      if (Math.abs(targetRotY - currentRotY) < 0.01) {
+        currentRotY = targetRotY;
+        mainGroup.rotation.y = currentRotY;
+        isFlipping = false;
+      }
+    }
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // Resize handler
+  function handleResize() {
+    if (!canvas || !canvas.parentElement) return;
+    const w = canvas.parentElement.clientWidth;
+    const h = canvas.parentElement.clientHeight || 340;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false);
+  }
+  window.addEventListener('resize', handleResize);
+
+  // Button: Spin 360°
   if (btnSpin) {
     btnSpin.addEventListener('click', () => {
-      if (isAutoSpinning) {
-        stopAutoSpin();
-      } else {
-        startAutoSpin();
-      }
+      controls.autoRotate = !controls.autoRotate;
+      btnSpin.classList.toggle('active', controls.autoRotate);
     });
   }
 
-  function startAutoSpin() {
-    isAutoSpinning = true;
-    if (btnSpin) btnSpin.classList.add('active');
-    function step() {
-      if (!isAutoSpinning) return;
-      rotY = (rotY + 1.2) % 360;
-      updateTransform(false);
-      spinAnimationId = requestAnimationFrame(step);
-    }
-    step();
-  }
-
-  function stopAutoSpin() {
-    isAutoSpinning = false;
-    if (spinAnimationId) cancelAnimationFrame(spinAnimationId);
-    if (btnSpin) btnSpin.classList.remove('active');
-  }
-
+  // Button: Flip 180° (Obverse / Reverse)
   if (btnFlip) {
     btnFlip.addEventListener('click', () => {
-      stopAutoSpin();
-      rotY += 180;
-      rotX = 0;
-      updateTransform(true);
+      controls.autoRotate = false;
+      if (btnSpin) btnSpin.classList.remove('active');
+      targetRotY += Math.PI;
+      isFlipping = true;
     });
   }
 
+  // Button: Reset view
   if (btnReset) {
     btnReset.addEventListener('click', () => {
-      stopAutoSpin();
-      rotX = 10;
-      rotY = 15;
-      updateTransform(true);
+      controls.autoRotate = false;
+      if (btnSpin) btnSpin.classList.remove('active');
+      controls.reset();
+      camera.position.set(0, 0, 3.4);
+      controls.target.set(0, 0, 0);
+      targetRotY = 0;
+      currentRotY = 0;
+      mainGroup.rotation.set(0, 0, 0);
+      isFlipping = false;
     });
   }
 
-  // Switch between Medal and Badge
+  // Artifact Tab switching
   function switchArtifact(type) {
-    currentArtifact = type;
-    stopAutoSpin();
-    rotX = 10;
-    rotY = 15;
-    updateTransform(true);
+    controls.autoRotate = false;
+    if (btnSpin) btnSpin.classList.remove('active');
+    targetRotY = 0;
+    currentRotY = 0;
+    mainGroup.rotation.set(0, 0, 0);
+    isFlipping = false;
 
     if (type === 'medal') {
+      medalGroup.visible = true;
+      badgeGroup.visible = false;
       if (tabMedal) tabMedal.classList.add('active');
       if (tabBadge) tabBadge.classList.remove('active');
-      if (modelMedal) modelMedal.classList.add('active');
-      if (modelBadge) modelBadge.classList.remove('active');
     } else {
+      medalGroup.visible = false;
+      badgeGroup.visible = true;
       if (tabBadge) tabBadge.classList.add('active');
       if (tabMedal) tabMedal.classList.remove('active');
-      if (modelBadge) modelBadge.classList.add('active');
-      if (modelMedal) modelMedal.classList.remove('active');
     }
 
     const data = ARTIFACT_DATA[type];
@@ -1280,9 +1977,6 @@ function initHero3DArtifact() {
 
   if (tabMedal) tabMedal.addEventListener('click', () => switchArtifact('medal'));
   if (tabBadge) tabBadge.addEventListener('click', () => switchArtifact('badge'));
-
-  // Initial render
-  updateTransform(true);
 }
 
 /* --------------------------------------------------------------------------
@@ -1848,14 +2542,24 @@ function init3DCardFlips() {
   document.querySelectorAll('.btn-card-flip').forEach(btn => {
     btn.addEventListener('click', () => {
       const card3d = btn.closest('.gen-card-3d');
-      if (card3d) card3d.classList.add('is-flipped');
+      if (card3d) {
+        const front = card3d.querySelector('.gen-card-front');
+        if (front) {
+          front.style.transform = '';
+          const glare = front.querySelector('.tilt-glare');
+          if (glare) glare.style.background = 'transparent';
+        }
+        card3d.classList.add('is-flipped');
+      }
     });
   });
 
   document.querySelectorAll('.btn-card-flip-back').forEach(btn => {
     btn.addEventListener('click', () => {
       const card3d = btn.closest('.gen-card-3d');
-      if (card3d) card3d.classList.remove('is-flipped');
+      if (card3d) {
+        card3d.classList.remove('is-flipped');
+      }
     });
   });
 }
@@ -1867,7 +2571,6 @@ function init3DTilt() {
   const tiltElements = document.querySelectorAll('[data-tilt]');
 
   tiltElements.forEach(el => {
-    // Add specular sheen overlay if not present
     let glare = el.querySelector('.tilt-glare');
     if (!glare) {
       glare = document.createElement('div');
@@ -1876,6 +2579,9 @@ function init3DTilt() {
     }
 
     el.addEventListener('mousemove', (e) => {
+      const card3d = el.closest('.gen-card-3d');
+      if (card3d && card3d.classList.contains('is-flipped')) return;
+
       const rect = el.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -2416,7 +3122,13 @@ function initArchivalInspectorAndGlossary() {
     const data = GLOSSARY_DATA[termKey];
     if (!data) return;
 
+    const fromGlossary = glossaryModal && glossaryModal.classList.contains('is-active');
+    const backBtnHtml = fromGlossary
+      ? `<button class="inspector-back-btn" id="inspector-back-btn">← Назад в словарь терминов</button>`
+      : '';
+
     inspectorContent.innerHTML = `
+      ${backBtnHtml}
       <div class="inspector-header">
         <span class="ih-badge">${data.badge}</span>
         <h3>${data.title}</h3>
@@ -2435,6 +3147,13 @@ function initArchivalInspectorAndGlossary() {
       </div>
     `;
 
+    const backBtn = document.getElementById('inspector-back-btn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        closeInspector();
+      });
+    }
+
     inspectorModal.classList.add('is-active');
     inspectorModal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -2443,7 +3162,10 @@ function initArchivalInspectorAndGlossary() {
   function closeInspector() {
     inspectorModal.classList.remove('is-active');
     inspectorModal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    // If glossary modal is still active, keep body overflow hidden so user can continue browsing glossary
+    if (!glossaryModal || !glossaryModal.classList.contains('is-active')) {
+      document.body.style.overflow = '';
+    }
   }
 
   if (inspectorCloseBtn) inspectorCloseBtn.addEventListener('click', closeInspector);
@@ -2549,216 +3271,11 @@ function initArchivalInspectorAndGlossary() {
   // ESC key listener for both modals
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      closeInspector();
-      closeGlossary();
+      if (inspectorModal && inspectorModal.classList.contains('is-active')) {
+        closeInspector();
+      } else if (glossaryModal && glossaryModal.classList.contains('is-active')) {
+        closeGlossary();
+      }
     }
   });
-}
-
-/* ==========================================================================
-   19. TEAM PRESENTATION SPEECH PROMPTER MODAL
-   ========================================================================== */
-const TEAM_SPEECH_DATA = {
-  all: {
-    title: "Полный сценарий доклада команды (4 спикера, 5–6 минут)",
-    sections: [
-      {
-        speaker: 1,
-        title: "Спикер 1: Вступление, Ликбез и суровая школьная форма",
-        time: "0:00 – 1:30",
-        badgeClass: "speaker-1-badge",
-        text: `
-          <p><strong>[Действие: <span class="action-pill">🔔 Нажать звонок в шапке</span>]</strong></p>
-          <p>«Здравствуйте, уважаемые члены жюри и слушатели! Этот звонок знаком каждому советскому человеку. Сегодня наша команда представляет интерактивную монографию, посвященную феномену советского образования — системы, которая всего за полвека превратила страну с 80% неграмотности в главную космическую и научно-инженерную сверхдержаву мира.</p>
-          <p>Всё началось в декабре 1919 года с ленинского Декрета о Ликбезе. Обучение стало не привилегией, а всеобщей конституционной обязанностью. В 1930-е годы вводится всеобщая семилетка, а к 1970-м — обязательное 10-летнее среднее образование.</p>
-          <p>Обратите внимание на школьную форму: коричневое шерстяное платье с черным повседневным или белым праздничным кружевным фартуком у девочек и строгие полушерстяные синие костюмы у мальчиков. Форма стоила копейки, шилась из 100% овечьей шерсти с лавсаном и полностью стирала любое материальное неравенство среди детей — в классе все были равны!»</p>
-        `
-      },
-      {
-        speaker: 2,
-        title: "Спикер 2: Парта Эрисмана, чистописание и анатомия советских вещей",
-        time: "1:30 – 3:00",
-        badgeClass: "speaker-2-badge",
-        text: `
-          <p><strong>[Действие: <span class="action-pill">🪑 Покрутить 3D парту и поднять створку</span>]</strong></p>
-          <p>«Переходим к инженерному шедевру советской школы — знаменитой парте Эрисмана по ГОСТ 11015-77. Посмотрите на наш интерактивный 3D-тренажер: стол и скамья объединены в жесткую конструкцию на чугунном каркасе. Столешница наклонена ровно под углом 15 градусов — луч зрения падает строго перпендикулярно строке тетради, полностью защищая ребенка от сколиоза и близорукости.</p>
-          <p>А теперь главный фокус <em>(клик на створку)</em>: откидная крышка на шарнирах! Она позволяла классу мгновенно и абсолютно бесшумно вставать по стойке «смирно» при входе учителя.</p>
-          <p>До конца 1960-х годов писали только стальными перьями № 86 и чернильницами-непроливайками. Шариковые ручки были под строгим запретом: считалось, что именно перо формирует мелкую моторику мозга. А школьные вещи — от готовален из рессорной стали 65Г до деревянных линеек — производились по военным ГОСТам и служили десятилетиями!»</p>
-        `
-      },
-      {
-        speaker: 3,
-        title: "Спикер 3: Иерархия, самоуправление, дежурство и субботники",
-        time: "3:00 – 4:15",
-        badgeClass: "speaker-3-badge",
-        text: `
-          <p>«Советская школа никогда не оказывала «образовательных услуг». Она воспитывала гражданина через коллективный труд. Каждый ребенок проходил нерушимую возрастную иерархию: с 7 лет — октябрята со звездочкой, с 10 лет — пионеры с красным галстуком, а с 14 лет — Ленинский комсомол (ВЛКСМ).</p>
-          <p>Класс управлялся самими учениками! Староста отмечал отсутствующих и следил за порядком. А каждую неделю назначалась пара дежурных с красными нарукавными повязками. Уборщицы мыли только коридоры. Кабинеты убирали сами дети: поднимали стулья на парты, посыпали дощатый пол влажными опилками, чтобы связать меловую пыль, и мыли класс шваброй.</p>
-          <p>Дважды в год школьники спасали экономику страны: операция «Миллион — Родине!» по сбору макулатуры и металлолома, апрельские Ленинские субботники и осенние выезды старшеклассников «на картошку» в колхозы закаляли характер на всю оставшуюся жизнь!»</p>
-        `
-      },
-      {
-        speaker: 4,
-        title: "Спикер 4: Развилка ВУЗ/ПТУ, калькулятор цен и финал",
-        time: "4:15 – 5:30",
-        badgeClass: "speaker-4-badge",
-        text: `
-          <p><strong>[Действие: <span class="action-pill">🪙 Кликнуть монету 15 коп. в калькуляторе</span>]</strong></p>
-          <p>«После 8 класса перед советским подростком вставал выбор. СПТУ давали рабочую специальность на полном гособеспечении — выпускник к 18 годам зарабатывал до 250 рублей! А после 10 класса лучших ждали ВУЗы. Никакого платного обучения не существовало, студенты получали стипендию, а золотая медаль давала право поступления всего по одному профильному экзамену.</p>
-          <p>А платой за бесплатный ВУЗ было обязательное 3-летнее Государственное распределение на предприятия страны — но зато никто не знал страха безработицы!</p>
-          <p>Посмотрите на наш калькулятор цен: на обычные 15-20 копеек карманных денег можно было купить стакан газировки с сиропом, школьную тетрадь, билет в кино и порцию пломбира в вафельном стаканчике.</p>
-          <p>Советское образование доказало: когда государство инвестирует в фундаментальную науку, дисциплину и уважение к учителю — нация способна первой покорить космос и построить великую державу. Спасибо за внимание! Наш сайт открыт для ваших вопросов и прохождения Всесоюзного экзамена!»</p>
-        `
-      }
-    ]
-  },
-  1: {
-    title: "Речь Спикера 1 (Ведущий / Историк) • Хронометраж: 1 мин 30 сек",
-    sections: [
-      {
-        speaker: 1,
-        title: "Вступление, Ликбез и суровая школьная форма",
-        time: "0:00 – 1:30",
-        badgeClass: "speaker-1-badge",
-        text: `
-          <p><strong>[Действие: <span class="action-pill">🔔 Нажать звонок в шапке сайта</span>]</strong></p>
-          <p>«Здравствуйте, уважаемые члены жюри и слушатели! Этот звонок знаком каждому советскому человеку. Сегодня наша команда представляет интерактивную монографию, посвященную феномену советского образования — системы, которая всего за полвека превратила страну с 80% неграмотности в главную космическую и научно-инженерную сверхдержаву мира.</p>
-          <p>Всё началось в декабре 1919 года с ленинского Декрета о Ликбезе. Обучение стало не привилегией, а всеобщей конституционной обязанностью. В 1930-е годы вводится всеобщая семилетка, а к 1970-м — обязательное 10-летнее среднее образование.</p>
-          <p>Обратите внимание на школьную форму: коричневое шерстяное платье с черным повседневным или белым праздничным кружевным фартуком у девочек и строгие полушерстяные синие костюмы у мальчиков. Форма стоила копейки, шилась из 100% овечьей шерсти с лавсаном и полностью стирала любое материальное неравенство среди детей — в классе все были равны! Передаю слово нашему инженеру!»</p>
-        `
-      }
-    ]
-  },
-  2: {
-    title: "Речь Спикера 2 (Инженер / Аналитик) • Хронометраж: 1 мин 30 сек",
-    sections: [
-      {
-        speaker: 2,
-        title: "Парта Эрисмана, чистописание и материаловедение СССР",
-        time: "1:30 – 3:00",
-        badgeClass: "speaker-2-badge",
-        text: `
-          <p><strong>[Действие: <span class="action-pill">🪑 Покрутить 3D парту и нажать «Поднять крышку»</span>]</strong></p>
-          <p>«Переходим к инженерному шедевру советской школы — знаменитой парте Эрисмана по ГОСТ 11015-77. Посмотрите на наш интерактивный 3D-тренажер: стол и скамья объединены в жесткую конструкцию на чугунном каркасе. Столешница наклонена ровно под углом 15 градусов — луч зрения падает строго перпендикулярно строке тетради, полностью защищая ребенка от сколиоза и близорукости.</p>
-          <p>А теперь главный фокус <em>(клик на створку парты)</em>: откидная крышка на шарнирах! Она позволяла классу мгновенно и абсолютно бесшумно вставать по стойке «смирно» при входе учителя.</p>
-          <p>До конца 1960-х годов писали только стальными перьями № 86 и чернильницами-непроливайками. Шариковые ручки были под строгим запретом: считалось, что именно перо формирует мелкую моторику мозга. А школьные вещи — от готовален из рессорной стали 65Г до деревянных линеек — производились по военным ГОСТам из натурального сырья и служили десятилетиями!»</p>
-        `
-      }
-    ]
-  },
-  3: {
-    title: "Речь Спикера 3 (Социолог / Куратор) • Хронометраж: 1 мин 15 сек",
-    sections: [
-      {
-        speaker: 3,
-        title: "Иерархия, самоуправление, дежурство и субботники",
-        time: "3:00 – 4:15",
-        badgeClass: "speaker-3-badge",
-        text: `
-          <p>«Советская школа никогда не оказывала «образовательных услуг». Она воспитывала гражданина через коллективный труд. Каждый ребенок проходил нерушимую возрастную иерархию: с 7 лет — октябрята со звездочкой, с 10 лет — пионеры с красным галстуком, а с 14 лет — Ленинский комсомол (ВЛКСМ).</p>
-          <p>Класс управлялся самими учениками! Староста отмечал отсутствующих и следил за порядком. А каждую неделю назначалась пара дежурных с красными нарукавными повязками. Уборщицы мыли только коридоры. Кабинеты убирали сами дети: поднимали стулья на парты, посыпали дощатый пол влажными опилками, чтобы связать меловую пыль, и мыли класс шваброй.</p>
-          <p>Дважды в год школьники спасали экономику страны: операция «Миллион — Родине!» по сбору макулатуры и металлолома, апрельские Ленинские субботники и осенние выезды старшеклассников «на картошку» в колхозы закаляли характер на всю оставшуюся жизнь!»</p>
-        `
-      }
-    ]
-  },
-  4: {
-    title: "Речь Спикера 4 (Экономист / Финал) • Хронометраж: 1 мин 15 сек",
-    sections: [
-      {
-        speaker: 4,
-        title: "Развилка ВУЗ/ПТУ, калькулятор цен эпохи и заключение",
-        time: "4:15 – 5:30",
-        badgeClass: "speaker-4-badge",
-        text: `
-          <p><strong>[Действие: <span class="action-pill">🪙 Кликнуть 15 копеек в калькуляторе и показать чек</span>]</strong></p>
-          <p>«После 8 класса перед советским подростком вставал выбор. СПТУ давали рабочую специальность на полном гособеспечении — выпускник к 18 годам зарабатывал до 250 рублей! А после 10 класса лучших ждали ВУЗы. Никакого платного обучения не существовало, студенты получали стипендию, а золотая медаль давала право поступления всего по одному профильному экзамену.</p>
-          <p>А платой за бесплатный ВУЗ было обязательное 3-летнее Государственное распределение на предприятия страны — но зато никто не знал страха безработицы!</p>
-          <p>Посмотрите на наш калькулятор цен: на обычные 15-20 копеек карманных денег можно было купить стакан газировки с сиропом, школьную тетрадь, билет в кино и порцию пломбира в вафельном стаканчике.</p>
-          <p>Советское образование доказало: когда государство инвестирует в фундаментальную науку, дисциплину и уважение к учителю — нация способна первой покорить космос и построить великую державу. Спасибо за внимание! Наш сайт открыт для ваших вопросов и прохождения Всесоюзного экзамена!»</p>
-        `
-      }
-    ]
-  }
-};
-
-function initTeamSpeechPrompter() {
-  const speechBtn = document.getElementById('team-speech-btn');
-  const speechModal = document.getElementById('speech-modal');
-  const speechCloseBtn = document.getElementById('speech-close-btn');
-  const speechCloseFooter = document.getElementById('btn-close-speech-footer');
-  const speechBody = document.getElementById('speech-content-body');
-  const tabBtns = document.querySelectorAll('.speech-tab-btn');
-  const copyBtn = document.getElementById('btn-copy-speech');
-
-  if (!speechModal || !speechBody) return;
-
-  function renderSpeech(speakerKey) {
-    const data = TEAM_SPEECH_DATA[speakerKey];
-    if (!data) return;
-
-    speechBody.innerHTML = `
-      <div style="font-family:var(--font-mono);font-size:0.82rem;color:var(--amber-gold);margin-bottom:16px;text-transform:uppercase;font-weight:700;">
-        ${data.title}
-      </div>
-      ${data.sections.map(sec => `
-        <div class="speech-section-card">
-          <div class="ssc-speaker-badge ${sec.badgeClass}">
-            <span>👤 Спикер ${sec.speaker}</span> • <span>⏱️ ${sec.time}</span>
-          </div>
-          <h4 style="font-family:var(--font-display);font-size:1.15rem;color:var(--navy-ink);margin-bottom:8px;">${sec.title}</h4>
-          <div style="font-size:0.95rem;line-height:1.65;color:var(--text-main);">
-            ${sec.text}
-          </div>
-        </div>
-      `).join('')}
-    `;
-  }
-
-  function openSpeech() {
-    renderSpeech('all');
-    speechModal.classList.add('is-active');
-    speechModal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeSpeech() {
-    speechModal.classList.remove('is-active');
-    speechModal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
-
-  if (speechBtn) speechBtn.addEventListener('click', openSpeech);
-  if (speechCloseBtn) speechCloseBtn.addEventListener('click', closeSpeech);
-  if (speechCloseFooter) speechCloseFooter.addEventListener('click', closeSpeech);
-
-  speechModal.addEventListener('click', (e) => {
-    if (e.target === speechModal) closeSpeech();
-  });
-
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderSpeech(btn.dataset.speaker);
-    });
-  });
-
-  if (copyBtn) {
-    copyBtn.addEventListener('click', () => {
-      const activeTab = document.querySelector('.speech-tab-btn.active');
-      const speakerKey = activeTab ? activeTab.dataset.speaker : 'all';
-      const data = TEAM_SPEECH_DATA[speakerKey];
-      if (!data) return;
-
-      const plainText = data.sections.map(s => `[СПИКЕР ${s.speaker} (${s.time}) — ${s.title}]\n` + s.text.replace(/<[^>]+>/g, '').trim()).join('\n\n');
-      navigator.clipboard.writeText(plainText).then(() => {
-        const origText = copyBtn.textContent;
-        copyBtn.textContent = '✅ Текст скопирован!';
-        setTimeout(() => { copyBtn.textContent = origText; }, 2000);
-      }).catch(() => {
-        copyBtn.textContent = 'Выделите текст вручную';
-      });
-    });
-  }
 }

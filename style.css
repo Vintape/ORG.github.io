@@ -903,7 +903,6 @@ body {
   background: #fff;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  overflow: hidden;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -943,11 +942,14 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  overflow: hidden;
 }
 
 .gen-art-header.bg-october { background: linear-gradient(135deg, #7F0000, #B71C1C); }
 .gen-art-header.bg-pioneer { background: linear-gradient(135deg, #B71C1C, #D32F2F); }
-.gen-art-header.bg-komsomol { background: linear-gradient(135deg, #4A148C, #880E4F); }
+.gen-art-header.bg-komsomol { background: linear-gradient(135deg, #8B0000 0%, #B71C1C 60%, #C62828 100%); }
 
 .gen-insignia {
   width: 90px;
@@ -1094,13 +1096,13 @@ body {
 }
 
 .rules-box.highlight-komsomol {
-  background: #F3E5F5;
-  border-left-color: #7B1FA2;
+  background: #FFF8E1;
+  border-left-color: var(--soviet-red);
 }
 
 .rules-box.highlight-komsomol p {
   font-size: 0.84rem;
-  color: #4A148C;
+  color: #4E342E;
   line-height: 1.45;
 }
 
@@ -2790,283 +2792,63 @@ body {
 }
 
 .artifact-stage {
-  perspective: 1200px;
-  height: 310px;
+  height: 340px;
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 45%, #231b17 0%, #120e0c 100%);
+  border: 1px solid rgba(229, 169, 60, 0.28);
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.7), 0 10px 30px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  cursor: grab;
-  user-select: none;
-}
-
-.artifact-stage:active {
-  cursor: grabbing;
 }
 
 .artifact-lighting-glow {
   position: absolute;
-  width: 240px;
-  height: 240px;
-  background: radial-gradient(circle, rgba(255, 213, 79, 0.35) 0%, rgba(211, 47, 47, 0.1) 50%, transparent 75%);
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(255, 213, 79, 0.18) 0%, rgba(211, 47, 47, 0.08) 50%, transparent 75%);
   border-radius: 50%;
   pointer-events: none;
-  filter: blur(20px);
+  filter: blur(30px);
 }
 
-.artifact-3d-scene {
-  width: 210px;
-  height: 210px;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.08s ease-out;
-}
-
-.artifact-model {
-  position: absolute;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  transform-style: preserve-3d;
-}
-
-.artifact-model.active {
-  display: flex;
-}
-
-/* 3D Gold Medal */
-.medal-3d-disc {
-  width: 195px;
-  height: 195px;
-  border-radius: 50%;
-  position: relative;
-  transform-style: preserve-3d;
-  filter: drop-shadow(0 15px 25px rgba(184, 134, 11, 0.35));
-}
-
-.disc-face {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  background: radial-gradient(circle at 35% 30%, #FFF9C4 0%, #FFD54F 35%, #FFB300 70%, #C47D00 100%);
-  border: 4px solid #E5A93C;
-  box-shadow: inset 0 0 12px rgba(184, 134, 11, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  overflow: hidden;
-}
-
-.disc-back {
-  transform: rotateY(180deg);
-  background: radial-gradient(circle at 65% 30%, #FFF9C4 0%, #FFD54F 35%, #FFB300 70%, #C47D00 100%);
-}
-
-.disc-thickness {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 6px solid #996515;
-  transform: translateZ(-3px);
-  pointer-events: none;
-}
-
-.medal-rim-ridge {
-  position: absolute;
-  inset: 6px;
-  border-radius: 50%;
-  border: 1px dashed rgba(153, 101, 21, 0.5);
-  pointer-events: none;
-}
-
-.medal-emboss {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
-}
-
-.emboss-star {
-  color: #C62828;
-  font-size: 1.1rem;
-  line-height: 1;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-}
-
-.emboss-arch-text {
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  font-weight: 900;
-  color: #5D4037;
-  letter-spacing: 1px;
-  line-height: 1.1;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-
-.emboss-crest-center {
-  width: 70px;
-  height: 70px;
-  margin: 2px 0;
-}
-
-.medal-crest-svg, .crest-svg {
+.artifact-canvas {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+  display: block;
+  outline: none;
+  touch-action: none;
+  cursor: grab;
 }
 
-.emboss-bottom-motto {
-  font-size: 0.52rem;
-  font-weight: 800;
-  color: #4E342E;
-  line-height: 1.1;
-  text-transform: uppercase;
-  max-width: 140px;
+.artifact-canvas:active {
+  cursor: grabbing;
 }
 
-.emboss-hallmark {
-  font-family: var(--font-mono);
-  font-size: 0.48rem;
-  font-weight: 700;
-  color: #795548;
-  letter-spacing: 1px;
-  margin-top: 4px;
-}
-
-.disc-sheen {
-  position: absolute;
-  inset: -100%;
-  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.6) 50%, transparent 60%);
-  pointer-events: none;
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.artifact-stage:hover .disc-sheen {
-  transform: translateX(100%);
-}
-
-.ussr-back-crest {
-  width: 68px;
-  height: 68px;
-}
-
-.ussr-full-title {
-  font-family: var(--font-display);
-  font-size: 0.68rem;
-  font-weight: 900;
-  color: #4E342E;
-  line-height: 1.1;
-  margin: 6px 0;
-  max-width: 160px;
-}
-
-.mint-stamp-box {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.52rem;
-  color: #5D4037;
-  font-family: var(--font-mono);
-  border-top: 1px solid rgba(93, 64, 55, 0.3);
-  padding-top: 4px;
-}
-
-/* 3D Pioneer Badge */
-.badge-3d-body {
-  width: 200px;
-  height: 200px;
-  position: relative;
-  transform-style: preserve-3d;
-  filter: drop-shadow(0 16px 28px rgba(211, 47, 47, 0.35));
-}
-
-.badge-front-face, .badge-back-face {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.pioneer-3d-svg {
-  width: 100%;
-  height: 100%;
-}
-
-.badge-back-face {
-  transform: rotateY(180deg);
-  background: radial-gradient(circle, #D7CCC8 0%, #BCAAA4 70%, #8D6E63 100%);
-  border-radius: 50%;
-  border: 3px solid #6D4C41;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.badge-pin-assembly {
-  text-align: center;
-  padding: 16px;
-}
-
-.pin-baseplate {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #3E2723;
-  margin-bottom: 12px;
-}
-
-.pin-needle-clasp {
-  width: 110px;
-  height: 6px;
-  background: #78909C;
-  border-radius: 3px;
-  margin: 0 auto;
-  position: relative;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-}
-
-.clasp-hinge {
-  position: absolute;
-  left: 0;
-  top: -4px;
-  width: 14px;
-  height: 14px;
-  background: #455A64;
-  border-radius: 50%;
-}
-
-.clasp-hook {
-  position: absolute;
-  right: 0;
-  top: -5px;
-  width: 16px;
-  height: 16px;
-  border: 3px solid #37474F;
-  border-left: none;
-  border-radius: 0 6px 6px 0;
-}
-
-/* Pedestal */
-.stage-pedestal {
+.artifact-stage-hint {
   position: absolute;
   bottom: 12px;
-  width: 160px;
-  height: 26px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(20, 33, 61, 0.15) 0%, rgba(20, 33, 61, 0.05) 50%, transparent 75%);
-  transform: rotateX(60deg);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--amber-gold);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.5px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(229, 169, 60, 0.35);
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  z-index: 5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Dossier */
@@ -3176,13 +2958,19 @@ body {
 /* 3. Generations 3D Flip Cards */
 .gen-card-wrapper {
   perspective: 1200px;
-  min-height: 620px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 640px;
 }
 
 .gen-card-3d {
   position: relative;
   width: 100%;
   height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   transform-style: preserve-3d;
   transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -3201,10 +2989,22 @@ body {
 
 .gen-card-front {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+}
+
+.gen-card-3d.is-flipped .gen-card-front {
+  pointer-events: none;
+}
+
+.gen-card-3d:not(.is-flipped) .gen-card-back {
+  pointer-events: none;
 }
 
 .gen-flip-bar {
-  margin-top: 18px;
+  margin-top: auto;
   padding-top: 14px;
   border-top: 1px dashed var(--border-subtle);
   display: flex;
@@ -3282,8 +3082,8 @@ body {
 }
 
 .archive-header-badge.komsomol-badge {
-  color: #4A148C;
-  border-color: #4A148C;
+  color: #B71C1C;
+  border-color: #B71C1C;
 }
 
 .back-title-group {
@@ -4017,7 +3817,7 @@ body {
   }
 
   .artifact-stage {
-    height: 260px;
+    height: 300px;
   }
 
   .desk-grid {
@@ -4617,8 +4417,9 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 8, 7, 0.78);
+  background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 10000;
   display: none;
   align-items: center;
@@ -4626,6 +4427,38 @@ body {
   padding: 20px;
   opacity: 0;
   transition: opacity 0.25s ease;
+}
+
+#glossary-modal {
+  z-index: 10000;
+}
+
+#inspector-modal {
+  z-index: 10100;
+}
+
+.inspector-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-ivory);
+  border: 1px solid var(--border-strong);
+  color: var(--navy-ink);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: var(--transition);
+}
+
+.inspector-back-btn:hover {
+  background: var(--light-red);
+  color: var(--primary-red);
+  border-color: var(--bright-red);
+  transform: translateX(-2px);
 }
 
 .modal-overlay.is-active {
@@ -5164,7 +4997,7 @@ body {
   }
 
   .artifact-stage {
-    height: 250px;
+    height: 280px;
     overflow: hidden;
   }
 
@@ -5740,7 +5573,7 @@ body {
   }
 
   .artifact-stage {
-    height: 210px;
+    height: 260px;
   }
 
   .dossier-specs-grid {

@@ -66,10 +66,6 @@
           <span>📖 Словарь</span>
         </button>
 
-        <!-- Team Presentation Speech Prompter -->
-        <button id="team-speech-btn" class="header-speech-btn" title="Текст доклада для команды (5 минут, 4 спикера)">
-          <span>🎙️ Доклад<span class="header-btn-extra"> команды</span></span>
-        </button>
 
         <!-- Direct Exam Anchor Button -->
         <a href="#quiz-section" class="header-exam-btn" title="Сдать экзамен 1980 года">
@@ -179,139 +175,13 @@
           </div>
 
           <div class="showcase-body">
-            <!-- 3D Interactive Stage -->
+            <!-- 3D Interactive Stage (Three.js WebGL Engine) -->
             <div class="artifact-stage" id="artifact-stage" title="Зажмите и перемещайте курсор для свободного 3D-вращения">
               <div class="artifact-lighting-glow"></div>
-              
-              <div class="artifact-3d-scene" id="artifact-3d-scene">
-                <!-- ARTIFACT 1: USSR GOLD GRADUATION MEDAL -->
-                <div class="artifact-model artifact-medal-model active" id="model-medal">
-                  <div class="medal-3d-disc">
-                    <div class="disc-face disc-front">
-                      <div class="medal-rim-ridge"></div>
-                      <div class="medal-emboss">
-                        <div class="emboss-star">★</div>
-                        <div class="emboss-arch-text">ЗА ОТЛИЧНЫЕ УСПЕХИ</div>
-                        <div class="emboss-crest-center">
-                          <svg viewBox="0 0 120 120" class="medal-crest-svg" aria-hidden="true">
-                            <defs>
-                              <linearGradient id="goldShine" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#FFE082"/>
-                                <stop offset="35%" stop-color="#FFD54F"/>
-                                <stop offset="70%" stop-color="#FFB300"/>
-                                <stop offset="100%" stop-color="#FF8F00"/>
-                              </linearGradient>
-                            </defs>
-                            <!-- Laurel branch -->
-                            <path d="M22,75 C20,45 35,26 60,20 C85,26 100,45 98,75" fill="none" stroke="url(#goldShine)" stroke-width="4.5" stroke-linecap="round"/>
-                            <!-- Open book -->
-                            <path d="M35,78 L60,67 L85,78 L85,88 L60,77 L35,88 Z" fill="#FFE082" stroke="#B8860B" stroke-width="2.5"/>
-                            <line x1="60" y1="67" x2="60" y2="77" stroke="#B8860B" stroke-width="2"/>
-                            <!-- Sun rays background -->
-                            <circle cx="60" cy="42" r="16" fill="url(#goldShine)" stroke="#B8860B" stroke-width="1.8"/>
-                            <!-- Red Soviet Star in center -->
-                            <polygon points="60,30 63.5,39 73,39 65.5,45 68,54 60,48.5 52,54 54.5,45 47,39 56.5,39" fill="#C62828" stroke="#FFE082" stroke-width="1"/>
-                          </svg>
-                        </div>
-                        <div class="emboss-bottom-motto">В УЧЕНИИ, ТРУДЕ И ЗА ПРИМЕРНОЕ ПОВЕДЕНИЕ</div>
-                        <div class="emboss-hallmark">ГОСЗНАК СССР</div>
-                      </div>
-                      <div class="disc-sheen"></div>
-                    </div>
-
-                    <!-- Milled Rim / Thickness Layer -->
-                    <div class="disc-thickness"></div>
-
-                    <!-- REVERSE FACE -->
-                    <div class="disc-face disc-back">
-                      <div class="medal-rim-ridge"></div>
-                      <div class="medal-emboss back-emboss">
-                        <div class="ussr-back-crest">
-                          <svg viewBox="0 0 120 120" class="crest-svg" aria-hidden="true">
-                            <!-- Globe with Hammer and Sickle -->
-                            <circle cx="60" cy="60" r="32" fill="none" stroke="#B8860B" stroke-width="3"/>
-                            <ellipse cx="60" cy="60" rx="16" ry="32" fill="none" stroke="#B8860B" stroke-width="2"/>
-                            <line x1="28" y1="60" x2="92" y2="60" stroke="#B8860B" stroke-width="2"/>
-                            <!-- Wheat Sheaves bound by ribbons -->
-                            <path d="M30,70 C24,50 32,32 60,22 C88,32 96,50 90,70" fill="none" stroke="url(#goldShine)" stroke-width="4.5"/>
-                            <!-- Hammer and Sickle -->
-                            <path d="M48,72 L72,46 M46,54 C52,44 65,45 70,55 C74,63 64,70 56,66" fill="none" stroke="#C62828" stroke-width="4.5" stroke-linecap="round"/>
-                            <!-- Top Star -->
-                            <polygon points="60,14 62.5,20 69,20 63.5,24 65.5,30 60,26 54.5,30 56.5,24 51,20 57.5,20" fill="#C62828" stroke="#FFE082" stroke-width="1"/>
-                          </svg>
-                        </div>
-                        <div class="ussr-full-title">СОЮЗ СОВЕТСКИХ СОЦИАЛИСТИЧЕСКИХ РЕСПУБЛИК</div>
-                        <div class="mint-stamp-box">
-                          <span>ЛЕНИНГРАДСКИЙ МОНЕТНЫЙ ДВОР</span>
-                          <strong>ПРОБА 583 • ВЕС 15.6 г</strong>
-                        </div>
-                      </div>
-                      <div class="disc-sheen"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- ARTIFACT 2: PIONEER BADGE -->
-                <div class="artifact-model artifact-badge-model" id="model-badge">
-                  <div class="badge-3d-body">
-                    <div class="badge-front-face">
-                      <svg viewBox="0 0 140 140" class="pioneer-3d-svg" aria-hidden="true">
-                        <defs>
-                          <radialGradient id="rubyEnamel" cx="50%" cy="50%" r="55%">
-                            <stop offset="0%" stop-color="#FF1744"/>
-                            <stop offset="65%" stop-color="#D50000"/>
-                            <stop offset="100%" stop-color="#880E4F"/>
-                          </radialGradient>
-                          <linearGradient id="goldFlame" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#FFF9C4"/>
-                            <stop offset="40%" stop-color="#FFD54F"/>
-                            <stop offset="80%" stop-color="#FF8F00"/>
-                            <stop offset="100%" stop-color="#E65100"/>
-                          </linearGradient>
-                          <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="rgba(0,0,0,0.3)"/>
-                          </filter>
-                        </defs>
-                        <!-- Three Tongues of Fire -->
-                        <g filter="url(#badgeShadow)">
-                          <path d="M52,32 C52,14 64,2 70,2 C76,2 88,14 88,32 C97,18 102,32 94,48 C76,38 64,38 46,48 C38,32 43,18 52,32 Z" fill="url(#goldFlame)" stroke="#FF8F00" stroke-width="2"/>
-                          <path d="M60,30 C60,16 68,6 70,6 C72,6 80,16 80,30 C86,22 88,32 82,42 C72,36 68,36 58,42 C52,32 54,22 60,30 Z" fill="#D50000"/>
-                        </g>
-                        <!-- Ruby Star -->
-                        <polygon points="70,26 84,56 116,58 90,80 98,112 70,94 42,112 50,80 24,58 56,56" fill="url(#rubyEnamel)" stroke="url(#goldFlame)" stroke-width="3.5"/>
-                        <!-- Gold Lenin Medallion -->
-                        <circle cx="70,72" r="22" fill="url(#goldFlame)" stroke="#B8860B" stroke-width="2.5"/>
-                        <!-- Lenin Silhouette High Relief -->
-                        <path d="M63,62 C68,59 75,59 79,64 C82,67 82,72 78,76 C81,79 79,83 75,84 C69,85 64,83 63,78 C61,74 61,66 63,62 Z" fill="#793B02"/>
-                        <!-- Ribbon Bar -->
-                        <rect x="42,94" width="56" height="13" rx="4" fill="#B71C1C" stroke="url(#goldFlame)" stroke-width="2"/>
-                        <text x="70" y="103" font-size="8.5" font-family="'JetBrains Mono', monospace" font-weight="900" fill="#FFFDE7" text-anchor="middle" letter-spacing="0.5">ВСЕГДА ГОТОВ!</text>
-                      </svg>
-                      <div class="disc-sheen"></div>
-                    </div>
-
-                    <div class="badge-back-face">
-                      <div class="badge-pin-assembly">
-                        <div class="pin-baseplate">
-                          <span class="pin-factory">З-Д «ПОБЕДА» МОСКВА</span>
-                          <span class="pin-price">Ц. 15 КОП.</span>
-                        </div>
-                        <div class="pin-needle-clasp">
-                          <div class="clasp-hinge"></div>
-                          <div class="clasp-pin"></div>
-                          <div class="clasp-hook"></div>
-                        </div>
-                      </div>
-                      <div class="disc-sheen"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Floating Depth Particles -->
-              <div class="stage-pedestal">
-                <div class="pedestal-plate"></div>
-                <div class="pedestal-reflection"></div>
+              <canvas id="artifact-canvas" class="artifact-canvas"></canvas>
+              <div class="artifact-stage-hint">
+                <span class="hint-icon">🖱️</span>
+                <span>Вращайте мышью или пальцем • Колесико — зум</span>
               </div>
             </div>
 
@@ -782,11 +652,27 @@
                 <div class="gen-art-header bg-komsomol">
                   <div class="gen-insignia">
                     <svg viewBox="0 0 100 100" class="insignia-svg">
-                      <!-- Komsomol Red Banner Badge -->
-                      <path d="M20,20 L75,12 C82,12 86,16 86,22 L82,65 C82,72 75,76 68,76 L25,82 C18,82 14,78 14,72 L18,25 C18,22 19,20 20,20 Z" fill="#B71C1C" stroke="#FFD54F" stroke-width="2.5"/>
-                      <circle cx="50" cy="46" r="18" fill="#D32F2F" stroke="#FFD54F" stroke-width="1.5"/>
-                      <text x="50" y="50" font-size="11" font-weight="900" fill="#FFD54F" text-anchor="middle" font-family="'Fira Sans Extra Condensed', sans-serif">ВЛКСМ</text>
-                      <text x="50" y="61" font-size="7" font-weight="bold" fill="#FFE082" text-anchor="middle">ЛЕНИН</text>
+                      <defs>
+                        <linearGradient id="komsomolFlagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#E53935"/>
+                          <stop offset="50%" stop-color="#C62828"/>
+                          <stop offset="100%" stop-color="#8B0000"/>
+                        </linearGradient>
+                        <linearGradient id="komsomolGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#FFF9C4"/>
+                          <stop offset="45%" stop-color="#FFD54F"/>
+                          <stop offset="100%" stop-color="#FF8F00"/>
+                        </linearGradient>
+                      </defs>
+                      <!-- Flagstaff and waving banner -->
+                      <rect x="14" y="10" width="4" height="82" rx="2" fill="url(#komsomolGoldGrad)"/>
+                      <circle cx="16" cy="10" r="4" fill="url(#komsomolGoldGrad)"/>
+                      <path d="M18,16 L84,16 C88,16 90,20 88,24 L82,62 C80,66 76,68 72,68 L18,68 Z" fill="url(#komsomolFlagGrad)" stroke="url(#komsomolGoldGrad)" stroke-width="2.5" stroke-linejoin="round"/>
+                      <!-- Lenin Profile Silhouette -->
+                      <circle cx="50" cy="38" r="15" fill="none" stroke="url(#komsomolGoldGrad)" stroke-width="1.2" opacity="0.6"/>
+                      <path d="M44,32 C47,29 52,29 55,33 C57,35 57,38 54,41 C56,43 55,46 52,47 C48,47 45,45 44,42 C43,39 43,34 44,32 Z" fill="url(#komsomolGoldGrad)"/>
+                      <!-- Acronym ВЛКСМ -->
+                      <text x="50" y="58" font-size="10.5" font-weight="900" fill="url(#komsomolGoldGrad)" text-anchor="middle" letter-spacing="1.5" font-family="'JetBrains Mono', monospace">ВЛКСМ</text>
                     </svg>
                   </div>
                   <div class="gen-tier-pill">С 14 ЛЕТ • 8–10 КЛАССЫ & ВУЗ</div>
@@ -2016,39 +1902,6 @@
       <button class="modal-close-btn" id="inspector-close-btn" aria-label="Закрыть архивное дело">&times;</button>
       <div class="inspector-card-content" id="inspector-card-content">
         <!-- Rendered dynamically by JS -->
-      </div>
-    </div>
-  </div>
-
-  <!-- TEAM PRESENTATION SPEECH PROMPTER MODAL -->
-  <div class="modal-overlay" id="speech-modal" aria-hidden="true" role="dialog" aria-labelledby="speech-modal-title">
-    <div class="modal-dialog speech-dialog">
-      <div class="speech-dialog-header">
-        <div class="sdh-left">
-          <span class="sdh-badge">ДОКЛАД КОМАНДЫ • 5 МИНУТ</span>
-          <h3 id="speech-modal-title">Текст выступления для команды (4 спикера)</h3>
-        </div>
-        <button class="modal-close-btn" id="speech-close-btn" aria-label="Закрыть текст доклада">&times;</button>
-      </div>
-
-      <div class="speech-speakers-tabs" id="speech-speakers-tabs">
-        <button class="speech-tab-btn active" data-speaker="all">📋 Весь доклад (общий обзор)</button>
-        <button class="speech-tab-btn" data-speaker="1">👤 Спикер 1: Вступление & Форма (1:30)</button>
-        <button class="speech-tab-btn" data-speaker="2">👤 Спикер 2: Парта, Чернила & Вещи (1:30)</button>
-        <button class="speech-tab-btn" data-speaker="3">👤 Спикер 3: Иерархия & Дежурство (1:15)</button>
-        <button class="speech-tab-btn" data-speaker="4">👤 Спикер 4: Развилка ВУЗ/ПТУ & Цены (1:15)</button>
-      </div>
-
-      <div class="speech-content-body" id="speech-content-body">
-        <!-- Rendered dynamically by JS -->
-      </div>
-
-      <div class="speech-dialog-footer">
-        <div class="sdf-tip">💡 В тексте выделены интерактивные действия (клик по звонку, 3D парте, калькулятору) для показа жюри в реальном времени.</div>
-        <div class="sdf-actions">
-          <button class="btn btn-secondary" id="btn-copy-speech">📋 Скопировать текст</button>
-          <button class="btn btn-primary" id="btn-close-speech-footer">Понятно, к докладу!</button>
-        </div>
       </div>
     </div>
   </div>
