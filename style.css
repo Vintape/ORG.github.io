@@ -2758,11 +2758,13 @@ body {
 
 .showcase-tabs {
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
   background: var(--bg-parchment);
   padding: 4px;
   border-radius: 30px;
   border: 1px solid var(--border-subtle);
+  justify-content: center;
 }
 
 .showcase-tab {
@@ -2776,12 +2778,32 @@ body {
   border-radius: 20px;
   cursor: pointer;
   transition: var(--transition);
+  white-space: nowrap;
+}
+
+.showcase-tab:hover {
+  color: var(--crimson-ussr);
 }
 
 .showcase-tab.active {
   background: #fff;
   color: var(--navy-ink);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.showcase-tab.active[data-artifact="komsomol"] {
+  color: #B71C1C;
+  border-bottom: 2px solid #B71C1C;
+}
+
+.showcase-tab.active[data-artifact="badge"] {
+  color: #C62828;
+  border-bottom: 2px solid #C62828;
+}
+
+.showcase-tab.active[data-artifact="medal"] {
+  color: #B27B00;
+  border-bottom: 2px solid #B27B00;
 }
 
 .showcase-body {

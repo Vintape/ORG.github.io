@@ -1103,6 +1103,18 @@ const ARTIFACT_DATA = {
       { label: "Цена в СССР", val: "15 копеек" },
       { label: "Охват", val: "Более 20 млн пионеров" }
     ]
+  },
+  komsomol: {
+    stamp: "ЦК ВЛКСМ • 1958",
+    tag: "ГРАЖДАНСКАЯ ЗРЕЛОСТЬ",
+    title: "Членский Значок ВЛКСМ (Комсомол)",
+    desc: "Утвержден в 1958 году постановлением Бюро ЦК ВЛКСМ. Вручался юношам и девушкам с 14 лет при торжественном вступлении в ряды Всесоюзного Ленинского Коммунистического Союза Молодёжи. Форма развевающегося алого знамени с чеканным золотым барельефом Владимира Ленина и строгой надписью «ВЛКСМ» символизировала вступление во взрослую жизнь, колоссальную социальную ответственность, право на комсомольские путевки на стройки века и поступление в ВУЗы.",
+    specs: [
+      { label: "Материал", val: "Томпак / Рубиновая эмаль" },
+      { label: "Крепление", val: "Винт с гайкой (ЛМД)" },
+      { label: "Размер", val: "20 × 24 мм" },
+      { label: "Охват", val: "Свыше 40 млн комсомольцев" }
+    ]
   }
 };
 
@@ -1111,6 +1123,7 @@ function initHero3DArtifact() {
   const stage = document.getElementById('artifact-stage');
   const tabMedal = document.getElementById('tab-medal');
   const tabBadge = document.getElementById('tab-badge');
+  const tabKomsomol = document.getElementById('tab-komsomol');
 
   const btnSpin = document.getElementById('btn-spin-artifact');
   const btnFlip = document.getElementById('btn-flip-artifact');
@@ -1180,9 +1193,12 @@ function initHero3DArtifact() {
 
   const medalGroup = new THREE.Group();
   const badgeGroup = new THREE.Group();
+  const komsomolGroup = new THREE.Group();
   badgeGroup.visible = false;
+  komsomolGroup.visible = false;
   mainGroup.add(medalGroup);
   mainGroup.add(badgeGroup);
+  mainGroup.add(komsomolGroup);
 
   // --- PROCEDURAL TEXTURES FOR GOLD MEDAL ---
   function createMedalObverseTexture() {
@@ -1752,32 +1768,65 @@ function initHero3DArtifact() {
     innerFlameMesh.position.z = 0.11;
     badge.add(innerFlameMesh);
 
-    // 3. Central Lenin Medallion
+    // 3. Central Lenin Medallion (Vector-precise historical relief)
     const leninCanvas = document.createElement('canvas');
     leninCanvas.width = 512;
     leninCanvas.height = 512;
     const lctx = leninCanvas.getContext('2d');
 
     const lgrad = lctx.createRadialGradient(256, 256, 20, 256, 256, 256);
-    lgrad.addColorStop(0, '#FFE082');
-    lgrad.addColorStop(0.6, '#FFB300');
-    lgrad.addColorStop(1, '#945800');
+    lgrad.addColorStop(0, '#FFF2B2');
+    lgrad.addColorStop(0.5, '#F7BF44');
+    lgrad.addColorStop(1, '#8D5200');
     lctx.fillStyle = lgrad;
     lctx.beginPath();
     lctx.arc(256, 256, 250, 0, Math.PI * 2);
     lctx.fill();
 
-    lctx.fillStyle = '#6D3600';
+    // Concentric milled border on medallion
+    lctx.lineWidth = 8;
+    lctx.strokeStyle = '#6D3600';
+    lctx.stroke();
+
+    // Sharp Soviet profile silhouette of V. I. Lenin
+    lctx.save();
+    lctx.translate(260, 260);
+    lctx.scale(1.45, 1.45);
+    lctx.shadowColor = '#5A3100';
+    lctx.shadowBlur = 6;
+    lctx.shadowOffsetX = 2;
+    lctx.shadowOffsetY = 2;
+    lctx.fillStyle = '#FFFDE7';
     lctx.beginPath();
-    lctx.ellipse(256, 225, 120, 140, -0.12, 0, Math.PI * 2);
+    lctx.moveTo(15, -95);
+    lctx.bezierCurveTo(45, -95, 75, -75, 75, -35);
+    lctx.bezierCurveTo(75, 5, 60, 45, 45, 75);
+    lctx.lineTo(55, 95);
+    lctx.lineTo(-45, 95);
+    lctx.lineTo(-35, 70);
+    lctx.bezierCurveTo(-20, 50, -10, 40, -15, 30);
+    lctx.bezierCurveTo(-28, 38, -45, 35, -45, 20);
+    lctx.bezierCurveTo(-45, 12, -35, 5, -28, 2);
+    lctx.bezierCurveTo(-38, 0, -42, -5, -38, -10);
+    lctx.bezierCurveTo(-32, -12, -25, -10, -22, -12);
+    lctx.lineTo(-24, -18);
+    lctx.bezierCurveTo(-38, -20, -48, -25, -46, -32);
+    lctx.bezierCurveTo(-44, -36, -32, -36, -26, -38);
+    lctx.bezierCurveTo(-24, -46, -28, -52, -26, -60);
+    lctx.bezierCurveTo(-22, -75, -5, -95, 15, -95);
+    lctx.closePath();
     lctx.fill();
 
-    lctx.fillStyle = '#FFF8D1';
+    lctx.strokeStyle = '#5A3100';
+    lctx.lineWidth = 2.5;
     lctx.beginPath();
-    lctx.arc(245, 185, 30, 0, Math.PI * 2);
-    lctx.arc(230, 240, 45, 0, Math.PI * 2);
-    lctx.arc(265, 320, 55, 0, Math.PI * 2);
-    lctx.fill();
+    lctx.ellipse(20, -15, 8, 14, 0.1, 0, Math.PI * 2);
+    lctx.moveTo(-15, -50);
+    lctx.quadraticCurveTo(-5, -52, 5, -46);
+    lctx.moveTo(-18, -10);
+    lctx.quadraticCurveTo(-28, -8, -38, -10);
+    lctx.stroke();
+    lctx.restore();
 
     const leninTex = new THREE.CanvasTexture(leninCanvas);
     const medallionGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.05, 32);
@@ -1854,8 +1903,184 @@ function initHero3DArtifact() {
     return badge;
   }
 
+  // --- BUILD 3D KOMSOMOL BADGE (ЗНАЧОК ВЛКСМ) ---
+  function buildKomsomolBadge() {
+    const komsomol = new THREE.Group();
+
+    // 1. Gold Staff / Pole on the left
+    const staffMat = new THREE.MeshStandardMaterial({
+      color: 0xF7BF44,
+      metalness: 0.92,
+      roughness: 0.22
+    });
+    const staffGeo = new THREE.CylinderGeometry(0.026, 0.026, 2.3, 16);
+    const staffMesh = new THREE.Mesh(staffGeo, staffMat);
+    staffMesh.position.set(-0.70, 0, 0.04);
+    komsomol.add(staffMesh);
+
+    // Spearhead Finial
+    const spearGeo = new THREE.ConeGeometry(0.06, 0.24, 16);
+    const spearMesh = new THREE.Mesh(spearGeo, staffMat);
+    spearMesh.position.set(-0.70, 1.22, 0.04);
+    komsomol.add(spearMesh);
+
+    // 2. Waving Red Flag (Развевающееся знамя)
+    const flagShape = new THREE.Shape();
+    flagShape.moveTo(-0.68, -0.85);
+    flagShape.lineTo(-0.68, 1.05);
+    flagShape.bezierCurveTo(-0.30, 1.15, 0.25, 0.95, 0.72, 1.08);
+    flagShape.bezierCurveTo(0.85, 0.75, 0.92, 0.15, 0.82, -0.55);
+    flagShape.bezierCurveTo(0.35, -0.68, -0.15, -0.45, -0.68, -0.85);
+    flagShape.closePath();
+
+    const flagExtrudeSettings = {
+      depth: 0.065,
+      bevelEnabled: true,
+      bevelSegments: 4,
+      steps: 1,
+      bevelSize: 0.025,
+      bevelThickness: 0.025
+    };
+    const flagGeo = new THREE.ExtrudeGeometry(flagShape, flagExtrudeSettings);
+
+    // Gold frame border
+    const borderGeo = new THREE.ExtrudeGeometry(flagShape, {
+      depth: 0.075,
+      bevelEnabled: true,
+      bevelSegments: 2,
+      bevelSize: 0.04,
+      bevelThickness: 0.02
+    });
+    const borderMat = new THREE.MeshStandardMaterial({
+      color: 0xF7BF44,
+      metalness: 0.90,
+      roughness: 0.22
+    });
+    const borderMesh = new THREE.Mesh(borderGeo, borderMat);
+    borderMesh.position.z = -0.01;
+    komsomol.add(borderMesh);
+
+    // Rich translucent Ruby Enamel
+    const enamelMat = new THREE.MeshStandardMaterial({
+      color: 0xC62828,
+      metalness: 0.18,
+      roughness: 0.12,
+      emissive: 0x330000
+    });
+    const flagMesh = new THREE.Mesh(flagGeo, enamelMat);
+    flagMesh.position.z = 0.02;
+    komsomol.add(flagMesh);
+
+    // 3. Central Lenin Profile & «ВЛКСМ» Decal
+    const komsomolCanvas = document.createElement('canvas');
+    komsomolCanvas.width = 512;
+    komsomolCanvas.height = 512;
+    const kctx = komsomolCanvas.getContext('2d');
+
+    // Draw Lenin profile in gold
+    const wgrad = kctx.createRadialGradient(256, 190, 20, 256, 190, 150);
+    wgrad.addColorStop(0, '#FFF2B2');
+    wgrad.addColorStop(0.6, '#F7BF44');
+    wgrad.addColorStop(1, '#9C6202');
+
+    kctx.save();
+    kctx.translate(256, 190);
+    kctx.scale(1.22, 1.22);
+    kctx.shadowColor = '#4A1C00';
+    kctx.shadowBlur = 8;
+    kctx.shadowOffsetX = 3;
+    kctx.shadowOffsetY = 3;
+    kctx.fillStyle = wgrad;
+    kctx.beginPath();
+    kctx.moveTo(15, -95);
+    kctx.bezierCurveTo(45, -95, 75, -75, 75, -35);
+    kctx.bezierCurveTo(75, 5, 60, 45, 45, 75);
+    kctx.lineTo(55, 95);
+    kctx.lineTo(-45, 95);
+    kctx.lineTo(-35, 70);
+    kctx.bezierCurveTo(-20, 50, -10, 40, -15, 30);
+    kctx.bezierCurveTo(-28, 38, -45, 35, -45, 20);
+    kctx.bezierCurveTo(-45, 12, -35, 5, -28, 2);
+    kctx.bezierCurveTo(-38, 0, -42, -5, -38, -10);
+    kctx.bezierCurveTo(-32, -12, -25, -10, -22, -12);
+    kctx.lineTo(-24, -18);
+    kctx.bezierCurveTo(-38, -20, -48, -25, -46, -32);
+    kctx.bezierCurveTo(-44, -36, -32, -36, -26, -38);
+    kctx.bezierCurveTo(-24, -46, -28, -52, -26, -60);
+    kctx.bezierCurveTo(-22, -75, -5, -95, 15, -95);
+    kctx.closePath();
+    kctx.fill();
+
+    kctx.strokeStyle = '#5A3100';
+    kctx.lineWidth = 2.5;
+    kctx.beginPath();
+    kctx.ellipse(20, -15, 8, 14, 0.1, 0, Math.PI * 2);
+    kctx.moveTo(-15, -50);
+    kctx.quadraticCurveTo(-5, -52, 5, -46);
+    kctx.moveTo(-18, -10);
+    kctx.quadraticCurveTo(-28, -8, -38, -10);
+    kctx.stroke();
+    kctx.restore();
+
+    // Embossed Letters «ВЛКСМ»
+    kctx.save();
+    kctx.font = '900 68px "JetBrains Mono", sans-serif';
+    kctx.textAlign = 'center';
+    kctx.textBaseline = 'middle';
+    kctx.fillStyle = '#4A1C00';
+    kctx.fillText('ВЛКСМ', 258, 392);
+    kctx.fillStyle = '#FFF8D1';
+    kctx.fillText('ВЛКСМ', 256, 390);
+
+    kctx.font = '900 28px sans-serif';
+    kctx.fillStyle = '#FFE082';
+    kctx.fillText('★', 256, 442);
+    kctx.restore();
+
+    const komsomolTex = new THREE.CanvasTexture(komsomolCanvas);
+    const decalGeo = new THREE.PlaneGeometry(1.35, 1.35);
+    const decalMat = new THREE.MeshStandardMaterial({
+      map: komsomolTex,
+      transparent: true,
+      metalness: 0.85,
+      roughness: 0.22,
+      depthWrite: false
+    });
+    const decalMesh = new THREE.Mesh(decalGeo, decalMat);
+    decalMesh.position.set(0.04, 0.08, 0.115);
+    komsomol.add(decalMesh);
+
+    // 4. Reverse side: Brass backing and threaded screw post with nut
+    const reverseMat = new THREE.MeshStandardMaterial({
+      color: 0x8D6E63,
+      metalness: 0.78,
+      roughness: 0.35
+    });
+    const screwGeo = new THREE.CylinderGeometry(0.042, 0.042, 0.28, 16);
+    screwGeo.rotateX(Math.PI / 2);
+    const screwMesh = new THREE.Mesh(screwGeo, reverseMat);
+    screwMesh.position.set(0, 0.05, -0.14);
+    komsomol.add(screwMesh);
+
+    const nutGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.05, 24);
+    nutGeo.rotateX(Math.PI / 2);
+    const nutMat = new THREE.MeshStandardMaterial({
+      color: 0xBCAAA4,
+      metalness: 0.88,
+      roughness: 0.25
+    });
+    const nutMesh = new THREE.Mesh(nutGeo, nutMat);
+    nutMesh.position.set(0, 0.05, -0.22);
+    komsomol.add(nutMesh);
+
+    return komsomol;
+  }
+
   const badge3D = buildPioneerBadge();
   badgeGroup.add(badge3D);
+
+  const komsomol3D = buildKomsomolBadge();
+  komsomolGroup.add(komsomol3D);
 
   mainGroup.position.set(0, 0, 0);
 
@@ -1936,7 +2161,7 @@ function initHero3DArtifact() {
     });
   }
 
-  // Artifact Tab switching
+  // Artifact Tab switching (3 artifacts: Medal, Pioneer, Komsomol)
   function switchArtifact(type) {
     controls.autoRotate = false;
     if (btnSpin) btnSpin.classList.remove('active');
@@ -1945,17 +2170,13 @@ function initHero3DArtifact() {
     mainGroup.rotation.set(0, 0, 0);
     isFlipping = false;
 
-    if (type === 'medal') {
-      medalGroup.visible = true;
-      badgeGroup.visible = false;
-      if (tabMedal) tabMedal.classList.add('active');
-      if (tabBadge) tabBadge.classList.remove('active');
-    } else {
-      medalGroup.visible = false;
-      badgeGroup.visible = true;
-      if (tabBadge) tabBadge.classList.add('active');
-      if (tabMedal) tabMedal.classList.remove('active');
-    }
+    medalGroup.visible = (type === 'medal');
+    badgeGroup.visible = (type === 'badge');
+    komsomolGroup.visible = (type === 'komsomol');
+
+    if (tabMedal) tabMedal.classList.toggle('active', type === 'medal');
+    if (tabBadge) tabBadge.classList.toggle('active', type === 'badge');
+    if (tabKomsomol) tabKomsomol.classList.toggle('active', type === 'komsomol');
 
     const data = ARTIFACT_DATA[type];
     if (data && dossierStamp && dossierTitle) {
@@ -1977,6 +2198,7 @@ function initHero3DArtifact() {
 
   if (tabMedal) tabMedal.addEventListener('click', () => switchArtifact('medal'));
   if (tabBadge) tabBadge.addEventListener('click', () => switchArtifact('badge'));
+  if (tabKomsomol) tabKomsomol.addEventListener('click', () => switchArtifact('komsomol'));
 }
 
 /* --------------------------------------------------------------------------
@@ -2085,39 +2307,54 @@ function init3DDesk() {
   // --- 4. Procedural Canvas Textures (Zero CORS, 100% Offline) ---
   function makeWoodTexture() {
     const c = document.createElement('canvas');
-    c.width = 512;
-    c.height = 512;
+    c.width = 1024;
+    c.height = 1024;
     const ctx = c.getContext('2d');
 
-    // Rich warm pine/oak school varnish
-    ctx.fillStyle = '#8d5b2d';
-    ctx.fillRect(0, 0, 512, 512);
+    // Rich warm golden honey-amber varnish
+    const grad = ctx.createLinearGradient(0, 0, 1024, 0);
+    grad.addColorStop(0, '#B37032');
+    grad.addColorStop(0.3, '#C9823B');
+    grad.addColorStop(0.7, '#A5632A');
+    grad.addColorStop(1, '#B37032');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1024, 1024);
 
-    for (let y = 0; y < 512; y++) {
-      const alpha = 0.03 + Math.random() * 0.05;
-      ctx.fillStyle = `rgba(50, 28, 12, ${alpha})`;
-      ctx.fillRect(0, y, 512, 1);
+    // Fine grain fibers
+    for (let y = 0; y < 1024; y++) {
+      const alpha = 0.04 + Math.random() * 0.06;
+      ctx.fillStyle = `rgba(60, 32, 10, ${alpha})`;
+      ctx.fillRect(0, y, 1024, 1);
     }
-    // Grain streaks
-    ctx.fillStyle = 'rgba(210, 150, 75, 0.07)';
-    for (let i = 0; i < 25; i++) {
-      const x = Math.random() * 512;
-      const w = Math.random() * 60 + 20;
-      ctx.fillRect(x, 0, w, 512);
-    }
-    // Soft wood knots
-    for (let k = 0; k < 5; k++) {
-      const kx = 60 + k * 95 + (Math.random() * 20);
-      const ky = 50 + k * 90 + (Math.random() * 30);
-      const grad = ctx.createRadialGradient(kx, ky, 2, kx, ky, 18);
-      grad.addColorStop(0, 'rgba(40, 20, 8, 0.45)');
-      grad.addColorStop(0.7, 'rgba(100, 50, 20, 0.2)');
-      grad.addColorStop(1, 'transparent');
-      ctx.fillStyle = grad;
+
+    // Natural wood growth rings and gentle waves
+    ctx.strokeStyle = 'rgba(75, 40, 15, 0.12)';
+    ctx.lineWidth = 2.5;
+    for (let i = 0; i < 40; i++) {
+      const baseY = i * 26 + (Math.random() * 8);
       ctx.beginPath();
-      ctx.ellipse(kx, ky, 22, 10, 0.15, 0, Math.PI * 2);
+      ctx.moveTo(0, baseY);
+      for (let x = 0; x <= 1024; x += 32) {
+        const wave = Math.sin(x * 0.008 + i) * 12 + Math.cos(x * 0.02) * 4;
+        ctx.lineTo(x, baseY + wave);
+      }
+      ctx.stroke();
+    }
+
+    // Authentic wood knots with concentric resin halos
+    for (let k = 0; k < 6; k++) {
+      const kx = 120 + k * 160 + (Math.random() * 40 - 20);
+      const ky = 100 + (k % 3) * 320 + (Math.random() * 60 - 30);
+      const rgrad = ctx.createRadialGradient(kx, ky, 2, kx, ky, 26);
+      rgrad.addColorStop(0, 'rgba(45, 20, 8, 0.7)');
+      rgrad.addColorStop(0.4, 'rgba(90, 42, 16, 0.35)');
+      rgrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = rgrad;
+      ctx.beginPath();
+      ctx.ellipse(kx, ky, 28, 14, 0.2, 0, Math.PI * 2);
       ctx.fill();
     }
+
     const t = new THREE.CanvasTexture(c);
     t.wrapS = THREE.RepeatWrapping;
     t.wrapT = THREE.RepeatWrapping;
@@ -2126,20 +2363,123 @@ function init3DDesk() {
 
   function makeIronTexture() {
     const c = document.createElement('canvas');
-    c.width = 256;
-    c.height = 256;
+    c.width = 512;
+    c.height = 512;
     const ctx = c.getContext('2d');
-    ctx.fillStyle = '#1e2226';
-    ctx.fillRect(0, 0, 256, 256);
-    const idata = ctx.getImageData(0, 0, 256, 256);
+    ctx.fillStyle = '#212529';
+    ctx.fillRect(0, 0, 512, 512);
+
+    // Cast iron pebble roughness
+    const idata = ctx.getImageData(0, 0, 512, 512);
     const d = idata.data;
     for (let i = 0; i < d.length; i += 4) {
-      const n = (Math.random() - 0.5) * 26;
-      d[i] = Math.min(255, Math.max(0, 32 + n));
-      d[i + 1] = Math.min(255, Math.max(0, 36 + n));
-      d[i + 2] = Math.min(255, Math.max(0, 42 + n));
+      const n = (Math.random() - 0.5) * 32;
+      d[i] = Math.min(255, Math.max(0, 36 + n));
+      d[i + 1] = Math.min(255, Math.max(0, 40 + n));
+      d[i + 2] = Math.min(255, Math.max(0, 46 + n));
     }
     ctx.putImageData(idata, 0, 0);
+
+    // Embossed Soviet standard stamp: «ГОСТ 11015-77»
+    ctx.save();
+    ctx.font = '900 24px "JetBrains Mono", sans-serif';
+    ctx.fillStyle = 'rgba(15, 18, 22, 0.85)';
+    ctx.fillText('ГОСТ 11015-77', 158, 248);
+    ctx.fillStyle = 'rgba(75, 85, 95, 0.75)';
+    ctx.fillText('ГОСТ 11015-77', 156, 246);
+
+    ctx.font = '700 16px "JetBrains Mono", sans-serif';
+    ctx.fillStyle = 'rgba(75, 85, 95, 0.65)';
+    ctx.fillText('З-Д ШКОЛЬНОЙ МЕБЕЛИ №3', 130, 276);
+    ctx.restore();
+
+    return new THREE.CanvasTexture(c);
+  }
+
+  function makeNotebookTexture() {
+    const c = document.createElement('canvas');
+    c.width = 512;
+    c.height = 512;
+    const ctx = c.getContext('2d');
+
+    // Authentic cream school notebook paper
+    ctx.fillStyle = '#FBF8EE';
+    ctx.fillRect(0, 0, 512, 512);
+
+    // Vignette shadow on paper edges
+    const vgrad = ctx.createRadialGradient(256, 256, 200, 256, 256, 260);
+    vgrad.addColorStop(0, 'transparent');
+    vgrad.addColorStop(1, 'rgba(120, 100, 80, 0.12)');
+    ctx.fillStyle = vgrad;
+    ctx.fillRect(0, 0, 512, 512);
+
+    // Red Left Margin Line (Поля)
+    ctx.strokeStyle = '#E53935';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(90, 0);
+    ctx.lineTo(90, 512);
+    ctx.stroke();
+
+    // Pale Blue Slanted Guide Lines (Косая линейка)
+    ctx.strokeStyle = 'rgba(92, 138, 196, 0.35)';
+    ctx.lineWidth = 1;
+
+    for (let y = 60; y < 490; y += 22) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(512, y);
+      ctx.stroke();
+
+      ctx.save();
+      ctx.setLineDash([3, 3]);
+      ctx.strokeStyle = 'rgba(92, 138, 196, 0.2)';
+      ctx.beginPath();
+      ctx.moveTo(0, y - 8);
+      ctx.lineTo(512, y - 8);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // 45-degree slanted guidelines
+    ctx.strokeStyle = 'rgba(92, 138, 196, 0.22)';
+    for (let x = -300; x < 700; x += 36) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x + 360, 512);
+      ctx.stroke();
+    }
+
+    // Calligraphic handwritten text in purple/violet ink
+    ctx.font = 'italic 700 24px "Times New Roman", serif';
+    ctx.fillStyle = '#311B92';
+
+    ctx.save();
+    ctx.fillText('12 сентября', 180, 56);
+    ctx.fillText('Классная работа', 140, 100);
+
+    ctx.font = 'italic 600 22px "Times New Roman", serif';
+    ctx.fillText('Мы не рабы, рабы не мы.', 105, 144);
+    ctx.fillText('Мама мыла раму с мылом.', 105, 188);
+    ctx.fillText('В лесу родилась ёлочка.', 105, 232);
+    ctx.fillText('2 + 2 = 4      5 × 5 = 25', 105, 276);
+    ctx.restore();
+
+    // Red Teacher Grade «5 (отл)» with checkmark
+    ctx.save();
+    ctx.font = 'bold 36px "Brush Script MT", cursive, sans-serif';
+    ctx.fillStyle = '#C62828';
+    ctx.fillText('✓ 5 (отл)', 340, 130);
+    ctx.fillText('Молодец!', 340, 168);
+    ctx.restore();
+
+    // Top Header: «ТЕТРАДЬ • 12 ЛИСТОВ • ЦЕНА 2 КОП.»
+    ctx.save();
+    ctx.font = '800 12px "JetBrains Mono", sans-serif';
+    ctx.fillStyle = 'rgba(60, 60, 60, 0.45)';
+    ctx.fillText('ТЕТРАДЬ ДЛЯ 1 КЛАССА • МИНПРОСВЕЩЕНИЯ СССР • ЦЕНА 2 КОП.', 20, 24);
+    ctx.restore();
+
     return new THREE.CanvasTexture(c);
   }
 
@@ -2148,45 +2488,43 @@ function init3DDesk() {
 
   const woodMaterial = new THREE.MeshStandardMaterial({
     map: woodTexture,
-    roughness: 0.38,
-    metalness: 0.04,
+    roughness: 0.32,
+    metalness: 0.03,
     color: 0xaa733e
   });
 
   const ironMaterial = new THREE.MeshStandardMaterial({
     map: ironTexture,
-    roughness: 0.72,
-    metalness: 0.65,
+    roughness: 0.68,
+    metalness: 0.70,
     color: 0x22262a
   });
 
   const porcelainMaterial = new THREE.MeshStandardMaterial({
-    color: 0xf4f4ee,
-    roughness: 0.12,
+    color: 0xfcfcfa,
+    roughness: 0.08,
     metalness: 0.05
-  });
-
-  const inkMaterial = new THREE.MeshStandardMaterial({
-    color: 0x240f42,
-    roughness: 0.1,
-    metalness: 0.2
   });
 
   const brassMaterial = new THREE.MeshStandardMaterial({
     color: 0xd4af37,
-    roughness: 0.35,
-    metalness: 0.8
+    roughness: 0.32,
+    metalness: 0.82
   });
 
   // --- 5. Assemble Realistic Erisman Desk (ГОСТ 11015-77) ---
   const deskGroup = new THREE.Group();
   scene.add(deskGroup);
 
-  // A. Cast-Iron Side Frames (Left & Right)
+  // A. Cast-Iron Side Frames (Left & Right) with Bolt Heads
   const ironSideGeo = new THREE.BoxGeometry(0.08, 0.85, 0.08);
   const ironBaseGeo = new THREE.BoxGeometry(0.1, 0.06, 1.6);
   const tieBarGeo = new THREE.CylinderGeometry(0.03, 0.03, 2.1, 16);
   tieBarGeo.rotateZ(Math.PI / 2);
+
+  const boltGeo = new THREE.CylinderGeometry(0.016, 0.016, 0.02, 6);
+  boltGeo.rotateZ(Math.PI / 2);
+  const boltMat = new THREE.MeshStandardMaterial({ color: 0x8D6E63, metalness: 0.85, roughness: 0.3 });
 
   [-1.0, 1.0].forEach(x => {
     // Front table upright
@@ -2207,12 +2545,19 @@ function init3DDesk() {
     baseRunner.castShadow = true;
     deskGroup.add(baseRunner);
 
-    // Diagonal stiffener strut
+    // Diagonal stiffener strut with openwork truss
     const strutGeo = new THREE.BoxGeometry(0.06, 0.05, 1.15);
     const strut = new THREE.Mesh(strutGeo, ironMaterial);
     strut.position.set(x, 0.38, 0.05);
     strut.rotation.x = 0.22;
     deskGroup.add(strut);
+
+    // Authentic hexagonal bolt heads on cast iron
+    [0.15, 0.45, 0.75].forEach(by => {
+      const bolt = new THREE.Mesh(boltGeo, boltMat);
+      bolt.position.set(x > 0 ? x + 0.045 : x - 0.045, by, -0.45);
+      deskGroup.add(bolt);
+    });
   });
 
   // Tie Bar (Стяжка)
@@ -2278,30 +2623,37 @@ function init3DDesk() {
   fixedShelf.castShadow = true;
   deskGroup.add(fixedShelf);
 
-  // Inkwell Socket & Porcelain Inkwell (Чернильница-непроливайка)
-  const inkwellOuterGeo = new THREE.CylinderGeometry(0.055, 0.045, 0.065, 24);
+  // Dual Porcelain Inkwell Socket & Porcelain Inkwell (Чернильница-непроливайка)
+  const inkwellOuterGeo = new THREE.CylinderGeometry(0.062, 0.050, 0.072, 28);
   const inkwellOuter = new THREE.Mesh(inkwellOuterGeo, porcelainMaterial);
   inkwellOuter.position.set(0, 0.92, -0.76);
   inkwellOuter.castShadow = true;
   deskGroup.add(inkwellOuter);
 
-  const inkInnerGeo = new THREE.CylinderGeometry(0.038, 0.015, 0.04, 24);
-  const inkInner = new THREE.Mesh(inkInnerGeo, inkMaterial);
-  inkInner.position.set(0, 0.94, -0.76);
+  // Deep Violet Ink inside with mirror meniscus
+  const inkInnerGeo = new THREE.CylinderGeometry(0.044, 0.02, 0.045, 24);
+  const inkInnerMat = new THREE.MeshStandardMaterial({
+    color: 0x1A0933,
+    roughness: 0.04,
+    metalness: 0.3
+  });
+  const inkInner = new THREE.Mesh(inkInnerGeo, inkInnerMat);
+  inkInner.position.set(0, 0.945, -0.76);
   deskGroup.add(inkInner);
 
-  // Pen Groove & Wooden Dip Pen
-  const penGeo = new THREE.CylinderGeometry(0.009, 0.009, 0.42, 16);
+  // Pen Groove & Wooden Dip Pen with Steel Nib №86
+  const penGeo = new THREE.CylinderGeometry(0.009, 0.007, 0.44, 16);
   penGeo.rotateZ(Math.PI / 2);
   const penMat = new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.3 });
   const pen = new THREE.Mesh(penGeo, penMat);
-  pen.position.set(0.45, 0.91, -0.76);
+  pen.position.set(0.45, 0.915, -0.76);
   deskGroup.add(pen);
 
-  const nibGeo = new THREE.ConeGeometry(0.012, 0.04, 8);
+  const nibGeo = new THREE.ConeGeometry(0.012, 0.042, 8);
   nibGeo.rotateZ(-Math.PI / 2);
-  const nib = new THREE.Mesh(nibGeo, brassMaterial);
-  nib.position.set(0.67, 0.91, -0.76);
+  const steelNibMat = new THREE.MeshStandardMaterial({ color: 0xE0E0E0, metalness: 0.95, roughness: 0.15 });
+  const nib = new THREE.Mesh(nibGeo, steelNibMat);
+  nib.position.set(0.68, 0.915, -0.76);
   deskGroup.add(nib);
 
   // E. Hinged Lid Assembly (Откидная створка парты)
@@ -2326,6 +2678,31 @@ function init3DDesk() {
     hinge.position.set(hx, 0.018, 0.01);
     lidPivot.add(hinge);
   });
+
+  // Authentic Soviet School Notebook on the Lid
+  const notebookTex = makeNotebookTexture();
+  const notebookGeo = new THREE.PlaneGeometry(0.48, 0.38);
+  const notebookMat = new THREE.MeshStandardMaterial({
+    map: notebookTex,
+    roughness: 0.85,
+    metalness: 0.05,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1
+  });
+  const notebookMesh = new THREE.Mesh(notebookGeo, notebookMat);
+  notebookMesh.rotation.x = -Math.PI / 2;
+  notebookMesh.position.set(-0.52, 0.024, 0.28);
+  notebookMesh.receiveShadow = true;
+  lidPivot.add(notebookMesh);
+
+  // Wooden Student Ruler on the Lid (20 см по ГОСТу)
+  const rulerGeo = new THREE.BoxGeometry(0.38, 0.008, 0.038);
+  const rulerMat = new THREE.MeshStandardMaterial({ color: 0xD7CCC8, roughness: 0.55 });
+  const rulerMesh = new THREE.Mesh(rulerGeo, rulerMat);
+  rulerMesh.position.set(0.55, 0.024, 0.40);
+  rulerMesh.rotation.y = 0.08;
+  lidPivot.add(rulerMesh);
 
   // Soft Contact Ground Shadow
   const shadowGeo = new THREE.PlaneGeometry(3.2, 2.2);
@@ -2405,6 +2782,7 @@ function init3DDesk() {
 
   const PRESETS = {
     iso: { pos: new THREE.Vector3(3.8, 2.6, 3.8), target: new THREE.Vector3(0, 0.45, 0) },
+    student: { pos: new THREE.Vector3(0, 1.45, 1.55), target: new THREE.Vector3(0, 0.72, -0.45) },
     profile: { pos: new THREE.Vector3(4.8, 0.65, 0.05), target: new THREE.Vector3(0, 0.5, 0) },
     front: { pos: new THREE.Vector3(0.01, 1.4, 4.4), target: new THREE.Vector3(0, 0.55, 0) },
     top: { pos: new THREE.Vector3(0.05, 5.2, 0.05), target: new THREE.Vector3(0, 0.45, 0) }
