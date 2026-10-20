@@ -2977,8 +2977,12 @@ body {
 }
 
 /* 3. Generations 3D Flip Cards */
+.gen-card-wrapper .gen-card:hover {
+  transform: none !important;
+}
+
 .gen-card-wrapper {
-  perspective: 1200px;
+  perspective: 1400px;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -2993,7 +2997,9 @@ body {
   display: flex;
   flex-direction: column;
   transform-style: preserve-3d;
-  transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1);
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.25, 1, 0.35, 1);
+  will-change: transform;
 }
 
 .gen-card-3d.is-flipped {
@@ -3006,6 +3012,7 @@ body {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   border-radius: var(--radius-lg);
+  transform: rotateY(0deg);
 }
 
 .gen-card-front {
@@ -3014,6 +3021,7 @@ body {
   flex-direction: column;
   height: 100%;
   flex: 1;
+  z-index: 2;
 }
 
 .gen-card-3d.is-flipped .gen-card-front {
@@ -3032,7 +3040,8 @@ body {
   justify-content: center;
 }
 
-.btn-card-flip {
+.btn-card-flip,
+.btn-card-flip-back {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -3046,14 +3055,17 @@ body {
   border-radius: 20px;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: var(--transition);
+  transform: none !important;
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.btn-card-flip:hover {
+.btn-card-flip:hover,
+.btn-card-flip-back:hover {
   background: var(--light-red);
   border-color: var(--bright-red);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+  box-shadow: 0 4px 14px rgba(211, 47, 47, 0.25);
 }
 
 .flip-icon {
@@ -3076,6 +3088,7 @@ body {
   padding: 24px 20px;
   display: flex;
   flex-direction: column;
+  z-index: 1;
 }
 
 .card-back-parchment {

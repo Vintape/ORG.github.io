@@ -2743,22 +2743,20 @@ function init3DDesk() {
    -------------------------------------------------------------------------- */
 function init3DCardFlips() {
   document.querySelectorAll('.btn-card-flip').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const card3d = btn.closest('.gen-card-3d');
       if (card3d) {
-        const front = card3d.querySelector('.gen-card-front');
-        if (front) {
-          front.style.transform = '';
-          const glare = front.querySelector('.tilt-glare');
-          if (glare) glare.style.background = 'transparent';
-        }
         card3d.classList.add('is-flipped');
       }
     });
   });
 
   document.querySelectorAll('.btn-card-flip-back').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const card3d = btn.closest('.gen-card-3d');
       if (card3d) {
         card3d.classList.remove('is-flipped');
@@ -2771,7 +2769,8 @@ function init3DCardFlips() {
    14. UNIVERSAL 3D TILT EFFECT & SPECULAR SHEEN
    -------------------------------------------------------------------------- */
 function init3DTilt() {
-  const tiltElements = document.querySelectorAll('[data-tilt]');
+  // Exclude flip cards to completely prevent any hover-transform conflicts
+  const tiltElements = document.querySelectorAll('[data-tilt]:not(.gen-card-face)');
 
   tiltElements.forEach(el => {
     let glare = el.querySelector('.tilt-glare');
@@ -2781,10 +2780,15 @@ function init3DTilt() {
       el.appendChild(glare);
     }
 
-    el.addEventListener('mousemove', (e) => {
-      const card3d = el.closest('.gen-card-3d');
-      if (card3d && card3d.classList.contains('is-flipped')) return;
+    let isHovered = false;
 
+    el.addEventListener('mouseenter', () => {
+      isHovered = true;
+      el.style.transition = 'transform 0.1s ease-out';
+    });
+
+    el.addEventListener('mousemove', (e) => {
+      if (!isHovered) return;
       const rect = el.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -2792,23 +2796,22 @@ function init3DTilt() {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      const rotateX = ((centerY - y) / centerY) * 7.5;
-      const rotateY = ((x - centerX) / centerX) * 7.5;
+      // Soft 5 deg tilt without scale3d to prevent boundary twitching
+      const rotateX = ((centerY - y) / centerY) * 5;
+      const rotateY = ((x - centerX) / centerX) * 5;
 
-      el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+      el.style.transform = `perspective(800px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
 
       const glareX = (x / rect.width) * 100;
       const glareY = (y / rect.height) * 100;
-      glare.style.background = `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.28) 0%, transparent 65%)`;
+      glare.style.background = `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.22) 0%, transparent 60%)`;
     });
 
     el.addEventListener('mouseleave', () => {
-      el.style.transform = '';
+      isHovered = false;
       el.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-    });
-
-    el.addEventListener('mouseenter', () => {
-      el.style.transition = 'transform 0.1s ease-out';
+      el.style.transform = '';
+      if (glare) glare.style.background = 'transparent';
     });
   });
 }
@@ -2829,6 +2832,7 @@ function initScrollReveal() {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-revealed');
+        observer.unobserve(entry.target);
       }
     });
   }, {
