@@ -2791,11 +2791,6 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.showcase-tab.active[data-artifact="komsomol"] {
-  color: #B71C1C;
-  border-bottom: 2px solid #B71C1C;
-}
-
 .showcase-tab.active[data-artifact="badge"] {
   color: #C62828;
   border-bottom: 2px solid #C62828;
@@ -2814,13 +2809,13 @@ body {
 }
 
 .artifact-stage {
-  height: 340px;
+  height: 350px;
   position: relative;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: radial-gradient(circle at 50% 45%, #231b17 0%, #120e0c 100%);
-  border: 1px solid rgba(229, 169, 60, 0.28);
-  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.7), 0 10px 30px rgba(0, 0, 0, 0.2);
+  background: radial-gradient(circle at 50% 38%, #2e2621 0%, #1c1613 60%, #120e0c 100%);
+  border: 1px solid rgba(229, 169, 60, 0.35);
+  box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.6), 0 10px 30px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2828,12 +2823,12 @@ body {
 
 .artifact-lighting-glow {
   position: absolute;
-  width: 260px;
-  height: 260px;
-  background: radial-gradient(circle, rgba(255, 213, 79, 0.18) 0%, rgba(211, 47, 47, 0.08) 50%, transparent 75%);
+  width: 270px;
+  height: 270px;
+  background: radial-gradient(circle, rgba(255, 215, 100, 0.20) 0%, rgba(218, 165, 32, 0.08) 50%, transparent 75%);
   border-radius: 50%;
   pointer-events: none;
-  filter: blur(30px);
+  filter: blur(28px);
 }
 
 .artifact-canvas {
@@ -2851,26 +2846,30 @@ body {
 
 .artifact-stage-hint {
   position: absolute;
-  bottom: 12px;
+  bottom: 14px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(15, 23, 42, 0.78);
+  background: rgba(30, 24, 20, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  color: var(--amber-gold);
+  color: #F8D179;
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   padding: 5px 14px;
   border-radius: 20px;
-  border: 1px solid rgba(229, 169, 60, 0.35);
+  border: 1px solid rgba(248, 209, 121, 0.25);
   pointer-events: none;
   display: flex;
   align-items: center;
   gap: 6px;
   white-space: nowrap;
   z-index: 5;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.3s ease;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Dossier */

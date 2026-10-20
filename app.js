@@ -1103,18 +1103,6 @@ const ARTIFACT_DATA = {
       { label: "Цена в СССР", val: "15 копеек" },
       { label: "Охват", val: "Более 20 млн пионеров" }
     ]
-  },
-  komsomol: {
-    stamp: "ЦК ВЛКСМ • 1958",
-    tag: "ГРАЖДАНСКАЯ ЗРЕЛОСТЬ",
-    title: "Членский Значок ВЛКСМ (Комсомол)",
-    desc: "Утвержден в 1958 году постановлением Бюро ЦК ВЛКСМ. Вручался юношам и девушкам с 14 лет при торжественном вступлении в ряды Всесоюзного Ленинского Коммунистического Союза Молодёжи. Форма развевающегося алого знамени с чеканным золотым барельефом Владимира Ленина и строгой надписью «ВЛКСМ» символизировала вступление во взрослую жизнь, колоссальную социальную ответственность, право на комсомольские путевки на стройки века и поступление в ВУЗы.",
-    specs: [
-      { label: "Материал", val: "Томпак / Рубиновая эмаль" },
-      { label: "Крепление", val: "Винт с гайкой (ЛМД)" },
-      { label: "Размер", val: "20 × 24 мм" },
-      { label: "Охват", val: "Свыше 40 млн комсомольцев" }
-    ]
   }
 };
 
@@ -1123,7 +1111,6 @@ function initHero3DArtifact() {
   const stage = document.getElementById('artifact-stage');
   const tabMedal = document.getElementById('tab-medal');
   const tabBadge = document.getElementById('tab-badge');
-  const tabKomsomol = document.getElementById('tab-komsomol');
 
   const btnSpin = document.getElementById('btn-spin-artifact');
   const btnFlip = document.getElementById('btn-flip-artifact');
@@ -1193,12 +1180,9 @@ function initHero3DArtifact() {
 
   const medalGroup = new THREE.Group();
   const badgeGroup = new THREE.Group();
-  const komsomolGroup = new THREE.Group();
   badgeGroup.visible = false;
-  komsomolGroup.visible = false;
   mainGroup.add(medalGroup);
   mainGroup.add(badgeGroup);
-  mainGroup.add(komsomolGroup);
 
   // --- PROCEDURAL TEXTURES FOR GOLD MEDAL ---
   function createMedalObverseTexture() {
@@ -1621,7 +1605,13 @@ function initHero3DArtifact() {
 
   // Build Gold Medal 3D Mesh
   const obverseTex = createMedalObverseTexture();
+  obverseTex.center.set(0.5, 0.5);
+  obverseTex.rotation = -Math.PI / 2;
+
   const reverseTex = createMedalReverseTexture();
+  reverseTex.center.set(0.5, 0.5);
+  reverseTex.rotation = -Math.PI / 2;
+
   const edgeTex = createMilledEdgeTexture();
 
   const goldRimMat = new THREE.MeshStandardMaterial({
@@ -1829,6 +1819,8 @@ function initHero3DArtifact() {
     lctx.restore();
 
     const leninTex = new THREE.CanvasTexture(leninCanvas);
+    leninTex.center.set(0.5, 0.5);
+    leninTex.rotation = -Math.PI / 2;
     const medallionGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.05, 32);
     const medallionMat = new THREE.MeshStandardMaterial({
       color: 0xF7BF44,
@@ -1903,186 +1895,16 @@ function initHero3DArtifact() {
     return badge;
   }
 
-  // --- BUILD 3D KOMSOMOL BADGE (ЗНАЧОК ВЛКСМ) ---
-  function buildKomsomolBadge() {
-    const komsomol = new THREE.Group();
-
-    // 1. Gold Staff / Pole on the left
-    const staffMat = new THREE.MeshStandardMaterial({
-      color: 0xF7BF44,
-      metalness: 0.92,
-      roughness: 0.22
-    });
-    const staffGeo = new THREE.CylinderGeometry(0.026, 0.026, 2.3, 16);
-    const staffMesh = new THREE.Mesh(staffGeo, staffMat);
-    staffMesh.position.set(-0.70, 0, 0.04);
-    komsomol.add(staffMesh);
-
-    // Spearhead Finial
-    const spearGeo = new THREE.ConeGeometry(0.06, 0.24, 16);
-    const spearMesh = new THREE.Mesh(spearGeo, staffMat);
-    spearMesh.position.set(-0.70, 1.22, 0.04);
-    komsomol.add(spearMesh);
-
-    // 2. Waving Red Flag (Развевающееся знамя)
-    const flagShape = new THREE.Shape();
-    flagShape.moveTo(-0.68, -0.85);
-    flagShape.lineTo(-0.68, 1.05);
-    flagShape.bezierCurveTo(-0.30, 1.15, 0.25, 0.95, 0.72, 1.08);
-    flagShape.bezierCurveTo(0.85, 0.75, 0.92, 0.15, 0.82, -0.55);
-    flagShape.bezierCurveTo(0.35, -0.68, -0.15, -0.45, -0.68, -0.85);
-    flagShape.closePath();
-
-    const flagExtrudeSettings = {
-      depth: 0.065,
-      bevelEnabled: true,
-      bevelSegments: 4,
-      steps: 1,
-      bevelSize: 0.025,
-      bevelThickness: 0.025
-    };
-    const flagGeo = new THREE.ExtrudeGeometry(flagShape, flagExtrudeSettings);
-
-    // Gold frame border
-    const borderGeo = new THREE.ExtrudeGeometry(flagShape, {
-      depth: 0.075,
-      bevelEnabled: true,
-      bevelSegments: 2,
-      bevelSize: 0.04,
-      bevelThickness: 0.02
-    });
-    const borderMat = new THREE.MeshStandardMaterial({
-      color: 0xF7BF44,
-      metalness: 0.90,
-      roughness: 0.22
-    });
-    const borderMesh = new THREE.Mesh(borderGeo, borderMat);
-    borderMesh.position.z = -0.01;
-    komsomol.add(borderMesh);
-
-    // Rich translucent Ruby Enamel
-    const enamelMat = new THREE.MeshStandardMaterial({
-      color: 0xC62828,
-      metalness: 0.18,
-      roughness: 0.12,
-      emissive: 0x330000
-    });
-    const flagMesh = new THREE.Mesh(flagGeo, enamelMat);
-    flagMesh.position.z = 0.02;
-    komsomol.add(flagMesh);
-
-    // 3. Central Lenin Profile & «ВЛКСМ» Decal
-    const komsomolCanvas = document.createElement('canvas');
-    komsomolCanvas.width = 512;
-    komsomolCanvas.height = 512;
-    const kctx = komsomolCanvas.getContext('2d');
-
-    // Draw Lenin profile in gold
-    const wgrad = kctx.createRadialGradient(256, 190, 20, 256, 190, 150);
-    wgrad.addColorStop(0, '#FFF2B2');
-    wgrad.addColorStop(0.6, '#F7BF44');
-    wgrad.addColorStop(1, '#9C6202');
-
-    kctx.save();
-    kctx.translate(256, 190);
-    kctx.scale(1.22, 1.22);
-    kctx.shadowColor = '#4A1C00';
-    kctx.shadowBlur = 8;
-    kctx.shadowOffsetX = 3;
-    kctx.shadowOffsetY = 3;
-    kctx.fillStyle = wgrad;
-    kctx.beginPath();
-    kctx.moveTo(15, -95);
-    kctx.bezierCurveTo(45, -95, 75, -75, 75, -35);
-    kctx.bezierCurveTo(75, 5, 60, 45, 45, 75);
-    kctx.lineTo(55, 95);
-    kctx.lineTo(-45, 95);
-    kctx.lineTo(-35, 70);
-    kctx.bezierCurveTo(-20, 50, -10, 40, -15, 30);
-    kctx.bezierCurveTo(-28, 38, -45, 35, -45, 20);
-    kctx.bezierCurveTo(-45, 12, -35, 5, -28, 2);
-    kctx.bezierCurveTo(-38, 0, -42, -5, -38, -10);
-    kctx.bezierCurveTo(-32, -12, -25, -10, -22, -12);
-    kctx.lineTo(-24, -18);
-    kctx.bezierCurveTo(-38, -20, -48, -25, -46, -32);
-    kctx.bezierCurveTo(-44, -36, -32, -36, -26, -38);
-    kctx.bezierCurveTo(-24, -46, -28, -52, -26, -60);
-    kctx.bezierCurveTo(-22, -75, -5, -95, 15, -95);
-    kctx.closePath();
-    kctx.fill();
-
-    kctx.strokeStyle = '#5A3100';
-    kctx.lineWidth = 2.5;
-    kctx.beginPath();
-    kctx.ellipse(20, -15, 8, 14, 0.1, 0, Math.PI * 2);
-    kctx.moveTo(-15, -50);
-    kctx.quadraticCurveTo(-5, -52, 5, -46);
-    kctx.moveTo(-18, -10);
-    kctx.quadraticCurveTo(-28, -8, -38, -10);
-    kctx.stroke();
-    kctx.restore();
-
-    // Embossed Letters «ВЛКСМ»
-    kctx.save();
-    kctx.font = '900 68px "JetBrains Mono", sans-serif';
-    kctx.textAlign = 'center';
-    kctx.textBaseline = 'middle';
-    kctx.fillStyle = '#4A1C00';
-    kctx.fillText('ВЛКСМ', 258, 392);
-    kctx.fillStyle = '#FFF8D1';
-    kctx.fillText('ВЛКСМ', 256, 390);
-
-    kctx.font = '900 28px sans-serif';
-    kctx.fillStyle = '#FFE082';
-    kctx.fillText('★', 256, 442);
-    kctx.restore();
-
-    const komsomolTex = new THREE.CanvasTexture(komsomolCanvas);
-    const decalGeo = new THREE.PlaneGeometry(1.35, 1.35);
-    const decalMat = new THREE.MeshStandardMaterial({
-      map: komsomolTex,
-      transparent: true,
-      metalness: 0.85,
-      roughness: 0.22,
-      depthWrite: false
-    });
-    const decalMesh = new THREE.Mesh(decalGeo, decalMat);
-    decalMesh.position.set(0.04, 0.08, 0.115);
-    komsomol.add(decalMesh);
-
-    // 4. Reverse side: Brass backing and threaded screw post with nut
-    const reverseMat = new THREE.MeshStandardMaterial({
-      color: 0x8D6E63,
-      metalness: 0.78,
-      roughness: 0.35
-    });
-    const screwGeo = new THREE.CylinderGeometry(0.042, 0.042, 0.28, 16);
-    screwGeo.rotateX(Math.PI / 2);
-    const screwMesh = new THREE.Mesh(screwGeo, reverseMat);
-    screwMesh.position.set(0, 0.05, -0.14);
-    komsomol.add(screwMesh);
-
-    const nutGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.05, 24);
-    nutGeo.rotateX(Math.PI / 2);
-    const nutMat = new THREE.MeshStandardMaterial({
-      color: 0xBCAAA4,
-      metalness: 0.88,
-      roughness: 0.25
-    });
-    const nutMesh = new THREE.Mesh(nutGeo, nutMat);
-    nutMesh.position.set(0, 0.05, -0.22);
-    komsomol.add(nutMesh);
-
-    return komsomol;
-  }
-
   const badge3D = buildPioneerBadge();
   badgeGroup.add(badge3D);
 
-  const komsomol3D = buildKomsomolBadge();
-  komsomolGroup.add(komsomol3D);
-
   mainGroup.position.set(0, 0, 0);
+
+  // Hide hint on interaction
+  controls.addEventListener('start', () => {
+    const hint = document.querySelector('.artifact-stage-hint');
+    if (hint) hint.style.opacity = '0';
+  });
 
   // Animation Loop with IntersectionObserver
   let isVisible = true;
@@ -2161,7 +1983,7 @@ function initHero3DArtifact() {
     });
   }
 
-  // Artifact Tab switching (3 artifacts: Medal, Pioneer, Komsomol)
+  // Artifact Tab switching (2 artifacts: Medal, Pioneer)
   function switchArtifact(type) {
     controls.autoRotate = false;
     if (btnSpin) btnSpin.classList.remove('active');
@@ -2172,11 +1994,15 @@ function initHero3DArtifact() {
 
     medalGroup.visible = (type === 'medal');
     badgeGroup.visible = (type === 'badge');
-    komsomolGroup.visible = (type === 'komsomol');
 
-    if (tabMedal) tabMedal.classList.toggle('active', type === 'medal');
-    if (tabBadge) tabBadge.classList.toggle('active', type === 'badge');
-    if (tabKomsomol) tabKomsomol.classList.toggle('active', type === 'komsomol');
+    if (tabMedal) {
+      tabMedal.classList.toggle('active', type === 'medal');
+      tabMedal.setAttribute('aria-selected', type === 'medal');
+    }
+    if (tabBadge) {
+      tabBadge.classList.toggle('active', type === 'badge');
+      tabBadge.setAttribute('aria-selected', type === 'badge');
+    }
 
     const data = ARTIFACT_DATA[type];
     if (data && dossierStamp && dossierTitle) {
@@ -2198,7 +2024,6 @@ function initHero3DArtifact() {
 
   if (tabMedal) tabMedal.addEventListener('click', () => switchArtifact('medal'));
   if (tabBadge) tabBadge.addEventListener('click', () => switchArtifact('badge'));
-  if (tabKomsomol) tabKomsomol.addEventListener('click', () => switchArtifact('komsomol'));
 }
 
 /* --------------------------------------------------------------------------
